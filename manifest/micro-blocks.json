@@ -1,0 +1,217 @@
+{
+  "version": "1.0.0",
+  "micro_blocks": [
+    {
+      "name": "HeadlineSubheadLockup",
+      "purpose": "Paired headline and subhead with consistent typographic hierarchy and spacing.",
+      "props": {
+        "headline": "string",
+        "subhead": "string | null",
+        "eyebrow": "string | null",
+        "alignment": "left | center | right"
+      },
+      "used_in": ["HeroPrimary", "HeroStatement", "FeatureGrid", "CTABanner", "ContentSection"],
+      "notes": "The most reused primitive. Eyebrow is optional — use for category, product line, or stage framing. Alignment inherits from parent module but can be overridden."
+    },
+    {
+      "name": "CTACluster",
+      "purpose": "One or two CTA buttons with correct hierarchy. Manages spacing and visual weight between primary and secondary actions.",
+      "props": {
+        "primary": "CTAButton",
+        "secondary": "CTAButton | null",
+        "layout": "inline | stacked"
+      },
+      "used_in": ["HeroPrimary", "HeroStatement", "CTABanner"],
+      "notes": "Never render two primary-weight buttons together. secondary is always lower visual weight. inline for desktop default; stacked for mobile or when copy length diverges."
+    },
+    {
+      "name": "CTAButton",
+      "purpose": "Single action trigger. Handles label, href, and visual variant.",
+      "props": {
+        "label": "string",
+        "href": "string",
+        "variant": "primary | secondary | ghost",
+        "size": "sm | md | lg"
+      },
+      "used_in": ["CTACluster", "PricingCard", "NavigationHeader", "FooterMinimal"],
+      "notes": "variant maps to visual weight, not action type. primary is filled. secondary is outlined. ghost is text-only. Size defaults to md. Use lg in hero contexts only."
+    },
+    {
+      "name": "MediaFrame",
+      "purpose": "Container for image or video content with aspect ratio and overflow control.",
+      "props": {
+        "src": "string",
+        "type": "image | video",
+        "aspect_ratio": "16:9 | 4:3 | 1:1 | auto",
+        "caption": "string | null",
+        "loading": "lazy | eager"
+      },
+      "used_in": ["HeroPrimary", "ContentSection"],
+      "notes": "loading defaults to lazy except in hero position above the fold. caption is optional and styled as small/muted. Use eager only for the first hero image."
+    },
+    {
+      "name": "TrustSignal",
+      "purpose": "Short friction-reducing string placed near a CTA. Reduces conversion anxiety.",
+      "props": {
+        "text": "string",
+        "icon": "string | null"
+      },
+      "used_in": ["HeroPrimary", "CTABanner"],
+      "notes": "Examples: 'No credit card required', '14-day free trial', 'Cancel anytime'. Keep under 40 characters. Optional icon (lock, checkmark) can reinforce message but is not required."
+    },
+    {
+      "name": "FeatureCard",
+      "purpose": "Icon, headline, and description unit. Single capability statement.",
+      "props": {
+        "icon": "string",
+        "title": "string",
+        "description": "string"
+      },
+      "used_in": ["FeatureGrid"],
+      "notes": "Icon is an icon name or SVG reference — not decorative, should reinforce the feature category. Description should be 1–2 sentences max. Write for outcome, not feature name."
+    },
+    {
+      "name": "GridLayout",
+      "purpose": "Responsive grid container. Handles column count and gap across breakpoints.",
+      "props": {
+        "columns": "2 | 3 | 4",
+        "gap": "sm | md | lg",
+        "collapse_at": "sm | md"
+      },
+      "used_in": ["FeatureGrid"],
+      "notes": "collapse_at defines the breakpoint at which columns collapse to single-column. Default is md. gap defaults to md."
+    },
+    {
+      "name": "LogoStrip",
+      "purpose": "Horizontal array of brand logos. Used for customer or partner social proof.",
+      "props": {
+        "logos": [
+          {
+            "src": "string",
+            "alt": "string"
+          }
+        ],
+        "style": "grayscale | full-color",
+        "max_display": "number | null"
+      },
+      "used_in": ["SocialProofBar"],
+      "notes": "style defaults to grayscale — keeps visual weight neutral and avoids brand conflicts. full-color only when logos are a selling point (e.g., enterprise marquee names). max_display caps visible logos; overflow is hidden, not paginated."
+    },
+    {
+      "name": "QuoteBlock",
+      "purpose": "Styled quotation text with proper typographic treatment.",
+      "props": {
+        "quote": "string",
+        "size": "sm | md | lg"
+      },
+      "used_in": ["SocialProofBar", "TestimonialSingle"],
+      "notes": "Opening quotation mark is a visual element, not a text character — handled in CSS. size lg for featured testimonials. size sm for inline quotes within ContentSection. Do not truncate quotes with ellipsis."
+    },
+    {
+      "name": "AuthorLockup",
+      "purpose": "Name, title, company, and optional photo attribution block.",
+      "props": {
+        "name": "string",
+        "title": "string",
+        "company": "string",
+        "photo": "image | null",
+        "company_logo": "image | null"
+      },
+      "used_in": ["SocialProofBar", "TestimonialSingle"],
+      "notes": "Always include name + title + company minimum for Validator credibility. photo is circular crop. company_logo is displayed at small size beside or below name. Don't use both photo and company_logo simultaneously — pick one."
+    },
+    {
+      "name": "StatUnit",
+      "purpose": "Single metric composed of a large value and a descriptive label.",
+      "props": {
+        "value": "string",
+        "label": "string",
+        "source": "string | null"
+      },
+      "used_in": ["StatBlock"],
+      "notes": "value should be formatted before passing in (e.g., '10,000+', '3.2x', '$2M'). label is supporting context. source is a citation string — always include for Validator contexts. source renders as small/muted below label."
+    },
+    {
+      "name": "StatGrid",
+      "purpose": "Grid container for StatUnit clusters. Handles even distribution and responsive collapse.",
+      "props": {
+        "columns": "3 | 4",
+        "dividers": "boolean"
+      },
+      "used_in": ["StatBlock"],
+      "notes": "dividers adds visual separators between StatUnit cells. Default true for 4-col, optional for 3-col. Collapses to 2-col on mobile, single-col on xs."
+    },
+    {
+      "name": "PriceDisplay",
+      "purpose": "Price value, billing period, and optional discount badge.",
+      "props": {
+        "price": "string",
+        "billing_period": "string",
+        "original_price": "string | null",
+        "badge": "string | null"
+      },
+      "used_in": ["PricingCard"],
+      "notes": "original_price enables strikethrough for discounted pricing. badge is a small overlay label (e.g., 'Most Popular', 'Save 20%'). Price should already be formatted including currency symbol."
+    },
+    {
+      "name": "FeatureList",
+      "purpose": "Checkmark list of plan inclusions or feature entitlements.",
+      "props": {
+        "features": ["string"],
+        "icon": "check | x | dot",
+        "max_display": "number | null"
+      },
+      "used_in": ["PricingCard"],
+      "notes": "icon defaults to check. Use x for features explicitly excluded from a plan (comparison tables). max_display truncates with 'Show more' — use only on mobile. Keep feature strings short; this is a scan-optimized component."
+    },
+    {
+      "name": "BodyCopy",
+      "purpose": "Long-form rich text container. Handles structured prose with subheadings, lists, and inline elements.",
+      "props": {
+        "content": "string (HTML or markdown)",
+        "max_width": "prose | wide | full"
+      },
+      "used_in": ["HeroStatement", "ContentSection"],
+      "notes": "max_width defaults to prose (~65ch) for readability. wide for layouts with adjacent elements. Supports subheadings (h2, h3), lists, and inline links within content. Do not use for UI labels or feature descriptions — those belong in FeatureCard."
+    },
+    {
+      "name": "LogoMark",
+      "purpose": "Brand logo mark with controlled sizing and link wrapping.",
+      "props": {
+        "src": "string",
+        "alt": "string",
+        "href": "string",
+        "size": "sm | md | lg"
+      },
+      "used_in": ["NavigationHeader", "FooterMinimal"],
+      "notes": "Always wraps in an anchor tag linking to home. size sm for footer, md for navigation, lg reserved for standalone brand moments. alt should describe the brand, not say 'logo'."
+    },
+    {
+      "name": "NavLinks",
+      "purpose": "Navigation link group, optionally structured in columns for footer use.",
+      "props": {
+        "links": [
+          {
+            "label": "string",
+            "href": "string",
+            "children": "NavLinks | null"
+          }
+        ],
+        "layout": "inline | column",
+        "heading": "string | null"
+      },
+      "used_in": ["NavigationHeader", "FooterMinimal"],
+      "notes": "inline for navigation bar. column for footer columns. heading is optional — used in footer column groups. children enables one level of dropdown in nav. Do not nest deeper than one level."
+    },
+    {
+      "name": "LegalCopy",
+      "purpose": "Small legal, copyright, and disclaimer text.",
+      "props": {
+        "text": "string",
+        "alignment": "left | center"
+      },
+      "used_in": ["FooterMinimal"],
+      "notes": "Renders at the smallest typographic size. alignment defaults to center for minimal footer, left for standard. Keep to one line where possible. Includes copyright symbol and year by convention."
+    }
+  ]
+}

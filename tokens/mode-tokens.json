@@ -1,0 +1,10 @@
+{
+  "_note": "Token profiles per resolution dimension. Not yet architected — placeholder only. See CLAUDE.md 'Unresolved: visual mapping tool' before building this out.",
+  "dimensions": {
+    "archetype": ["Mover", "Validator", "Explorer"],
+    "funnel_stage": ["awareness", "consideration", "decision", "conversion"],
+    "intent_state": [],
+    "context_mode": ["organic", "campaign", "retargeting"]
+  },
+  "profiles": {}
+}
