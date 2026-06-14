@@ -33,10 +33,19 @@ async function selectComponents(ia, brief, manifest) {
     const selections = await llmSelectComponents(ia, brief, componentMap);
     return selections.map((sel) => {
       const component = componentMap[sel.component];
+
+      // Validate variant against the manifest. LLMs occasionally hallucinate
+      // combined names (e.g. "3-stat-with-source") that don't exist.
+      let variant = sel.variant;
+      if (component && variant && !component.variants.includes(variant)) {
+        console.warn(`  Variant "${variant}" not in manifest for ${sel.component} — using heuristic`);
+        variant = pickVariant(component, brief);
+      }
+
       return {
         section: sel.section,
         component: sel.component,
-        variant: sel.variant,
+        variant,
         reasoning: sel.reasoning,
         slots: stubSlots(component ? component.slots : {}, brief),
       };
