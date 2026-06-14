@@ -212,15 +212,24 @@ No action yet. The right time to build this is when there's a real brief, a real
 
 The four resolution dimensions (archetype, funnel stage, intent state, context mode) are fixed axes of the platform. What a **deployment** configures is which dimension drives which token behavior.
 
-Three valid deployment configurations:
+The resolver itself is generic — it reads `mode-tokens.json` and resolves tokens for any brief + component. The config is what makes one deployment different from another. Swap the config, get a different visual system. The components don't know which dimension produced their palette; they only know what classes to render.
 
-| Config | Palette driver | Behavioral driver | Use case |
+### The four presets
+
+These aren't different systems — they're the same resolver with a different config. But as a product, they're the likely trailheads for any design or brand owner picking up the kit. Each one answers a different question about what emphasis *means* in their context.
+
+| Preset | What "dark" means | Palette driver | When to use |
 |---|---|---|---|
-| **Funnel-driven** (this deployment) | Funnel stage | Archetype | Dark emphasis accumulates toward conversion |
-| **Archetype-driven** | Archetype | Archetype | Visual treatment expresses user identity |
-| **Product-architecture-driven** | Product tier / surface | Funnel stage | Enterprise vs. Starter get distinct treatments |
+| **Funnel-driven** (current) | "This is where you decide" — emphasis accumulates toward conversion moments | Funnel stage | SaaS conversion pages, trial-to-paid flows, signup |
+| **Archetype-driven** | "This product is built for people like you" — visual language expresses buyer identity | Archetype | Multi-persona sites where Validator, Mover, Explorer each get a distinct visual register |
+| **Product-architecture-driven** | "You are inside this part of the product" — palette tracks product structure | Product tier / surface | App dashboards, enterprise vs. starter tiers, feature modules with distinct ownership |
+| **Feature-emphasis** | "Look at this capability" — base palette stays neutral, emphasis spotlights substance | Editorial intent | Product marketing pages where the features *are* the story; CTA is secondary to capability proof |
 
-These aren't mutually exclusive. A deployment picks which dimension drives each behavior. The resolution engine is generic; the config is deployment-specific.
+The four aren't the only valid configurations — they're the configurations a design or brand owner is most likely to reach for first. The resolver handles all of them; what changes is the `palette_map` in `mode-tokens.json` and which dimension populates it.
+
+**The key distinction between 1 and 4:** Funnel-driven uses dark as a *decision signal* — urgency increases as the user approaches conversion. Feature-emphasis uses dark as a *substance signal* — it marks capabilities worth pausing on. A feature section might be dark; the CTA could stay light. The logic inverts.
+
+**The key distinction between 2 and 3:** Archetype-driven adapts visual language to *who the user is*. Product-architecture-driven adapts it to *where in the product they are*. One is identity-anchored, the other is navigation-anchored.
 
 ### What varies vs. what stays stable
 
