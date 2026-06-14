@@ -225,6 +225,39 @@ When dropping back in after time away, start here:
 
 ---
 
+## Architecture principle: semantic states vs. visual expression
+
+MODE's three palette modes (light / neutral / dark) are **semantic states**, not visual designs:
+
+- **light** — low emphasis, background, chrome
+- **neutral** — supporting context, informational
+- **dark** — high emphasis, spotlight moments
+
+What those states *look like* is the consuming design system's responsibility. MODE declares intent ("this component should be high emphasis here"). The brand fills in what high emphasis means visually.
+
+This has two important consequences:
+
+**1. The visual mapping tool is not a design task**
+Deciding that `HeroPrimary` should be `dark` for a Validator in decision stage is a judgment call about semantic weight — not a visual design problem. You're not designing 3 colorways per component. You're declaring once which weight a component should carry in each context.
+
+**2. MODE is a framework, not a look**
+Anyone should be able to adopt MODE by writing their own theme mapping. The architecture separates into two layers:
+
+- **Intent layer (MODE owns)** — `mode-tokens.json`: which semantic state each component is in for each context. Shared across any deployment.
+- **Expression layer (consuming system owns)** — what `light`, `neutral`, and `dark` resolve to in *their* token system (CSS variables, Tailwind config, component props, etc.).
+
+A fourth planned preset or a new client deployment means writing a new intent map — not redesigning the visual system.
+
+**On Figma as a design system connection point**
+
+Figma holds visual tokens and component structure. It has no concept of semantic intent. An ingestion from Figma could tell MODE what components exist and what their visual variants are — but it cannot tell MODE which variant is appropriate for a Validator in decision stage. That part lives in MODE's config layer and always will.
+
+The cleaner seam is a code-level integration: the user defines what `light`, `neutral`, and `dark` resolve to in their token system. MODE owns the intent mapping. The consuming system owns the visual expression. No sync dependency, no Figma sidecar.
+
+*The expression layer / theme mapping is not yet built. It's the right next abstraction after the intent mapping tooling is in place.*
+
+---
+
 ## Unresolved: visual mapping tool
 
 The hard architectural question is the handoff between discovery and build:
