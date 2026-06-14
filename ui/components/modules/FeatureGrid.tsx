@@ -4,13 +4,15 @@
  * Falls back to 6 placeholder cards if features array is empty.
  */
 
-import type { ComponentSlots, Feature } from "@/lib/types";
+import type { ComponentSlots, Feature, PaletteMode } from "@/lib/types";
+import { getPalette } from "@/lib/palette";
 import { PlaceholderSlot } from "@/components/blocks/PlaceholderSlot";
 import { FeatureCard } from "@/components/blocks/FeatureCard";
 
 interface FeatureGridProps {
   slots: ComponentSlots;
   variant: string | null;
+  palette?: PaletteMode;
 }
 
 const PLACEHOLDER_FEATURES: Feature[] = Array.from({ length: 6 }, (_, i) => ({
@@ -19,7 +21,8 @@ const PLACEHOLDER_FEATURES: Feature[] = Array.from({ length: 6 }, (_, i) => ({
   description: "Feature description placeholder",
 }));
 
-export function FeatureGrid({ slots, variant }: FeatureGridProps) {
+export function FeatureGrid({ slots, variant, palette }: FeatureGridProps) {
+  const p = getPalette(palette);
   const features: Feature[] =
     Array.isArray(slots.features) && slots.features.length > 0
       ? (slots.features as Feature[])
@@ -33,31 +36,34 @@ export function FeatureGrid({ slots, variant }: FeatureGridProps) {
       : "grid-cols-1 md:grid-cols-3";
 
   return (
-    <section className="mx-auto max-w-6xl px-6 py-20">
-      <div className="mb-12">
-        <PlaceholderSlot name="headline" value={slots.headline}>
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900">
-            {slots.headline as string}
-          </h2>
-        </PlaceholderSlot>
-        {slots.subhead !== undefined && (
-          <div className="mt-4">
-            <PlaceholderSlot name="subhead" value={slots.subhead}>
-              <p className="text-lg text-gray-600">{slots.subhead as string}</p>
-            </PlaceholderSlot>
-          </div>
-        )}
-      </div>
+    <section className={`${p.bg} py-20`}>
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="mb-12">
+          <PlaceholderSlot name="headline" value={slots.headline}>
+            <h2 className={`text-3xl font-bold tracking-tight ${p.text}`}>
+              {slots.headline as string}
+            </h2>
+          </PlaceholderSlot>
+          {slots.subhead !== undefined && (
+            <div className="mt-4">
+              <PlaceholderSlot name="subhead" value={slots.subhead}>
+                <p className={`text-lg ${p.subtext}`}>{slots.subhead as string}</p>
+              </PlaceholderSlot>
+            </div>
+          )}
+        </div>
 
-      <div className={`grid gap-8 ${gridClass}`}>
-        {features.map((f, i) => (
-          <FeatureCard
-            key={i}
-            icon={f.icon}
-            title={f.title}
-            description={f.description}
-          />
-        ))}
+        <div className={`grid gap-8 ${gridClass}`}>
+          {features.map((f, i) => (
+            <FeatureCard
+              key={i}
+              icon={f.icon}
+              title={f.title}
+              description={f.description}
+              palette={p}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );

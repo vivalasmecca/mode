@@ -1,10 +1,76 @@
 {
-  "_note": "Token profiles per resolution dimension. Not yet architected — placeholder only. See CLAUDE.md 'Unresolved: visual mapping tool' before building this out.",
-  "dimensions": {
-    "archetype": ["Mover", "Validator", "Explorer"],
-    "funnel_stage": ["awareness", "consideration", "decision", "conversion"],
-    "intent_state": [],
-    "context_mode": ["organic", "campaign", "retargeting"]
+  "_note": "Deployment token config for the funnel-driven MODE execution. Palette is funnel-stage-driven; behavioral tokens are archetype-driven. See README for platform vs. deployment distinction.",
+
+  "deployment": {
+    "palette_driver": "funnel_stage",
+    "behavioral_driver": "archetype",
+    "description": "Dark emphasis accumulates toward conversion. Behavioral rules (copy density, evidence, CTA rules) are archetype-scoped."
   },
-  "profiles": {}
+
+  "palette_modes": {
+    "light": {
+      "description": "Neutral canvas. Default section treatment. Top-of-funnel, chrome.",
+      "bg": "bg-white",
+      "text": "text-gray-900",
+      "subtext": "text-gray-600",
+      "muted": "text-gray-400",
+      "border": "border-gray-100",
+      "iconBg": "bg-gray-100"
+    },
+    "neutral": {
+      "description": "Mild separation. Mid-funnel, informational sections.",
+      "bg": "bg-gray-50",
+      "text": "text-gray-900",
+      "subtext": "text-gray-600",
+      "muted": "text-gray-500",
+      "border": "border-gray-200",
+      "iconBg": "bg-gray-100"
+    },
+    "dark": {
+      "description": "High emphasis. Trust anchors, conversion gates, commitment moments.",
+      "bg": "bg-gray-900",
+      "text": "text-white",
+      "subtext": "text-gray-300",
+      "muted": "text-gray-500",
+      "border": "border-gray-700",
+      "iconBg": "bg-gray-800"
+    }
+  },
+
+  "behavioral_tokens": {
+    "Validator": {
+      "require_trust_signal": true,
+      "allow_secondary_cta": true,
+      "subhead_policy": "always",
+      "copy_density": "medium",
+      "evidence_density": "high"
+    },
+    "Mover": {
+      "require_trust_signal": false,
+      "allow_secondary_cta": false,
+      "subhead_policy": "optional",
+      "copy_density": "low",
+      "evidence_density": "low"
+    },
+    "Explorer": {
+      "require_trust_signal": false,
+      "allow_secondary_cta": true,
+      "subhead_policy": "always",
+      "copy_density": "high",
+      "evidence_density": "medium"
+    }
+  },
+
+  "palette_map": {
+    "_note": "Bridge map until zone layer is built. Maps component × funnel_stage → palette mode. Zone layer will replace this with zone × funnel_stage logic.",
+    "NavigationHeader":  { "awareness": "light",   "consideration": "light",   "decision": "light",   "conversion": "light"   },
+    "HeroPrimary":       { "awareness": "light",   "consideration": "light",   "decision": "dark",    "conversion": "dark"    },
+    "SocialProofBar":    { "awareness": "neutral",  "consideration": "dark",    "decision": "dark",    "conversion": "dark"    },
+    "StatBlock":         { "awareness": "neutral",  "consideration": "dark",    "decision": "dark",    "conversion": "dark"    },
+    "FeatureGrid":       { "awareness": "light",   "consideration": "neutral",  "decision": "neutral", "conversion": "neutral" },
+    "TestimonialSingle": { "awareness": "neutral",  "consideration": "dark",    "decision": "dark",    "conversion": "dark"    },
+    "PricingCard":       { "awareness": "light",   "consideration": "neutral",  "decision": "dark",    "conversion": "dark"    },
+    "CTABanner":         { "awareness": "dark",    "consideration": "dark",    "decision": "dark",    "conversion": "dark"    },
+    "FooterMinimal":     { "awareness": "light",   "consideration": "light",   "decision": "light",   "conversion": "light"   }
+  }
 }

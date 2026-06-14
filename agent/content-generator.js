@@ -35,8 +35,7 @@ const SKIP_KEYS = new Set([
 const TONE = {
   Validator:
     "Evidence-led and specific. Cite real-sounding outcomes with numbers. " +
-    "Use source attribution on stats. Build trust through specificity, not superlatives. " +
-    "Give the reader space to evaluate — no pressure, just proof.",
+    "Build trust through specificity, not superlatives. Give the reader space to evaluate — no pressure, just proof.",
   Mover:
     "Terse and action-forward. Every word earns its place. Strong verbs. No hedging. " +
     "CTA copy is direct and confident. One message, one action per section.",
@@ -44,6 +43,44 @@ const TONE = {
     "Content-rich and low-pressure. Informative, broad framing. No hard sell. " +
     "Navigational and discovery-friendly. Prioritise depth over urgency.",
 };
+
+/**
+ * Build a tone + behavioral guide from the archetype base and resolved behavioral tokens.
+ * Behavioral tokens make implicit rules explicit in the LLM prompt.
+ */
+function buildToneGuide(archetype, behavioral) {
+  const base = TONE[archetype] || TONE.Validator;
+  if (!behavioral) return base;
+
+  const rules = [];
+
+  if (behavioral.evidence_density === "high") {
+    rules.push('Stats and claims MUST include source attribution (e.g. "2024 customer survey", "G2 data", "internal data").');
+  } else if (behavioral.evidence_density === "low") {
+    rules.push("Use direct assertions only — no source citations needed.");
+  }
+
+  if (behavioral.require_trust_signal) {
+    rules.push('Include a trust signal near primary CTAs (e.g. "No credit card required", "Cancel anytime").');
+  }
+
+  if (!behavioral.allow_secondary_cta) {
+    rules.push("One CTA per section — set secondary CTA fields to null.");
+  }
+
+  if (behavioral.copy_density === "low") {
+    rules.push("Keep copy extremely concise — headlines ≤8 words, body text 1 line maximum.");
+  } else if (behavioral.copy_density === "high") {
+    rules.push("Provide fuller explanations — 3–4 lines for body text where the slot allows.");
+  }
+
+  if (behavioral.subhead_policy === "optional") {
+    rules.push("Subheads are optional — use empty string or null if a section doesn't need one.");
+  }
+
+  if (rules.length === 0) return base;
+  return `${base}\n\nBEHAVIORAL RULES (follow exactly):\n${rules.map((r) => `- ${r}`).join("\n")}`;
+}
 
 /**
  * How many items to generate for array slots, based on component + variant.
@@ -99,8 +136,8 @@ function buildSpec(ia, page, manifest) {
   });
 }
 
-async function callLLM(spec, brief) {
-  const tone = TONE[brief.archetype] || TONE.Validator;
+async function callLLM(spec, brief, behavioral) {
+  const toneGuide = buildToneGuide(brief.archetype, behavioral);
   const anthropic = getClient();
 
   const message = await anthropic.messages.create({
@@ -117,7 +154,7 @@ BRIEF:
 ${JSON.stringify(brief, null, 2)}
 
 TONE — ${brief.archetype} archetype:
-${tone}
+${toneGuide}
 
 SLOT TYPE RULES — follow exactly:
 - type "string"            → write a plain string value
@@ -162,12 +199,12 @@ Return ONLY valid JSON keyed by the exact section name — no markdown, no expla
  * Main export. Returns page with all fillable slots populated.
  * Falls back to original stubs if the LLM call fails.
  */
-async function populateContent(ia, page, brief, manifest) {
+async function populateContent(ia, page, brief, manifest, behavioral = null) {
   const spec = buildSpec(ia, page, manifest);
 
   let generated;
   try {
-    generated = await callLLM(spec, brief);
+    generated = await callLLM(spec, brief, behavioral);
   } catch (err) {
     console.warn(`  Content generation failed (${err.message}), keeping stubs`);
     return page;

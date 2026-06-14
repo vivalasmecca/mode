@@ -1,4 +1,4 @@
-import type { ComponentSlots } from "@/lib/types";
+import type { ComponentSlots, PaletteMode } from "@/lib/types";
 import { NavigationHeader } from "./NavigationHeader";
 import { HeroPrimary } from "./HeroPrimary";
 import { SocialProofBar } from "./SocialProofBar";
@@ -12,6 +12,7 @@ import { StatBlock } from "./StatBlock";
 export type ModuleComponent = React.ComponentType<{
   slots: ComponentSlots;
   variant: string | null;
+  palette?: PaletteMode;
 }>;
 
 export const MODULE_REGISTRY: Record<string, ModuleComponent> = {

@@ -19,6 +19,7 @@ const readline = require("readline");
 const { proposeIA } = require("./ia-planner");
 const { selectComponents } = require("./component-selector");
 const { populateContent } = require("./content-generator");
+const { resolveTokens } = require("./token-resolver");
 
 const MANIFEST_PATH = path.resolve(__dirname, "../manifest/components.json");
 const OUTPUT_DIR = path.resolve(__dirname, "../output");
@@ -91,9 +92,20 @@ async function run(brief) {
     if (s.reasoning) console.log(`     ↳ ${s.reasoning}`);
   });
 
-  // Step 3.5: Content generation
+  // Step 3.5: Resolve tokens — palette per component, behavioral rules per archetype
+  const { behavioral, resolvePalette } = resolveTokens(brief);
+  const pageWithPalette = page.map((section) => ({
+    ...section,
+    palette: resolvePalette(section.component),
+  }));
+  console.log("\nToken resolution:");
+  pageWithPalette.forEach((s) => {
+    console.log(`  ${s.section} (${s.component}) → palette: ${s.palette}`);
+  });
+
+  // Step 3.6: Content generation (behavioral tokens inform copy)
   console.log("\nGenerating content...");
-  const populatedPage = await populateContent(ia, page, brief, manifest);
+  const populatedPage = await populateContent(ia, pageWithPalette, brief, manifest, behavioral);
   console.log("\nFilled slots:");
   populatedPage.forEach((s) => {
     const preview = Object.entries(s.slots)

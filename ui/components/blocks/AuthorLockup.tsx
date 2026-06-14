@@ -3,18 +3,22 @@
 /**
  * AuthorLockup — name, title, company, optional photo.
  * Uses Radix Avatar for circular crop with initial fallback.
+ * Accepts palette to invert text colors on dark sections.
  */
 
 import * as Avatar from "@radix-ui/react-avatar";
+import type { PaletteMode } from "@/lib/types";
 
 interface AuthorLockupProps {
   name: string;
   title?: string | null;
   company?: string | null;
   photo?: string | null;
+  palette?: PaletteMode;
 }
 
-export function AuthorLockup({ name, title, company, photo }: AuthorLockupProps) {
+export function AuthorLockup({ name, title, company, photo, palette }: AuthorLockupProps) {
+  const isDark = palette === "dark";
   const initials = name
     .split(" ")
     .map((n) => n[0])
@@ -37,9 +41,9 @@ export function AuthorLockup({ name, title, company, photo }: AuthorLockupProps)
         </Avatar.Fallback>
       </Avatar.Root>
       <div>
-        <p className="text-sm font-semibold text-gray-900">{name}</p>
+        <p className={`text-sm font-semibold ${isDark ? "text-white" : "text-gray-900"}`}>{name}</p>
         {(title || company) && (
-          <p className="text-sm text-gray-500">
+          <p className={`text-sm ${isDark ? "text-gray-400" : "text-gray-500"}`}>
             {title}
             {title && company ? ", " : ""}
             {company}

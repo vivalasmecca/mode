@@ -2,10 +2,11 @@
  * CTABanner — full-width conversion prompt.
  * split variant: text left / CTAs right.
  * centered variant: stacked center.
- * Dark background section.
+ * Always dark — palette_map assigns dark across all funnel stages.
  */
 
-import type { ComponentSlots } from "@/lib/types";
+import type { ComponentSlots, PaletteMode } from "@/lib/types";
+import { getPalette } from "@/lib/palette";
 import { PlaceholderSlot } from "@/components/blocks/PlaceholderSlot";
 import { CTAButton } from "@/components/blocks/CTAButton";
 import { TrustSignal } from "@/components/blocks/TrustSignal";
@@ -13,30 +14,32 @@ import { TrustSignal } from "@/components/blocks/TrustSignal";
 interface CTABannerProps {
   slots: ComponentSlots;
   variant: string | null;
+  palette?: PaletteMode;
 }
 
-export function CTABanner({ slots, variant }: CTABannerProps) {
+export function CTABanner({ slots, variant, palette }: CTABannerProps) {
+  const p = getPalette(palette ?? "dark");
   const isSplit = variant === "split";
 
   return (
-    <section className="bg-gray-900 py-20">
+    <section className={`${p.bg} py-20`}>
       <div className="mx-auto max-w-6xl px-6">
         <div className={`flex flex-col gap-8 ${isSplit ? "md:flex-row md:items-center md:justify-between" : "items-center text-center"}`}>
           {/* Text */}
           <div className={`flex flex-col gap-3 ${isSplit ? "md:max-w-lg" : "max-w-xl"}`}>
             <PlaceholderSlot name="headline" value={slots.headline}>
-              <h2 className="text-3xl font-bold tracking-tight text-white">
+              <h2 className={`text-3xl font-bold tracking-tight ${p.text}`}>
                 {slots.headline as string}
               </h2>
             </PlaceholderSlot>
 
             {slots.subhead !== undefined && (
               <PlaceholderSlot name="subhead" value={slots.subhead}>
-                <p className="text-lg text-gray-300">{slots.subhead as string}</p>
+                <p className={`text-lg ${p.subtext}`}>{slots.subhead as string}</p>
               </PlaceholderSlot>
             )}
 
-            <TrustSignal value={slots.trust_signal as string | null} />
+            <TrustSignal value={slots.trust_signal as string | null} palette={palette ?? "dark"} />
           </div>
 
           {/* CTAs */}

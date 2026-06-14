@@ -1,6 +1,8 @@
 // Schema contract between agent JSON output and the preview UI.
 // Must stay in sync with the output schema in agent/page-builder.js.
 
+export type PaletteMode = "light" | "neutral" | "dark";
+
 export interface CTAButtonSlot {
   label: string;
   href: string;
@@ -58,6 +60,7 @@ export interface PageSection {
   variant: string | null;
   reasoning: string | null;
   slots: ComponentSlots;
+  palette?: PaletteMode;
 }
 
 export interface PageOutput {

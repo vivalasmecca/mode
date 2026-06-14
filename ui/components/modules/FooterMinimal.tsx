@@ -7,16 +7,17 @@
  */
 
 import * as Separator from "@radix-ui/react-separator";
-import type { ComponentSlots, NavColumn } from "@/lib/types";
+import type { ComponentSlots, NavColumn, PaletteMode } from "@/lib/types";
 import { PlaceholderSlot } from "@/components/blocks/PlaceholderSlot";
 import { CTAButton } from "@/components/blocks/CTAButton";
 
 interface FooterMinimalProps {
   slots: ComponentSlots;
   variant: string | null;
+  palette?: PaletteMode; // chrome — always light regardless of page palette
 }
 
-export function FooterMinimal({ slots, variant }: FooterMinimalProps) {
+export function FooterMinimal({ slots, variant, palette: _palette }: FooterMinimalProps) {
   const isMinimal = variant === "minimal";
   const hasCTA = variant === "with-cta";
   const navColumns = Array.isArray(slots.nav_columns) ? (slots.nav_columns as NavColumn[]) : [];

@@ -6,24 +6,27 @@
  * Variants: quote-only | with-photo | with-company-logo
  */
 
-import type { ComponentSlots } from "@/lib/types";
+import type { ComponentSlots, PaletteMode } from "@/lib/types";
+import { getPalette } from "@/lib/palette";
 import { PlaceholderSlot } from "@/components/blocks/PlaceholderSlot";
 import { AuthorLockup } from "@/components/blocks/AuthorLockup";
 
 interface TestimonialSingleProps {
   slots: ComponentSlots;
   variant: string | null;
+  palette?: PaletteMode;
 }
 
-export function TestimonialSingle({ slots, variant }: TestimonialSingleProps) {
+export function TestimonialSingle({ slots, variant, palette }: TestimonialSingleProps) {
+  const p = getPalette(palette);
   const showPhoto = variant === "with-photo";
   const photo = showPhoto ? (slots.photo as string | null) : null;
 
   return (
-    <section className="bg-gray-50 py-20">
+    <section className={`${p.bg} py-20`}>
       <div className="mx-auto max-w-3xl px-6 text-center">
         <PlaceholderSlot name="quote" value={slots.quote}>
-          <blockquote className="text-xl font-medium italic leading-relaxed text-gray-800">
+          <blockquote className={`text-xl font-medium italic leading-relaxed ${p.text}`}>
             &ldquo;{slots.quote as string}&rdquo;
           </blockquote>
         </PlaceholderSlot>
@@ -35,6 +38,7 @@ export function TestimonialSingle({ slots, variant }: TestimonialSingleProps) {
               title={slots.author_title as string | null}
               company={slots.company as string | null}
               photo={photo}
+              palette={palette}
             />
           </PlaceholderSlot>
         </div>

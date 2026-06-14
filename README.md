@@ -119,23 +119,23 @@ Funnel stage and archetype are genuinely independent dimensions doing different 
 
 ### Done
 
-- **Agent pipeline** — brief → IA proposal → human approval → component selection → content generation → JSON output
+- **Agent pipeline** — brief → IA proposal → human approval → component selection → token resolution → content generation → JSON output
 - **Component manifest** — 11 components fully defined with archetypes, funnel stages, variants, slots, notes
-- **Content layer** — single batched Sonnet call fills all slot values in one pass; archetype-aware tone (Validator = evidence-led/sourced, Mover = terse/direct); image and structural nav slots correctly skipped
+- **Content layer** — single batched Sonnet call fills all slot values in one pass; behavioral tokens drive tone directives (evidence density, trust signal requirements, CTA rules, copy density)
+- **Token config layer** — `mode-tokens.json` has full deployment config: palette modes, behavioral tokens per archetype, palette_map per component × funnel stage. `token-resolver.js` resolves both. `palette` field written to every section in output JSON.
+- **Palette-aware modules** — all 9 module components accept `palette?: PaletteMode` and apply correct bg, text, subtext, muted, border, iconBg classes. Block components (FeatureCard, AuthorLockup, TrustSignal) accept palette from parent.
 - **Preview UI** — Next.js app renders agent output with no unknown components
 - **Module registry** — NavigationHeader, HeroPrimary, SocialProofBar, StatBlock, FeatureGrid, TestimonialSingle, PricingCard, CTABanner, FooterMinimal (+ HeroStatement, ContentSection pending agent use)
 - **Micro-blocks** — AuthorLockup, CTAButton, FeatureCard, HeadlineSubheadLockup, LogoStrip, PlaceholderSlot, PriceDisplay, TrustSignal
+- **Label overlay** — toggleable dev tool shows MODE classification (section name, component, variant, archetype, funnel stage, IA rationale) above each section
 
 ### Up next
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Token profiles | Not started | `mode-tokens.json` has dimension keys; `profiles` is empty. Need values for each archetype × funnel stage combination. |
-| Token → component binding | Not started | No mechanism for resolved profiles to affect module rendering yet. |
 | IA revision flow | Stubbed | `page-builder.js` exits if approval !== `y`. Revision loop not implemented. |
 | Visual mapping tool | Open question | How designers set token values per dimension. Composition vs named profiles unresolved — revisit with 2–3 concrete examples. |
 | HeroStatement, ContentSection | Not in UI | In manifest, not yet in module registry (no agent test case exercises them yet). |
-| Component selector variant hallucination | Known bug | LLM occasionally returns combined variant names (e.g. `3-stat-with-source`) not in the manifest. Falls back to heuristics correctly but the LLM call is wasted. Fix: add explicit variant validation + retry. |
 | CMS as revision layer | Future | LLM authors the content; CMS is where humans revise before publish. Agent pushes to Contentful via Management API. Content types derived from manifest slot schemas. See note below. |
 | Page zones | Future concept | Zones sit above sections — each zone has a narrative job (Credibility, Value, Conversion, etc.). Funnel stage controls which zones exist and their weight; archetype controls density and component choice within each zone. Requires IA planner rework and zone affinity on manifest. See architecture section. |
 | Multi-variant generation | Future | One brief generates all archetype variants in a single run. Output schema holds Validator/Mover/Explorer variants side by side. Business owner previews and approves each. Customer is served the right one at runtime — no LLM at request time. |
@@ -206,11 +206,46 @@ No action yet. The right time to build this is when there's a real brief, a real
 
 ---
 
-## Token profiles (future task)
+## Token layer — platform model
 
-`tokens/mode-tokens.json` defines the four dimensions. The open question is whether token values are:
+### Platform vs. deployment
 
-- **Composed** — each dimension contributes independently and values are combined at runtime
-- **Named profiles** — `Validator × decision` is a single named profile with its own token set
+The four resolution dimensions (archetype, funnel stage, intent state, context mode) are fixed axes of the platform. What a **deployment** configures is which dimension drives which token behavior.
 
-Come back to this with 2–3 concrete examples of what a designer would actually configure before choosing an architecture.
+Three valid deployment configurations:
+
+| Config | Palette driver | Behavioral driver | Use case |
+|---|---|---|---|
+| **Funnel-driven** (this deployment) | Funnel stage | Archetype | Dark emphasis accumulates toward conversion |
+| **Archetype-driven** | Archetype | Archetype | Visual treatment expresses user identity |
+| **Product-architecture-driven** | Product tier / surface | Funnel stage | Enterprise vs. Starter get distinct treatments |
+
+These aren't mutually exclusive. A deployment picks which dimension drives each behavior. The resolution engine is generic; the config is deployment-specific.
+
+### What varies vs. what stays stable
+
+**Stable across all contexts:** spacing scale, type scale, radius, shadows. Standard design system territory.
+
+**Varies by context:** palette mode — which color treatment a section renders in.
+
+```
+light   — white bg, default text. Neutral canvas.
+neutral — gray-50 bg, default text. Slight separation.
+dark    — gray-900 bg, inverted text. Emphasis and urgency.
+```
+
+### This deployment: funnel-driven
+
+Palette mode is an emphasis signal. Dark marks the moments that matter — commitment points, trust anchors, conversion gates. It accumulates as the user moves toward decision.
+
+Behavioral tokens (copy density, evidence requirements, CTA rules) are driven by archetype.
+
+### Token config file
+
+`tokens/mode-tokens.json` holds the full deployment config:
+- `deployment` — which dimensions drive which behaviors
+- `palette_modes` — the three named modes with their Tailwind class sets
+- `behavioral_tokens` — per-archetype behavioral rules
+- `palette_map` — component → funnel stage → palette mode (bridge until zone layer is built)
+
+The resolution engine (`agent/token-resolver.js`) reads this config and resolves tokens for any given brief + component. Components receive a `palette` prop and a behavioral token set; they don't know which dimension produced them.

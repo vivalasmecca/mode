@@ -6,16 +6,17 @@
  */
 
 import * as NavigationMenu from "@radix-ui/react-navigation-menu";
-import type { ComponentSlots } from "@/lib/types";
+import type { ComponentSlots, PaletteMode } from "@/lib/types";
 import { PlaceholderSlot, isPlaceholderValue } from "@/components/blocks/PlaceholderSlot";
 import { CTAButton } from "@/components/blocks/CTAButton";
 
 interface NavigationHeaderProps {
   slots: ComponentSlots;
   variant: string | null;
+  palette?: PaletteMode; // chrome — always light regardless of page palette
 }
 
-export function NavigationHeader({ slots, variant }: NavigationHeaderProps) {
+export function NavigationHeader({ slots, variant, palette: _palette }: NavigationHeaderProps) {
   const isMinimal = variant === "minimal";
   const navLinks = Array.isArray(slots.nav_links) ? slots.nav_links : [];
 

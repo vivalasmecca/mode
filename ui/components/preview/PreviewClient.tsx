@@ -55,7 +55,7 @@ export function PreviewClient({ output }: PreviewClientProps) {
                 />
               )}
               {Component ? (
-                <Component slots={section.slots} variant={section.variant} />
+                <Component slots={section.slots} variant={section.variant} palette={section.palette} />
               ) : (
                 <UnknownComponent name={section.component} />
               )}

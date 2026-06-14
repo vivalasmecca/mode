@@ -7,38 +7,45 @@
  * headline is always optional — suppressed when null.
  */
 
-import type { ComponentSlots, Stat } from "@/lib/types";
+import type { ComponentSlots, Stat, PaletteMode } from "@/lib/types";
+import { getPalette } from "@/lib/palette";
 import { PlaceholderSlot, isPlaceholderValue } from "@/components/blocks/PlaceholderSlot";
 
 interface StatBlockProps {
   slots: ComponentSlots;
   variant: string | null;
+  palette?: PaletteMode;
 }
 
-function StatUnit({ stat, showSource }: { stat: Stat; showSource: boolean }) {
+function StatUnit({ stat, showSource, p }: {
+  stat: Stat;
+  showSource: boolean;
+  p: ReturnType<typeof getPalette>;
+}) {
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-4xl font-bold tracking-tight text-gray-900">{stat.value}</span>
-      <span className="text-sm font-medium text-gray-600">{stat.label}</span>
+      <span className={`text-4xl font-bold tracking-tight ${p.text}`}>{stat.value}</span>
+      <span className={`text-sm font-medium ${p.subtext}`}>{stat.label}</span>
       {showSource && stat.source && (
-        <span className="text-xs text-gray-400">{stat.source}</span>
+        <span className={`text-xs ${p.muted}`}>{stat.source}</span>
       )}
     </div>
   );
 }
 
-export function StatBlock({ slots, variant }: StatBlockProps) {
+export function StatBlock({ slots, variant, palette }: StatBlockProps) {
+  const p = getPalette(palette);
   const showSource = variant === "with-source";
   const cols = variant === "4-stat" ? "sm:grid-cols-4" : "sm:grid-cols-3";
 
   const rawStats = Array.isArray(slots.stats) ? slots.stats as Stat[] : [];
 
   return (
-    <section className="border-y border-gray-100 bg-white py-16">
+    <section className={`border-y ${p.border} ${p.bg} py-16`}>
       <div className="mx-auto max-w-6xl px-6">
         {!isPlaceholderValue(slots.headline) && (
           <PlaceholderSlot name="headline" value={slots.headline}>
-            <p className="mb-10 text-center text-xs font-semibold uppercase tracking-widest text-gray-400">
+            <p className={`mb-10 text-center text-xs font-semibold uppercase tracking-widest ${p.muted}`}>
               {slots.headline as string}
             </p>
           </PlaceholderSlot>
@@ -47,7 +54,7 @@ export function StatBlock({ slots, variant }: StatBlockProps) {
         {rawStats.length > 0 ? (
           <div className={`grid grid-cols-1 gap-10 text-center ${cols}`}>
             {rawStats.map((stat, i) => (
-              <StatUnit key={i} stat={stat} showSource={showSource} />
+              <StatUnit key={i} stat={stat} showSource={showSource} p={p} />
             ))}
           </div>
         ) : (
