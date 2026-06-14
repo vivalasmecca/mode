@@ -1,6 +1,6 @@
 {
   "_note": "MODE deployment token config. Switch presets with: node agent/set-preset.js <preset-name>",
-  "active_preset": "feature-emphasis",
+  "active_preset": "archetype-driven",
   "palette_modes": {
     "_note": "Shared across all presets. Only palette_map changes between presets.",
     "light": {
@@ -59,6 +59,7 @@
     "funnel-driven": {
       "description": "Dark = decision signal. Emphasis accumulates toward conversion — trust anchors and commitment moments are dark, top-of-funnel is light.",
       "palette_driver": "funnel_stage",
+      "palette_key": "funnel_stage",
       "palette_map": {
         "NavigationHeader": {
           "awareness": "light",
@@ -119,6 +120,7 @@
     "feature-emphasis": {
       "description": "Dark = substance signal. Spotlights product capabilities and metrics. CTA and pricing are understated — features are the story, not conversion pressure.",
       "palette_driver": "editorial_intent",
+      "palette_key": "funnel_stage",
       "palette_map": {
         "NavigationHeader": {
           "awareness": "light",
@@ -173,6 +175,58 @@
           "consideration": "light",
           "decision": "light",
           "conversion": "light"
+        }
+      }
+    },
+    "archetype-driven": {
+      "description": "Dark = identity signal. Visual language expresses who the user is. Validator gets authority and weight (heavy dark). Mover gets minimal light with one dark CTA punch. Explorer gets all-neutral — open, spacious, no urgency.",
+      "palette_driver": "archetype",
+      "palette_key": "archetype",
+      "palette_map": {
+        "NavigationHeader": {
+          "Validator": "light",
+          "Mover": "light",
+          "Explorer": "light"
+        },
+        "HeroPrimary": {
+          "Validator": "dark",
+          "Mover": "light",
+          "Explorer": "neutral"
+        },
+        "SocialProofBar": {
+          "Validator": "dark",
+          "Mover": "neutral",
+          "Explorer": "neutral"
+        },
+        "StatBlock": {
+          "Validator": "dark",
+          "Mover": "neutral",
+          "Explorer": "neutral"
+        },
+        "FeatureGrid": {
+          "Validator": "dark",
+          "Mover": "light",
+          "Explorer": "neutral"
+        },
+        "TestimonialSingle": {
+          "Validator": "dark",
+          "Mover": "light",
+          "Explorer": "neutral"
+        },
+        "PricingCard": {
+          "Validator": "neutral",
+          "Mover": "neutral",
+          "Explorer": "light"
+        },
+        "CTABanner": {
+          "Validator": "dark",
+          "Mover": "dark",
+          "Explorer": "neutral"
+        },
+        "FooterMinimal": {
+          "Validator": "light",
+          "Mover": "light",
+          "Explorer": "light"
         }
       }
     }

@@ -34,10 +34,14 @@ function resolveTokens(brief) {
     throw new Error(`Unknown preset "${tokenConfig.active_preset}". Check tokens/mode-tokens.json.`);
   }
 
+  // palette_key tells the resolver which brief field to use as the lookup dimension.
+  // funnel-driven and feature-emphasis use "funnel_stage"; archetype-driven uses "archetype".
+  const paletteKey = brief[preset.palette_key ?? "funnel_stage"] ?? "awareness";
+
   function resolvePalette(componentName) {
     const map = preset.palette_map[componentName];
     if (!map) return "light";
-    return map[funnel_stage] ?? map["awareness"] ?? "light";
+    return map[paletteKey] ?? "light";
   }
 
   return { behavioral, resolvePalette };
