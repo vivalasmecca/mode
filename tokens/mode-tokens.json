@@ -1,6 +1,11 @@
 {
   "_note": "MODE deployment token config. Switch presets with: node agent/set-preset.js <preset-name>",
   "active_preset": "archetype-driven",
+  "accent": {
+    "_note": "Brand primary CTA color. Global — not per-preset. Two variants: button on a light/neutral section vs. on a dark section.",
+    "on_light": { "bg": "bg-indigo-600", "text": "text-white" },
+    "on_dark":  { "bg": "bg-white",      "text": "text-gray-900" }
+  },
   "palette_modes": {
     "_note": "Shared across all presets. Only palette_map changes between presets.",
     "light": {

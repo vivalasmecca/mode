@@ -47,9 +47,19 @@ function resolveTokens(brief, presetOverride) {
     return map[paletteKey] ?? "light";
   }
 
+  // Accent: global brand CTA color, not per-preset.
+  // Returns the right variant based on the section's palette mode.
+  const accent = tokenConfig.accent ?? null;
+  function resolveAccent(paletteMode) {
+    if (!accent) return null;
+    return paletteMode === "dark" ? accent.on_dark : accent.on_light;
+  }
+
   return {
     behavioral,
     resolvePalette,
+    resolveAccent,
+    accent,
     presetName,
     presetDescription: preset.description,
     paletteDriver: preset.palette_driver,

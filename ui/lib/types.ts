@@ -71,6 +71,16 @@ export interface BehavioralTokens {
   evidence_density: "low" | "medium" | "high";
 }
 
+export interface AccentVariant {
+  bg: string;
+  text: string;
+}
+
+export interface AccentTokens {
+  on_light: AccentVariant;
+  on_dark: AccentVariant;
+}
+
 export interface PageOutput {
   schema_version: string;
   generated_at: string;
@@ -80,6 +90,7 @@ export interface PageOutput {
   palette_driver?: string;
   brief: PageBrief;
   behavioral_tokens?: BehavioralTokens;
+  accent_tokens?: AccentTokens;
   ia: { sections: IASection[] };
   page: PageSection[];
   preview_url: string;

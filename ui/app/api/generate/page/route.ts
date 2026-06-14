@@ -37,7 +37,7 @@ export async function POST(req: Request) {
       variants.map(async ({ label, brief, ia, preset }) => {
         const page = await selectComponents(ia, brief, manifest);
 
-        const { behavioral, resolvePalette, presetName, presetDescription, paletteDriver } =
+        const { behavioral, resolvePalette, accent, presetName, presetDescription, paletteDriver } =
           resolveTokens(brief, preset);
 
         const pageWithPalette = page.map((section: Record<string, unknown>) => ({
@@ -66,6 +66,7 @@ export async function POST(req: Request) {
           palette_driver: paletteDriver,
           brief,
           behavioral_tokens: behavioral,
+          accent_tokens: accent,
           ia,
           page: populatedPage,
           preview_url: previewUrl,
