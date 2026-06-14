@@ -231,6 +231,25 @@ The four aren't the only valid configurations — they're the configurations a d
 
 **The key distinction between 2 and 3:** Archetype-driven adapts visual language to *who the user is*. Product-architecture-driven adapts it to *where in the product they are*. One is identity-anchored, the other is navigation-anchored.
 
+### A fifth concept — in motion, not yet a preset
+
+Observed on Shopify's marketing site: top-level product pages are globally dark. The blog is globally light. Neither is section-by-section assignment — the whole page exists in one ambient mode as a *brand register declaration*. Dark = "this is the flagship product experience." Light = "this is editorial/content." The palette isn't signaling anything about what happens within the page; it's signaling what kind of page this is.
+
+This is a different question from presets 1–4. Those all ask: *what does emphasis mean within sections of this page?* The Shopify pattern asks: *what mode does this entire page exist in?*
+
+A second, more complex pattern appeared alongside it: an overlay rendered with a brand color background (purple) but with components inside rendered in their light/white palette. The surface background and the component palette were decoupled. In the current MODE model, section bg and component text colors come from the same palette object — they travel together. That overlay breaks the assumption.
+
+**Two distinct concepts worth separating:**
+
+| Concept | What it is | Current status |
+|---|---|---|
+| **Page ambient** | Palette declared at the page level; all sections inherit it; overlays are the contrast break | Not a preset yet — would require a page-level mode field on the brief, not section-by-section resolution |
+| **Surface/overlay decoupling** | Surface bg (brand color) independent of component palette mode (light/dark) | Not in current architecture — would require `surfaceBg` separate from `componentPalette` in the palette utility |
+
+Neither fits cleanly into the preset model as built. The preset system resolves palette section-by-section from a brief. "Page ambient" would need a page-level mode declaration that sections inherit rather than resolve individually. Surface decoupling would need the palette primitive split into two independent axes.
+
+**Don't build this yet.** Come back when there are 2–3 real examples of where this pattern is needed. The right architecture will be clearer with concrete cases than from first principles.
+
 ### What varies vs. what stays stable
 
 **Stable across all contexts:** spacing scale, type scale, radius, shadows. Standard design system territory.
