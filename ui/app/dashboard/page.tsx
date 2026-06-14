@@ -70,34 +70,20 @@ export default function DashboardPage() {
 
   if (!output) {
     return (
-      <main className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="flex items-center justify-center py-32">
         <div className="text-center">
           <p className="text-gray-500 text-sm">No output found.</p>
           <p className="text-gray-400 text-xs mt-1">Run <code className="font-mono">node agent/page-builder.js</code> to generate a page.</p>
         </div>
-      </main>
+      </div>
     );
   }
 
-  const { brief, preset, preset_description, palette_driver, behavioral_tokens, page, ia, generated_at, schema_version } = output;
+  const { brief, preset, preset_description, palette_driver, behavioral_tokens, page, ia } = output;
   const bt = behavioral_tokens as BehavioralTokens | undefined;
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="max-w-5xl mx-auto flex items-baseline justify-between">
-          <div>
-            <span className="text-xs font-semibold uppercase tracking-widest text-gray-400">MODE</span>
-            <h1 className="text-lg font-semibold text-gray-900 mt-0.5">Token Dashboard</h1>
-          </div>
-          <div className="text-right">
-            <p className="text-xs text-gray-400">schema {schema_version}</p>
-            <p className="text-xs text-gray-400">{new Date(generated_at).toLocaleString()}</p>
-          </div>
-        </div>
-      </div>
-
+    <main>
       <div className="max-w-5xl mx-auto px-6 py-8 space-y-6">
 
         {/* Row 1: Deployment + Brief side by side */}
