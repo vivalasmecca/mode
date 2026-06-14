@@ -272,6 +272,36 @@ The theme mapping isn't a new concept to build so much as a **named seam** that 
 
 *The expression layer / theme mapping is not yet built as a separable artifact. It's the right next abstraction after the intent mapping tooling is in place.*
 
+**Relationship to Radix Themes**
+
+The Radix Themes playground already handles the expression layer at a global brand level — accent color, gray scale, radius, scaling — and outputs a code-native config with no sync problem. MODE's intent layer is orthogonal to this: it determines which semantic state each component gets and when. These compose naturally. A user configures their brand once in the Radix playground; MODE orchestrates which Radix appearance gets applied per component per context.
+
+**What the visual mapping tool actually is**
+
+Not a design tool — a **semantic decision tool with live component previews**. Instead of abstract color swatches in a grid, show the actual rendered Radix components in their three states (light / neutral / dark) so the designer can make intent decisions ("yes, this component should be dark here") while seeing real output. Code-native, no walled garden, lives in the dashboard. This is the "in-between" — more structured than Figma, more semantic than the Radix playground.
+
+---
+
+## Unresolved: MODE Studio (canvas / orchestration view)
+
+A higher-level concept above the visual mapping tool. The idea: a studio-like experience that reads from your theme and lets you lightly orchestrate and envision changes across the full system — not one variant at a time, but all of them simultaneously on a single canvas.
+
+**The interaction model** is similar to how Claude's design output works: a series of samples rendered on one surface. You can see all variants at once and zoom out to compare, or click into a single artifact to inspect it. For MODE this would mean:
+
+- All generated page variants visible on one canvas
+- Pinch-zoom to compare across variants or drill into one
+- Theme token controls alongside the canvas — adjust a token value and all variants update live
+- Possibly semantic controls too — shift a component's weight for a given context and see the ripple
+
+**Why this matters:** Right now evaluation happens by opening separate preview tabs and mentally comparing. A canvas view would make differentiation visible at a glance — you'd immediately see whether the funnel stages or archetypes are producing meaningfully different experiences, or whether they're converging.
+
+**Relationship to other layers:**
+- Reads from the expression layer (theme tokens → visual output)
+- Reads from the intent layer (preset palette maps → which semantic state per component)
+- Doesn't replace either tool — it's the evaluation and envisioning surface above both
+
+*This is a longer-horizon concept. Define the expression layer and visual mapping tool first, then the studio becomes the thing that makes both of them legible.*
+
 ---
 
 ## Unresolved: visual mapping tool
