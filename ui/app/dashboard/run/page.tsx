@@ -55,7 +55,7 @@ export default function RunPage() {
         {/* Launch */}
         <Group title="Launch — start the system from scratch">
           <Step n={1} label="Start the preview UI">
-            <Cmd>cd mode/ui && npm run dev</Cmd>
+            <Cmd>cd ~/GitHub/mode/ui && npm run dev</Cmd>
             <Note>
               Starts the Next.js dev server. Preview at localhost:3001/preview · Dashboard at
               localhost:3001/dashboard. Keep this running in the background.
@@ -63,11 +63,11 @@ export default function RunPage() {
           </Step>
 
           <Step n={2} label="Run the agent">
-            <Cmd>node agent/page-builder.js</Cmd>
+            <Cmd>cd ~/GitHub/mode && node agent/page-builder.js</Cmd>
             <Note>
-              Run from the mode/ root. Uses the test brief hardcoded at the bottom of
-              page-builder.js (Validator · decision · organic by default). The agent will pause
-              and ask you to approve the IA.
+              Must be run from mode/ — not mode/ui/. Uses the test brief hardcoded at the bottom
+              of agent/page-builder.js (Validator · decision · organic by default). The agent will
+              pause and ask you to approve the IA.
             </Note>
           </Step>
 
@@ -84,15 +84,15 @@ export default function RunPage() {
         {/* Refresh */}
         <Group title="Refresh — update output or change settings">
           <Step n={1} label="Re-run the agent">
-            <Cmd>node agent/page-builder.js</Cmd>
+            <Cmd>cd ~/GitHub/mode && node agent/page-builder.js</Cmd>
             <Note>
-              Generates a new output file. The dashboard and preview pick it up on next page load
-              — no server restart needed.
+              Must be run from mode/ — not mode/ui/. Generates a new output file. The dashboard
+              and preview pick it up on next page load — no server restart needed.
             </Note>
           </Step>
 
           <Step n={2} label="Switch preset">
-            <Cmd>node agent/set-preset.js archetype-driven</Cmd>
+            <Cmd>cd ~/GitHub/mode && node agent/set-preset.js archetype-driven</Cmd>
             <Note>
               Changes the active preset in tokens/mode-tokens.json. Re-run the agent after
               switching to see the new palette resolution in effect.
