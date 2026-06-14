@@ -89,7 +89,7 @@ The agent pipeline:
 
 1. `ia-planner.js` — takes brief + manifest, proposes section-by-section IA (Claude Opus)
 2. `component-selector.js` — selects specific component + variant for each IA slot (Claude Haiku)
-3. `token-resolver.js` — resolves behavioral tokens and palette per component (no LLM, reads mode-tokens.json)
+3. `token-resolver.js` — resolves behavioral tokens, palette, and accent per component (no LLM, reads mode-tokens.json)
 4. `content-generator.js` — populates all slots with real copy (Claude Sonnet)
 
 Output is written to `output/page-{timestamp}-{variant}.json`. Multi-variant builds produce one file per variant.
@@ -112,6 +112,7 @@ http://localhost:3000/preview?file=page-{ts}-{variant}.json ← Specific variant
 - **Overview** — shows preset, brief, behavioral tokens, token resolution table, and IA rationale for the latest output file
 - **Concepts** — static reference documentation for all brief fields and system concepts
 - **Build** — the main UI for generating pages (see below)
+- **Palette** — editable palette map grid + brand accent configuration (see below)
 - **Run** — (exists, purpose TBD)
 
 ### Build tab flow
@@ -136,7 +137,9 @@ This ensures Node.js resolves `mode-agent/*` from `ui/node_modules/` regardless 
 
 **Turbopack root:** Set explicitly to `mode/ui/` in `next.config.ts` to prevent Turbopack from auto-detecting `mode/` as workspace root (which breaks Next.js module resolution). The warning about multiple lockfiles is expected and harmless once `turbopack.root` is set.
 
-**Token resolver caching:** `token-resolver.js` caches `mode-tokens.json` at module load time (Node.js module cache). Changing the active preset requires restarting the dev server.
+**Token resolver caching:** `token-resolver.js` caches `mode-tokens.json` at module load time (Node.js module cache). Editing palette maps or accent tokens via the Palette tab writes to the file immediately, but a dev server restart is needed for those changes to take effect in new builds. The UI notes this after saving.
+
+**Palette tab:** Two sections — Brand Accent (global, not per-preset) and Palette Map (per-preset grid). Accent has `on_light` and `on_dark` variants for branded CTA buttons. Palette map cells cycle light → neutral → dark on click. Both have independent save states; saves write directly to `mode-tokens.json`.
 
 ---
 
@@ -157,7 +160,7 @@ mode/
 │   ├── content-generator.js         ← slot population (Claude Sonnet)
 │   └── set-preset.js                ← CLI tool to switch active preset
 ├── tokens/
-│   └── mode-tokens.json             ← palette maps + behavioral tokens per preset
+│   └── mode-tokens.json             ← palette maps + behavioral tokens per preset + global accent
 ├── output/
 │   └── page-{ts}-{variant}.json    ← generated page outputs (one per variant per run)
 └── ui/                              ← Next.js 16 dashboard + preview
@@ -172,10 +175,16 @@ mode/
     │   │   │   ├── page.tsx
     │   │   │   └── BuildClient.tsx  ← "use client" — full build flow
     │   │   ├── concepts/page.tsx    ← static reference docs
+    │   │   ├── palette/
+    │   │   │   ├── page.tsx         ← server: reads mode-tokens.json, passes to client
+    │   │   │   └── PaletteClient.tsx ← "use client" — accent + palette map editor
     │   │   └── run/page.tsx
     │   ├── preview/page.tsx         ← renders output JSON; supports ?file= param
     │   └── api/
     │       ├── config/route.ts      ← GET: active preset + variant config
+    │       ├── palette/
+    │       │   ├── route.ts         ← PUT: save palette_map for a preset
+    │       │   └── accent/route.ts  ← PUT: save accent tokens
     │       └── generate/
     │           ├── ia/route.ts      ← POST: N IA proposals in parallel
     │           └── page/route.ts    ← POST: N full pages in parallel
@@ -214,6 +223,8 @@ When dropping back in after time away, start here:
 - Preview at `/preview?file={filename}` for any specific variant
 - Dashboard overview shows latest output (behavioral tokens, IA rationale, token resolution table)
 - **Palette Approach selector in the Build form** — all three presets selectable per build; no file editing or server restart required
+- **Palette tab** — editable palette map grid (click cells to cycle light/neutral/dark, save to `mode-tokens.json`) and brand accent editor (on_light / on_dark CTA color variants with live preview)
+- **Accent layer** — `accent` block in `mode-tokens.json`; `token-resolver.js` exposes `accent` + `resolveAccent(paletteMode)`; `accent_tokens` written into output JSON per build
 
 ---
 
@@ -272,6 +283,10 @@ The theme mapping isn't a new concept to build so much as a **named seam** that 
 
 *The expression layer / theme mapping is not yet built as a separable artifact. It's the right next abstraction after the intent mapping tooling is in place.*
 
+**Accent layer (built)**
+
+Brand primary CTA color sits outside the semantic palette — it cuts across all three modes rather than being tied to section emphasis. Modeled as an `accent` block in `mode-tokens.json` with `on_light` and `on_dark` variants. Editable in the Palette tab. Flows into output JSON and is available to the renderer per section based on that section's palette mode.
+
 **Relationship to Radix Themes**
 
 The Radix Themes playground already handles the expression layer at a global brand level — accent color, gray scale, radius, scaling — and outputs a code-native config with no sync problem. MODE's intent layer is orthogonal to this: it determines which semantic state each component gets and when. These compose naturally. A user configures their brand once in the Radix playground; MODE orchestrates which Radix appearance gets applied per component per context.
@@ -327,21 +342,25 @@ Worked through three examples to answer: does knowing both dimensions simultaneo
 
 The visual mapping tool is a **1D grid** — components on rows, dimension values on columns — not a 2D matrix.
 
-**Step 2: Build a read-only palette map visualizer**
+**Step 2: Build a read-only palette map visualizer ✓ done**
 
-A new dashboard tab (or panel) that renders the current preset's `palette_map` as a visual grid — components on rows, dimension values on columns, cells color-coded light/neutral/dark. Right now the designer reads raw JSON. This makes it visible.
+Palette tab at `/dashboard/palette` — components on rows, dimension values on columns, cells color-coded light/neutral/dark. Three preset tabs to compare all maps.
 
-**Step 3: Make the grid editable**
+**Step 3: Make the grid editable ✓ done**
 
-Click a cell → cycle through light / neutral / dark. Visual feedback in place.
+Click any cell to cycle light → neutral → dark. Changed cells highlighted with an indigo ring. Discard to revert.
 
-**Step 4: Wire saving**
+**Step 4: Wire saving ✓ done**
 
-API route that accepts the updated `palette_map` and writes it back to `mode-tokens.json`. Token resolver caches at module load, so a server restart is needed to use the new values in a build — acceptable constraint for now, worth noting in the UI.
+`PUT /api/palette` writes the updated `palette_map` for the selected preset back to `mode-tokens.json`. `PUT /api/palette/accent` saves the accent block. Both routes only touch their specific keys — nothing else in the file is affected. Server restart needed to pick up changes in builds; noted in the UI after saving.
+
+**Step 4b: Accent layer ✓ done**
+
+Added `accent` block to `mode-tokens.json` — global, not per-preset. Two variants: `on_light` (brand CTA on light/neutral sections) and `on_dark` (brand CTA on dark sections). Editable via the Palette tab with live preview. Flows into output JSON as `accent_tokens`; `token-resolver.js` exposes `resolveAccent(paletteMode)` for per-section resolution.
 
 **Step 5: (Future) Cross-dimension composition**
 
-Only if Step 1 resolves to "we need both dimensions active at once" — extend the schema and resolver to handle a 2D matrix instead of 1D maps.
+Resolved as unnecessary — single-dimension presets are sufficient. See Step 1 above.
 
 ---
 
