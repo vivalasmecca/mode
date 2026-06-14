@@ -254,7 +254,23 @@ Figma holds visual tokens and component structure. It has no concept of semantic
 
 The cleaner seam is a code-level integration: the user defines what `light`, `neutral`, and `dark` resolve to in their token system. MODE owns the intent mapping. The consuming system owns the visual expression. No sync dependency, no Figma sidecar.
 
-*The expression layer / theme mapping is not yet built. It's the right next abstraction after the intent mapping tooling is in place.*
+**How palette approach and theme mapping differ**
+
+These are different layers that currently both live in `mode-tokens.json`:
+
+- **Palette approach (preset) = intent layer.** Answers: *which semantic state should this component be in for this context?* (`HeroPrimary` + `decision stage` → `dark`). This is the interesting/hard part — it encodes judgment about emphasis and hierarchy.
+- **Theme mapping = expression layer.** Answers: *what does `dark` actually look like?* (`dark` → `bg-gray-900`, `text-white`, `border-gray-700`). Currently hardcoded in `palette_modes` in `mode-tokens.json`.
+
+```
+palette_map    → intent layer    (component + context → light/neutral/dark)
+palette_modes  → expression layer (light/neutral/dark → actual CSS classes)
+```
+
+A brand adopting MODE would keep the preset logic (or write their own) and only replace `palette_modes` with their brand's token values — maybe `dark` means `bg-brand-navy` and `text-brand-cream` in their system.
+
+The theme mapping isn't a new concept to build so much as a **named seam** that should be made explicit and easy to swap. The right move is probably a separate `theme.json` that lives outside `mode-tokens.json` — clearly the brand's responsibility, not the system's.
+
+*The expression layer / theme mapping is not yet built as a separable artifact. It's the right next abstraction after the intent mapping tooling is in place.*
 
 ---
 
