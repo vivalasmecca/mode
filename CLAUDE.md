@@ -230,8 +230,7 @@ When dropping back in after time away, start here:
 
 ## What's next (as of June 2026)
 
-- **Visual mapping tool** — the open question: how does a designer configure token values per dimension? See "Unresolved" section below.
-- **Runtime signal routing** — serving the right variant based on visitor signals (the end goal of the whole system)
+- **Runtime signal routing** — serving the right variant based on visitor signals (the end goal of the whole system). See "Unresolved: runtime signal routing" below.
 - **Product data inputs** — see "Unresolved: product grounding" below.
 
 ---
@@ -361,6 +360,53 @@ Added `accent` block to `mode-tokens.json` — global, not per-preset. Two varia
 **Step 5: (Future) Cross-dimension composition**
 
 Resolved as unnecessary — single-dimension presets are sufficient. See Step 1 above.
+
+---
+
+## Unresolved: runtime signal routing
+
+The system generates N variant files at build time. Routing means: when a real visitor lands, something reads their signals and serves the right variant — without them knowing there are variants, without them choosing.
+
+**Signals available at request time**
+
+Easy (readable from the request itself):
+- UTM params / referral source → maps naturally to `context_mode` (campaign, retargeting, organic)
+- Query param override → useful for testing (`?variant=decision`)
+- User agent / device → weak archetype proxy (mobile skews Mover)
+- Cookie from a previous session → funnel stage advancement (return visitor = further along)
+
+Hard (need external data):
+- Actual archetype — who this person is behaviorally. Without a CDP or CRM, you're inferring from weak proxies.
+- Funnel stage for a returning logged-in user — needs session history, which means integrating with whatever the product uses for user state.
+
+**Where routing logic lives**
+
+The cleanest option for the current architecture is **edge middleware** (Vercel Edge Middleware runs before the page loads, reads signals, rewrites to `/preview?file=page-{ts}-{variant}.json`). No client-side flash, no server round-trip, works with the static JSON output files as-is. The routing logic itself is a lookup table: detected signals → variant label → filename.
+
+**What's genuinely tricky**
+
+1. **Archetype assignment without identity** — inferring Mover/Validator/Explorer from anonymous signals is lossy. You're making a population-level guess, not a person-level one. Fine for the system, but the accuracy ceiling is low without real identity data.
+2. **Variant file currency** — the routing layer needs to know which build's files to serve (latest? pinned? per-campaign?). The timestamp in the filename means you need a pointer to the current active build.
+3. **Intra-session funnel advancement** — a visitor lands in awareness but browses for 10 minutes. Do they get a different variant mid-session? Probably not for now, but architecturally that's the real-time routing end state.
+4. **Analytics attribution** — if you're serving different variants, analytics needs to record which one was served. Otherwise you can't evaluate whether routing is working. This means firing an event (variant label, signals used, preset) on every page load.
+
+**Interoperability — enhancements, not requirements**
+
+Minimum viable routing has zero external dependencies: edge middleware + UTM/cookie signals + query param override for testing. That's shippable.
+
+Enhancement layers where existing systems plug in:
+- **CDP** (Segment, mParticle) → feeds real behavioral archetype signals
+- **CRM** (HubSpot, Salesforce) → logged-in user identity → known archetype
+- **A/B testing platforms** (Optimizely, Split) → statistical rigor on variant performance. Note: paradigm mismatch — these tools swap a headline; MODE swaps the entire IA, copy register, and palette. Usable as a routing decision layer only.
+- **Analytics** (GA4, Amplitude) → variant label as a dimension on all events
+
+**Breakdown**
+
+1. Define signal → variant mapping rules (product/strategy decision — do this first)
+2. Build edge middleware with UTM/cookie signal detection and variant file lookup
+3. Add a "current build" pointer so routing always finds the right files
+4. Instrument analytics (variant served as a page-level dimension)
+5. (Enhancement) CDP/CRM integration for identity-based archetype assignment
 
 ---
 
