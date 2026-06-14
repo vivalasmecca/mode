@@ -6,7 +6,7 @@
       "purpose": "Page-opening statement. Establishes context and intent above the fold.",
       "tier": "module",
       "archetypes": ["Mover", "Validator"],
-      "funnel_stages": ["awareness", "consideration"],
+      "funnel_stages": ["awareness", "consideration", "decision"],
       "variants": ["with-media", "text-only", "with-social-proof"],
       "slots": {
         "headline": "string",

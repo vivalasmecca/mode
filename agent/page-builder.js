@@ -4,10 +4,13 @@
  * Entry point. Orchestrates the full build flow:
  *   1. Accept brief (audience, intent, goal)
  *   2. Hand off to ia-planner for IA proposal
- *   3. Human approval of IA (CLI prompt or React UI)
+ *   3. Human approval of IA (CLI prompt)
  *   4. Hand off to component-selector to fill IA slots
- *   5. Generate semantic HTML output
+ *   5. Hand off to content-generator to populate all slot values
+ *   6. Write JSON output + print preview URL
  */
+
+require("dotenv").config();
 
 const fs = require("fs");
 const path = require("path");
@@ -15,6 +18,7 @@ const readline = require("readline");
 
 const { proposeIA } = require("./ia-planner");
 const { selectComponents } = require("./component-selector");
+const { populateContent } = require("./content-generator");
 
 const MANIFEST_PATH = path.resolve(__dirname, "../manifest/components.json");
 const OUTPUT_DIR = path.resolve(__dirname, "../output");
@@ -37,28 +41,23 @@ function prompt(question) {
   });
 }
 
-function generateHTML(slots) {
-  // TODO: render each selected component + populated slots into semantic HTML
-  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-  const filename = `page-${timestamp}.html`;
+function generateOutput(brief, ia, page) {
+  const timestamp = new Date().toISOString();
+  const filename = `page-${timestamp.replace(/[:.]/g, "-")}.json`;
   const outputPath = path.join(OUTPUT_DIR, filename);
 
-  const html = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Generated Page</title>
-</head>
-<body>
-  <!-- MODE generated page -->
-  <!-- Slots: ${JSON.stringify(slots, null, 2)} -->
-</body>
-</html>`;
+  const output = {
+    schema_version: "1.0.0",
+    generated_at: timestamp,
+    brief,
+    ia,
+    page,
+    preview_url: "http://localhost:3000/preview",
+  };
 
   if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR, { recursive: true });
-  fs.writeFileSync(outputPath, html);
-  return outputPath;
+  fs.writeFileSync(outputPath, JSON.stringify(output, null, 2));
+  return { outputPath, output };
 }
 
 async function run(brief) {
@@ -68,10 +67,12 @@ async function run(brief) {
   console.log(`Brief received: ${JSON.stringify(brief, null, 2)}\n`);
 
   // Step 1: IA proposal
+  console.log("Proposing information architecture...");
   const ia = await proposeIA(brief, manifest);
   console.log("\nProposed Information Architecture:");
   ia.sections.forEach((s, i) => {
-    console.log(`  ${i + 1}. ${s.name} — ${s.rationale}`);
+    console.log(`  ${i + 1}. ${s.name}`);
+    console.log(`     ${s.rationale}`);
   });
 
   // Step 2: Human approval
@@ -82,13 +83,31 @@ async function run(brief) {
   }
 
   // Step 3: Component selection
-  const slots = await selectComponents(ia, brief, manifest);
+  console.log("\nSelecting components...");
+  const page = await selectComponents(ia, brief, manifest);
   console.log("\nSelected components:");
-  slots.forEach((s) => console.log(`  ${s.section} → ${s.component}`));
+  page.forEach((s) => {
+    console.log(`  ${s.section} → ${s.component} (${s.variant})`);
+    if (s.reasoning) console.log(`     ↳ ${s.reasoning}`);
+  });
 
-  // Step 4: Generate output
-  const outputPath = generateHTML(slots);
-  console.log(`\nPage generated: ${outputPath}`);
+  // Step 3.5: Content generation
+  console.log("\nGenerating content...");
+  const populatedPage = await populateContent(ia, page, brief, manifest);
+  console.log("\nFilled slots:");
+  populatedPage.forEach((s) => {
+    const preview = Object.entries(s.slots)
+      .filter(([, v]) => v !== null && v !== undefined && !Array.isArray(v) && typeof v !== "object")
+      .slice(0, 2)
+      .map(([k, v]) => `${k}: "${String(v).slice(0, 40)}"`)
+      .join("  |  ");
+    console.log(`  ${s.section}: ${preview || "(arrays/objects)"}`);
+  });
+
+  // Step 4: Write JSON output
+  const { outputPath } = generateOutput(brief, ia, populatedPage);
+  console.log(`\nOutput written: ${outputPath}`);
+  console.log("Preview: http://localhost:3000/preview");
   console.log("────────────────────────────────────────────────────\n");
 }
 

@@ -1,0 +1,6 @@
+node_modules/
+.env
+.DS_Store
+ui/.next/
+ui/node_modules/
+output/

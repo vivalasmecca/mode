@@ -11,40 +11,97 @@
  *     that could fill this slot (agent will select one)
  */
 
+const Anthropic = require("@anthropic-ai/sdk");
+
+let _client;
+function getClient() {
+  if (!_client) _client = new Anthropic();
+  return _client;
+}
+
 /**
  * @param {object} brief - { audience, archetype, funnel_stage, goal, context_mode }
  * @param {object} manifest - parsed components.json
  * @returns {object} ia - { sections: [{ name, rationale, candidate_components }] }
  */
 async function proposeIA(brief, manifest) {
-  const { archetype, funnel_stage } = brief;
+  try {
+    return await llmProposeIA(brief, manifest);
+  } catch (err) {
+    console.warn(`LLM IA planning failed (${err.message}), falling back to rule-based`);
+    const { archetype, funnel_stage } = brief;
+    const eligible = manifest.components.filter(
+      (c) => c.archetypes.includes(archetype) && c.funnel_stages.includes(funnel_stage)
+    );
+    return buildRuleBasedIA(brief, eligible);
+  }
+}
 
-  // Filter manifest to components that match archetype and funnel stage
-  const eligible = manifest.components.filter(
-    (c) =>
-      c.archetypes.includes(archetype) && c.funnel_stages.includes(funnel_stage)
-  );
+async function llmProposeIA(brief, manifest) {
+  const anthropic = getClient();
 
-  // TODO: Replace this rule-based stub with LLM-driven IA proposal.
-  // The LLM should reason about page narrative arc, not just filter eligibility.
-  // Prompt should include: brief, eligible components with their purpose/notes,
-  // and ask for an ordered section list with rationale.
+  // Send full manifest so LLM can reason about eligibility
+  const components = manifest.components.map((c) => ({
+    name: c.name,
+    purpose: c.purpose,
+    archetypes: c.archetypes,
+    funnel_stages: c.funnel_stages,
+    notes: c.notes,
+  }));
 
-  const ia = buildRuleBasedIA(brief, eligible);
+  const message = await anthropic.messages.create({
+    model: "claude-opus-4-6",
+    max_tokens: 2048,
+    messages: [
+      {
+        role: "user",
+        content: `You are a page architecture strategist for an intent-aware SaaS design system called MODE.
+
+Your job: propose the optimal section-by-section information architecture for a landing page.
+
+BRIEF:
+${JSON.stringify(brief, null, 2)}
+
+AVAILABLE COMPONENTS:
+${JSON.stringify(components, null, 2)}
+
+RULES:
+1. Every page must start with NavigationHeader and end with FooterMinimal.
+2. Order sections by narrative arc — establish context → build trust → prove value → drive decision → capture action.
+3. Only include components whose archetypes array includes "${brief.archetype}" AND whose funnel_stages array includes "${brief.funnel_stage}". NavigationHeader and FooterMinimal are always eligible.
+4. Each rationale must specifically reference the ${brief.archetype} archetype and ${brief.funnel_stage} funnel stage.
+5. Propose 5–8 sections total.
+
+Return ONLY valid JSON — no markdown, no explanation:
+{
+  "sections": [
+    {
+      "name": "human-readable section name",
+      "rationale": "why this section belongs here, citing archetype and funnel stage",
+      "candidate_components": ["ComponentName1", "ComponentName2"]
+    }
+  ]
+}`,
+      },
+    ],
+  });
+
+  const text = message.content[0].text.trim();
+  const jsonMatch = text.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) throw new Error("No JSON object in LLM response");
+
+  const ia = JSON.parse(jsonMatch[0]);
+  if (!ia.sections || !Array.isArray(ia.sections)) throw new Error("Invalid IA structure");
   return ia;
 }
 
 /**
- * Stub IA builder — rule-based placeholder until LLM planning is wired in.
- * Returns a sensible default structure for decision-stage pages.
+ * Rule-based fallback — used when LLM call fails.
  */
 function buildRuleBasedIA(brief, eligible) {
   const componentNames = eligible.map((c) => c.name);
-
-  // Every page gets navigation and footer
   const always = ["NavigationHeader", "FooterMinimal"];
 
-  // Decision-stage default arc
   const decisionArc = [
     { name: "Navigation", candidates: ["NavigationHeader"] },
     { name: "Hero", candidates: ["HeroPrimary", "HeroStatement"] },
@@ -59,8 +116,10 @@ function buildRuleBasedIA(brief, eligible) {
   const sections = decisionArc
     .map((slot) => ({
       name: slot.name,
-      rationale: `${slot.name} section — filtered for ${brief.archetype} archetype at ${brief.funnel_stage} stage`,
-      candidate_components: slot.candidates.filter((c) => componentNames.includes(c) || always.includes(c)),
+      rationale: `${slot.name} — ${brief.archetype} archetype at ${brief.funnel_stage} stage`,
+      candidate_components: slot.candidates.filter(
+        (c) => componentNames.includes(c) || always.includes(c)
+      ),
     }))
     .filter((s) => s.candidate_components.length > 0);
 
