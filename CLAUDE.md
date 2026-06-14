@@ -315,14 +315,17 @@ The gap: how does a designer set token values per dimension, and does the system
 
 ### Breakdown
 
-**Step 1: Settle the model (thinking task, before any code)**
+**Step 1: Settle the model ✓ resolved**
 
-Work through 2–3 concrete examples:
-- What should `Validator + decision stage` feel like visually?
-- What should `Mover + awareness stage` feel like?
-- Does the result differ from `Mover + decision stage` in a way that requires knowing *both* dimensions simultaneously?
+Worked through three examples to answer: does knowing both dimensions simultaneously change the palette, or is one dimension enough?
 
-If yes → cross-dimension composition is needed (a 3×4 matrix per component). If no → single-dimension presets are sufficient and the tool is much simpler.
+- **Validator + decision** — both dimensions point the same way (heavy, dark, authoritative). No tension.
+- **Mover + awareness** — tension: awareness says light, Mover says give me one clear action. Resolution: light overall, one dark CTA punch.
+- **Mover + decision vs. Mover + awareness** — these differ, but the funnel stage is doing all the palette work. The Mover archetype shows up in what's *present* (fewer sections, less social proof) and how copy reads — not in whether the hero is dark or light.
+
+**Conclusion: single-dimension palette presets are sufficient.** The behavioral tokens already handle archetype differences (copy density, evidence level, CTA rules). The palette expresses the emotional register of the moment (funnel stage) or identity (archetype) — cross-dimension composition would produce mostly the same values as the 1D map.
+
+The visual mapping tool is a **1D grid** — components on rows, dimension values on columns — not a 2D matrix.
 
 **Step 2: Build a read-only palette map visualizer**
 
