@@ -1,4 +1,4 @@
-import { getLatestOutput } from "@/lib/get-output";
+import { getLatestOutput, getOutputByFile } from "@/lib/get-output";
 import { PreviewClient } from "@/components/preview/PreviewClient";
 
 function EmptyState() {
@@ -18,8 +18,13 @@ function EmptyState() {
 
 export const dynamic = "force-dynamic";
 
-export default function PreviewPage() {
-  const output = getLatestOutput();
+export default async function PreviewPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ file?: string }>;
+}) {
+  const { file } = await searchParams;
+  const output = file ? getOutputByFile(file) : getLatestOutput();
 
   if (!output) return <EmptyState />;
 

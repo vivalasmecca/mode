@@ -74,6 +74,7 @@ export interface BehavioralTokens {
 export interface PageOutput {
   schema_version: string;
   generated_at: string;
+  variant?: string;
   preset?: string;
   preset_description?: string;
   palette_driver?: string;

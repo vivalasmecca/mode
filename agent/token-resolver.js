@@ -18,20 +18,23 @@ const tokenConfig = require("../tokens/mode-tokens.json");
 
 /**
  * @param {object} brief - { archetype, funnel_stage, ... }
+ * @param {string} [presetOverride] - optional preset key; falls back to active_preset in mode-tokens.json
  * @returns {{ behavioral: object, resolvePalette: (componentName: string) => string }}
  */
-function resolveTokens(brief) {
-  const { archetype, funnel_stage } = brief;
+function resolveTokens(brief, presetOverride) {
+  const { archetype } = brief;
 
-  // Behavioral tokens: archetype-driven in this deployment
+  // Behavioral tokens: always archetype-driven regardless of palette preset
   const behavioral =
     tokenConfig.behavioral_tokens[archetype] ??
     tokenConfig.behavioral_tokens["Validator"];
 
-  // Palette: resolved from the active preset's palette_map
-  const preset = tokenConfig.presets[tokenConfig.active_preset];
+  // Palette: resolved from the selected or active preset's palette_map.
+  // All presets are cached in memory at module load — overriding doesn't require a reload.
+  const presetName = presetOverride ?? tokenConfig.active_preset;
+  const preset = tokenConfig.presets[presetName];
   if (!preset) {
-    throw new Error(`Unknown preset "${tokenConfig.active_preset}". Check tokens/mode-tokens.json.`);
+    throw new Error(`Unknown preset "${presetName}". Check tokens/mode-tokens.json.`);
   }
 
   // palette_key tells the resolver which brief field to use as the lookup dimension.
@@ -47,7 +50,7 @@ function resolveTokens(brief) {
   return {
     behavioral,
     resolvePalette,
-    presetName: tokenConfig.active_preset,
+    presetName,
     presetDescription: preset.description,
     paletteDriver: preset.palette_driver,
   };
