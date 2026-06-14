@@ -42,7 +42,7 @@ function prompt(question) {
   });
 }
 
-function generateOutput(brief, ia, page) {
+function generateOutput(brief, ia, page, presetName, presetDescription, paletteDriver, behavioral) {
   const timestamp = new Date().toISOString();
   const filename = `page-${timestamp.replace(/[:.]/g, "-")}.json`;
   const outputPath = path.join(OUTPUT_DIR, filename);
@@ -121,9 +121,9 @@ async function run(brief) {
   });
 
   // Step 4: Write JSON output
-  const { outputPath } = generateOutput(brief, ia, populatedPage);
+  const { outputPath } = generateOutput(brief, ia, populatedPage, presetName, presetDescription, paletteDriver, behavioral);
   console.log(`\nOutput written: ${outputPath}`);
-  console.log("Preview: http://localhost:3000/preview");
+  console.log("Preview: http://localhost:3001/preview");
   console.log("────────────────────────────────────────────────────\n");
 }
 
