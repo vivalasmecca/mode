@@ -219,9 +219,9 @@ When dropping back in after time away, start here:
 
 ## What's next (as of June 2026)
 
-- **Evaluate variant quality** — review the 3–4 generated variants in preview tabs and assess whether the IA, copy, and palette are meaningfully differentiated across variants
 - **Visual mapping tool** — the open question: how does a designer configure token values per dimension? See "Unresolved" section below.
 - **Runtime signal routing** — serving the right variant based on visitor signals (the end goal of the whole system)
+- **Product data inputs** — see "Unresolved: product grounding" below.
 
 ---
 
@@ -235,6 +235,30 @@ The hard architectural question is the handoff between discovery and build:
 The gap: how does a designer set token values per dimension, and does the system compose them (per dimension × dimension = token value) or assign them per mode (Validator-in-decision is a single named profile)?
 
 *Come back to this with 2–3 concrete examples before architecting further.*
+
+---
+
+## Unresolved: product grounding
+
+The current system generates content entirely from the brief (audience, goal, archetype, funnel stage, context mode). The LLM invents product claims, features, stats, and copy with no grounding in actual product truth. This is fine for demo and system evaluation, but a real deployment needs real data flowing in.
+
+**The two connection points:**
+
+**1. Product catalog / feature set**
+What the product actually does, what features exist, real pricing, real metrics and social proof. Currently absent — the content generator fabricates all of this.
+- Feeds into: `content-generator.js` prompt (slot population)
+- Possibly also: `ia-planner.js` (IA structure might reflect what the product actually has)
+- Format TBD: could be a JSON catalog, markdown feature brief, or structured schema
+
+**2. Brand brief / messaging guide**
+Tone of voice, messaging pillars, what claims are approved, what language is off-brand, positioning relative to competitors. Also absent.
+- Feeds into: `content-generator.js` prompt (copy style and claim boundaries)
+- Possibly: `ia-planner.js` (IA ordering might reflect brand narrative priorities)
+- Format TBD: likely a text document or structured prompt fragment
+
+**Current state:** The brief is the only input. The system is architecturally sound; the content is hallucinated product truth. For demos this is acceptable. For any real client deployment, both connection points need to be wired.
+
+*Come back to this when the system is being positioned for a real client or when the visual mapping tool question is resolved — both are likely to inform the data model here.*
 
 ---
 
