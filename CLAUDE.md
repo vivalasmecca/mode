@@ -234,7 +234,32 @@ The hard architectural question is the handoff between discovery and build:
 
 The gap: how does a designer set token values per dimension, and does the system compose them (per dimension × dimension = token value) or assign them per mode (Validator-in-decision is a single named profile)?
 
-*Come back to this with 2–3 concrete examples before architecting further.*
+### Breakdown
+
+**Step 1: Settle the model (thinking task, before any code)**
+
+Work through 2–3 concrete examples:
+- What should `Validator + decision stage` feel like visually?
+- What should `Mover + awareness stage` feel like?
+- Does the result differ from `Mover + decision stage` in a way that requires knowing *both* dimensions simultaneously?
+
+If yes → cross-dimension composition is needed (a 3×4 matrix per component). If no → single-dimension presets are sufficient and the tool is much simpler.
+
+**Step 2: Build a read-only palette map visualizer**
+
+A new dashboard tab (or panel) that renders the current preset's `palette_map` as a visual grid — components on rows, dimension values on columns, cells color-coded light/neutral/dark. Right now the designer reads raw JSON. This makes it visible.
+
+**Step 3: Make the grid editable**
+
+Click a cell → cycle through light / neutral / dark. Visual feedback in place.
+
+**Step 4: Wire saving**
+
+API route that accepts the updated `palette_map` and writes it back to `mode-tokens.json`. Token resolver caches at module load, so a server restart is needed to use the new values in a build — acceptable constraint for now, worth noting in the UI.
+
+**Step 5: (Future) Cross-dimension composition**
+
+Only if Step 1 resolves to "we need both dimensions active at once" — extend the schema and resolver to handle a 2D matrix instead of 1D maps.
 
 ---
 
