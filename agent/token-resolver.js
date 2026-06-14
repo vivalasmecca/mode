@@ -44,7 +44,13 @@ function resolveTokens(brief) {
     return map[paletteKey] ?? "light";
   }
 
-  return { behavioral, resolvePalette };
+  return {
+    behavioral,
+    resolvePalette,
+    presetName: tokenConfig.active_preset,
+    presetDescription: preset.description,
+    paletteDriver: preset.palette_driver,
+  };
 }
 
 module.exports = { resolveTokens };

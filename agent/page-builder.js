@@ -48,12 +48,16 @@ function generateOutput(brief, ia, page) {
   const outputPath = path.join(OUTPUT_DIR, filename);
 
   const output = {
-    schema_version: "1.0.0",
+    schema_version: "1.1.0",
     generated_at: timestamp,
+    preset: presetName,
+    preset_description: presetDescription,
+    palette_driver: paletteDriver,
     brief,
+    behavioral_tokens: behavioral,
     ia,
     page,
-    preview_url: "http://localhost:3000/preview",
+    preview_url: "http://localhost:3001/preview",
   };
 
   if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR, { recursive: true });
@@ -93,7 +97,7 @@ async function run(brief) {
   });
 
   // Step 3.5: Resolve tokens — palette per component, behavioral rules per archetype
-  const { behavioral, resolvePalette } = resolveTokens(brief);
+  const { behavioral, resolvePalette, presetName, presetDescription, paletteDriver } = resolveTokens(brief);
   const pageWithPalette = page.map((section) => ({
     ...section,
     palette: resolvePalette(section.component),

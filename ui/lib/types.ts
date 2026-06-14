@@ -63,10 +63,22 @@ export interface PageSection {
   palette?: PaletteMode;
 }
 
+export interface BehavioralTokens {
+  require_trust_signal: boolean;
+  allow_secondary_cta: boolean;
+  subhead_policy: "always" | "optional" | "never";
+  copy_density: "low" | "medium" | "high";
+  evidence_density: "low" | "medium" | "high";
+}
+
 export interface PageOutput {
   schema_version: string;
   generated_at: string;
+  preset?: string;
+  preset_description?: string;
+  palette_driver?: string;
   brief: PageBrief;
+  behavioral_tokens?: BehavioralTokens;
   ia: { sections: IASection[] };
   page: PageSection[];
   preview_url: string;

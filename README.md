@@ -208,6 +208,29 @@ No action yet. The right time to build this is when there's a real brief, a real
 
 ## Token layer — platform model
 
+### Deployment hierarchy
+
+Two distinct layers of decision-making govern every page:
+
+```
+Brand/design owner (one-time, at deployment setup)
+└── Declares a preset — the visual deployment mechanism
+      "We are using the archetype-driven preset.
+       In our system, dark means buyer identity."
+
+Content/strategy team (per page, per brief)
+└── Submits a brief — behavioral signals that drive composition
+      archetype    → behavioral tokens → copy direction, IA shape, component selection
+      funnel_stage → palette resolution (if funnel-driven preset)
+      └── Page output: sections, components, palettes, copy
+```
+
+The **preset** is upstream of the brief. It's a policy declaration, not a per-page choice. A brand owner picks it once when they configure their MODE deployment. It governs the visual logic of the entire site.
+
+The **behavioral signals** (archetype, funnel stage) are per-brief. They operate *within* the preset's rules and drive what actually gets generated: which IA sections exist, which components fill them, what copy rules apply, and how palette resolves given the preset's driver.
+
+The brief doesn't pick a preset. The deployment does.
+
 ### Platform vs. deployment
 
 The four resolution dimensions (archetype, funnel stage, intent state, context mode) are fixed axes of the platform. What a **deployment** configures is which dimension drives which token behavior.
