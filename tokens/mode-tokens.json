@@ -1,15 +1,10 @@
 {
-  "_note": "Deployment token config for the funnel-driven MODE execution. Palette is funnel-stage-driven; behavioral tokens are archetype-driven. See README for platform vs. deployment distinction.",
-
-  "deployment": {
-    "palette_driver": "funnel_stage",
-    "behavioral_driver": "archetype",
-    "description": "Dark emphasis accumulates toward conversion. Behavioral rules (copy density, evidence, CTA rules) are archetype-scoped."
-  },
-
+  "_note": "MODE deployment token config. Switch presets with: node agent/set-preset.js <preset-name>",
+  "active_preset": "feature-emphasis",
   "palette_modes": {
+    "_note": "Shared across all presets. Only palette_map changes between presets.",
     "light": {
-      "description": "Neutral canvas. Default section treatment. Top-of-funnel, chrome.",
+      "description": "Neutral canvas. Chrome, top-of-funnel, low-emphasis sections.",
       "bg": "bg-white",
       "text": "text-gray-900",
       "subtext": "text-gray-600",
@@ -18,7 +13,7 @@
       "iconBg": "bg-gray-100"
     },
     "neutral": {
-      "description": "Mild separation. Mid-funnel, informational sections.",
+      "description": "Mild separation. Supporting context, informational sections.",
       "bg": "bg-gray-50",
       "text": "text-gray-900",
       "subtext": "text-gray-600",
@@ -27,7 +22,7 @@
       "iconBg": "bg-gray-100"
     },
     "dark": {
-      "description": "High emphasis. Trust anchors, conversion gates, commitment moments.",
+      "description": "High emphasis. Spotlights whatever this preset assigns it to.",
       "bg": "bg-gray-900",
       "text": "text-white",
       "subtext": "text-gray-300",
@@ -36,8 +31,8 @@
       "iconBg": "bg-gray-800"
     }
   },
-
   "behavioral_tokens": {
+    "_note": "Archetype-driven across all presets. Controls copy density, evidence level, CTA rules.",
     "Validator": {
       "require_trust_signal": true,
       "allow_secondary_cta": true,
@@ -60,17 +55,126 @@
       "evidence_density": "medium"
     }
   },
-
-  "palette_map": {
-    "_note": "Bridge map until zone layer is built. Maps component × funnel_stage → palette mode. Zone layer will replace this with zone × funnel_stage logic.",
-    "NavigationHeader":  { "awareness": "light",   "consideration": "light",   "decision": "light",   "conversion": "light"   },
-    "HeroPrimary":       { "awareness": "light",   "consideration": "light",   "decision": "dark",    "conversion": "dark"    },
-    "SocialProofBar":    { "awareness": "neutral",  "consideration": "dark",    "decision": "dark",    "conversion": "dark"    },
-    "StatBlock":         { "awareness": "neutral",  "consideration": "dark",    "decision": "dark",    "conversion": "dark"    },
-    "FeatureGrid":       { "awareness": "light",   "consideration": "neutral",  "decision": "neutral", "conversion": "neutral" },
-    "TestimonialSingle": { "awareness": "neutral",  "consideration": "dark",    "decision": "dark",    "conversion": "dark"    },
-    "PricingCard":       { "awareness": "light",   "consideration": "neutral",  "decision": "dark",    "conversion": "dark"    },
-    "CTABanner":         { "awareness": "dark",    "consideration": "dark",    "decision": "dark",    "conversion": "dark"    },
-    "FooterMinimal":     { "awareness": "light",   "consideration": "light",   "decision": "light",   "conversion": "light"   }
+  "presets": {
+    "funnel-driven": {
+      "description": "Dark = decision signal. Emphasis accumulates toward conversion — trust anchors and commitment moments are dark, top-of-funnel is light.",
+      "palette_driver": "funnel_stage",
+      "palette_map": {
+        "NavigationHeader": {
+          "awareness": "light",
+          "consideration": "light",
+          "decision": "light",
+          "conversion": "light"
+        },
+        "HeroPrimary": {
+          "awareness": "light",
+          "consideration": "light",
+          "decision": "dark",
+          "conversion": "dark"
+        },
+        "SocialProofBar": {
+          "awareness": "neutral",
+          "consideration": "dark",
+          "decision": "dark",
+          "conversion": "dark"
+        },
+        "StatBlock": {
+          "awareness": "neutral",
+          "consideration": "dark",
+          "decision": "dark",
+          "conversion": "dark"
+        },
+        "FeatureGrid": {
+          "awareness": "light",
+          "consideration": "neutral",
+          "decision": "neutral",
+          "conversion": "neutral"
+        },
+        "TestimonialSingle": {
+          "awareness": "neutral",
+          "consideration": "dark",
+          "decision": "dark",
+          "conversion": "dark"
+        },
+        "PricingCard": {
+          "awareness": "light",
+          "consideration": "neutral",
+          "decision": "dark",
+          "conversion": "dark"
+        },
+        "CTABanner": {
+          "awareness": "dark",
+          "consideration": "dark",
+          "decision": "dark",
+          "conversion": "dark"
+        },
+        "FooterMinimal": {
+          "awareness": "light",
+          "consideration": "light",
+          "decision": "light",
+          "conversion": "light"
+        }
+      }
+    },
+    "feature-emphasis": {
+      "description": "Dark = substance signal. Spotlights product capabilities and metrics. CTA and pricing are understated — features are the story, not conversion pressure.",
+      "palette_driver": "editorial_intent",
+      "palette_map": {
+        "NavigationHeader": {
+          "awareness": "light",
+          "consideration": "light",
+          "decision": "light",
+          "conversion": "light"
+        },
+        "HeroPrimary": {
+          "awareness": "light",
+          "consideration": "light",
+          "decision": "light",
+          "conversion": "light"
+        },
+        "SocialProofBar": {
+          "awareness": "neutral",
+          "consideration": "neutral",
+          "decision": "neutral",
+          "conversion": "neutral"
+        },
+        "StatBlock": {
+          "awareness": "dark",
+          "consideration": "dark",
+          "decision": "dark",
+          "conversion": "dark"
+        },
+        "FeatureGrid": {
+          "awareness": "dark",
+          "consideration": "dark",
+          "decision": "dark",
+          "conversion": "dark"
+        },
+        "TestimonialSingle": {
+          "awareness": "neutral",
+          "consideration": "neutral",
+          "decision": "neutral",
+          "conversion": "neutral"
+        },
+        "PricingCard": {
+          "awareness": "light",
+          "consideration": "light",
+          "decision": "light",
+          "conversion": "light"
+        },
+        "CTABanner": {
+          "awareness": "neutral",
+          "consideration": "neutral",
+          "decision": "neutral",
+          "conversion": "neutral"
+        },
+        "FooterMinimal": {
+          "awareness": "light",
+          "consideration": "light",
+          "decision": "light",
+          "conversion": "light"
+        }
+      }
+    }
   }
 }

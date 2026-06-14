@@ -28,9 +28,14 @@ function resolveTokens(brief) {
     tokenConfig.behavioral_tokens[archetype] ??
     tokenConfig.behavioral_tokens["Validator"];
 
-  // Palette: funnel-stage-driven in this deployment
+  // Palette: resolved from the active preset's palette_map
+  const preset = tokenConfig.presets[tokenConfig.active_preset];
+  if (!preset) {
+    throw new Error(`Unknown preset "${tokenConfig.active_preset}". Check tokens/mode-tokens.json.`);
+  }
+
   function resolvePalette(componentName) {
-    const map = tokenConfig.palette_map[componentName];
+    const map = preset.palette_map[componentName];
     if (!map) return "light";
     return map[funnel_stage] ?? map["awareness"] ?? "light";
   }
