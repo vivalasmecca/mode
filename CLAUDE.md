@@ -419,27 +419,89 @@ Enhancement layers where existing systems plug in:
 
 ---
 
-## Unresolved: product grounding
+## Product grounding — brand context agent
 
-The current system generates content entirely from the brief (audience, goal, archetype, funnel stage, context mode). The LLM invents product claims, features, stats, and copy with no grounding in actual product truth. This is fine for demo and system evaluation, but a real deployment needs real data flowing in.
+The current system generates content entirely from the brief (audience, goal, archetype, funnel stage, context mode). The LLM invents product claims, features, stats, and copy with no grounding in actual product truth. This is fine for demos; a real deployment needs real data flowing in.
 
-**The two connection points:**
+**Two separate concerns**
 
-**1. Product catalog / feature set**
-What the product actually does, what features exist, real pricing, real metrics and social proof. Currently absent — the content generator fabricates all of this.
-- Feeds into: `content-generator.js` prompt (slot population)
-- Possibly also: `ia-planner.js` (IA structure might reflect what the product actually has)
-- Format TBD: could be a JSON catalog, markdown feature brief, or structured schema
+These are distinct in ownership and cadence and should be treated as separate artifacts:
 
-**2. Brand brief / messaging guide**
-Tone of voice, messaging pillars, what claims are approved, what language is off-brand, positioning relative to competitors. Also absent.
-- Feeds into: `content-generator.js` prompt (copy style and claim boundaries)
-- Possibly: `ia-planner.js` (IA ordering might reflect brand narrative priorities)
-- Format TBD: likely a text document or structured prompt fragment
+**Product context** — factual, semi-stable, product-owned
+- What the product actually does
+- Real features, real pricing, real metrics
+- Customer proof (logos, testimonials, case study stats)
+- Competitor positioning
 
-**Current state:** The brief is the only input. The system is architecturally sound; the content is hallucinated product truth. For demos this is acceptable. For any real client deployment, both connection points need to be wired.
+**Brand brief** — editorial, stable, PMM-owned
+- Tone of voice and approved language
+- Messaging pillars (the 3–4 things the brand always returns to)
+- Claim territory — what's approved, what's off-limits
+- Positioning statement
 
-*Come back to this when the system is being positioned for a real client or when the visual mapping tool question is resolved — both are likely to inform the data model here.*
+**Architecture: a separate ingestion agent**
+
+Ingestion is a different concern than generation — it runs on a different cadence (once per client setup, not per build) and pulls from different sources. The separation is clean:
+
+```
+ingestion agent → context/product-context.json + context/brand-brief.md
+                                    ↓
+                       content-generator.js (reads both at slot population time)
+```
+
+The ingestion agent takes source URLs or uploaded docs, crawls/reads them, and uses an LLM to extract and normalize into a structured format. The content generator doesn't know or care where the data came from.
+
+**`product-context.json` schema (minimum viable)**
+
+```json
+{
+  "product_name": "...",
+  "one_liner": "...",
+  "features": [{ "name": "...", "description": "...", "benefit": "..." }],
+  "proof_points": [{ "value": "...", "label": "...", "source": "..." }],
+  "pricing": [{ "tier": "...", "price": "...", "description": "..." }],
+  "social_proof": [{ "quote": "...", "attribution": "...", "company": "..." }],
+  "differentiators": ["..."]
+}
+```
+
+**`brand-brief.md`** — plain markdown. Tone guidelines and messaging rules are prose; the content generator consumes them directly as a prompt fragment. PMMs write this directly — no extraction needed, though an agent could draft it from existing copy for review.
+
+**How archetype and funnel stage interact with product context**
+
+Product context is static — same features regardless of who's reading. What changes is how they're framed and emphasized. The content generator already handles this via behavioral tokens (copy density, evidence level). With real product data, a Validator in decision stage will naturally reach for the proof points; a Mover in awareness will naturally surface the one-liner. The LLM handles emphasis shift — the data just needs to be there.
+
+**Dashboard integration: Brand Setup tab**
+
+1. Paste source URLs and/or upload a doc
+2. Run ingestion agent — extracts and structures into `product-context.json`
+3. Review and edit the extracted output inline
+4. Save — subsequent builds use it automatically
+
+Brand brief is a separate text editor in the same tab. PMM edits it directly.
+
+**Output file locations**
+
+```
+context/
+├── product-context.json   ← structured factual data (machine-readable, LLM-injected)
+└── brand-brief.md         ← editorial guidelines (human-readable, injected as prompt fragment)
+```
+
+Same flat-file pattern as `tokens/mode-tokens.json` — no database.
+
+**Open questions before building**
+
+1. **Source types for ingestion:** Website URLs (crawl) are the right starting point — most companies have a website. Doc upload and structured catalog are second-pass.
+2. **Brand brief automation:** An agent could draft a brand brief from scraped copy for the PMM to edit. Probably don't fully automate — brand voice is a human judgment call.
+3. **IA planner connection:** Product context likely also informs `ia-planner.js` — if the product has a strong features story, the IA might shift toward feature-heavy sections. Worth wiring after content generator is working.
+
+**Build order**
+
+1. Define `product-context.json` schema and wire it into `content-generator.js` prompt (can be hand-authored first to validate the injection)
+2. Add `brand-brief.md` injection alongside it
+3. Build the ingestion agent (URL → structured extraction)
+4. Build Brand Setup tab in the dashboard
 
 ---
 
