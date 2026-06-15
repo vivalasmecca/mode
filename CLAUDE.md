@@ -9,7 +9,7 @@
 
 MODE is an intent-aware design system built as a semantic layer on top of Radix UI components, targeted at SaaS businesses. The page builder agent is the first working surface — it takes a brief, proposes an information architecture, then selects and populates components to build a semantic HTML page.
 
-The agent exists. The UI dashboard is built and working. The current focus is on multi-variant generation and preview evaluation.
+The agent exists. The UI dashboard is built and working. The current focus is on multi-page coherence — demonstrating that the semantic thread holds across a full funnel journey, not just within one page.
 
 ---
 
@@ -105,6 +105,8 @@ http://localhost:3000/dashboard       ← Overview (latest output)
 http://localhost:3000/dashboard/build ← Build form (multi-variant generation)
 http://localhost:3000/preview         ← Latest output rendered
 http://localhost:3000/preview?file=page-{ts}-{variant}.json ← Specific variant
+http://localhost:3000/site?ts={ts}    ← Site view: all variants from a build with linked nav
+http://localhost:3000/site?ts={ts}&page={label} ← Specific page within a site build
 ```
 
 ### Dashboard tabs
@@ -123,7 +125,7 @@ http://localhost:3000/preview?file=page-{ts}-{variant}.json ← Specific variant
 4. Submits → selected preset + brief sent to `/api/generate/ia` → N IA proposals in parallel
 5. IA review with tabs — one tab per variant, shows sections + rationale
 6. "Approve & Generate All N" → full pipeline runs in parallel for each variant (preset passed to token resolver)
-7. Output files saved, preview tabs opened automatically
+7. Output files saved + `site-{ts}.json` manifest written → one `/site?ts=` tab opens with all pages linked in the nav bar
 
 ### Key architecture decisions in the UI
 
@@ -140,6 +142,8 @@ This ensures Node.js resolves `mode-agent/*` from `ui/node_modules/` regardless 
 **Token resolver caching:** `token-resolver.js` caches `mode-tokens.json` at module load time (Node.js module cache). Editing palette maps or accent tokens via the Palette tab writes to the file immediately, but a dev server restart is needed for those changes to take effect in new builds. The UI notes this after saving.
 
 **Palette tab:** Two sections — Brand Accent (global, not per-preset) and Palette Map (per-preset grid). Accent has `on_light` and `on_dark` variants for branded CTA buttons. Palette map cells cycle light → neutral → dark on click. Both have independent save states; saves write directly to `mode-tokens.json`.
+
+**Site manifest:** After each multi-variant build, `/api/generate/page` writes `output/site-{ts}.json` recording all variant files, preset, and base brief. The `/site` route reads this to power the linked nav bar — no database, just the same flat-file pattern as the page outputs.
 
 ---
 
@@ -162,7 +166,8 @@ mode/
 ├── tokens/
 │   └── mode-tokens.json             ← palette maps + behavioral tokens per preset + global accent
 ├── output/
-│   └── page-{ts}-{variant}.json    ← generated page outputs (one per variant per run)
+│   ├── page-{ts}-{variant}.json    ← generated page outputs (one per variant per run)
+│   └── site-{ts}.json              ← site manifest (all variants for a build, written after generation)
 └── ui/                              ← Next.js 16 dashboard + preview
     ├── next.config.ts               ← turbopack.root + serverExternalPackages
     ├── package.json                 ← includes mode-agent as file: dependency
@@ -180,6 +185,7 @@ mode/
     │   │   │   └── PaletteClient.tsx ← "use client" — accent + palette map editor
     │   │   └── run/page.tsx
     │   ├── preview/page.tsx         ← renders output JSON; supports ?file= param
+    │   ├── site/page.tsx            ← site view: fixed dark nav + PreviewClient; reads site manifest
     │   └── api/
     │       ├── config/route.ts      ← GET: active preset + variant config
     │       ├── palette/
@@ -196,7 +202,7 @@ mode/
     │   │   └── index.ts             ← MODULE_REGISTRY
     │   └── blocks/                  ← micro-block primitives
     └── lib/
-        ├── get-output.ts            ← getLatestOutput() + getOutputByFile(filename)
+        ├── get-output.ts            ← getLatestOutput() + getOutputByFile(filename) + getSiteManifest(ts)
         ├── types.ts                 ← schema contract (PageOutput, PageBrief, etc.)
         └── palette.ts               ← getPalette() utility
 ```
@@ -208,7 +214,7 @@ mode/
 When dropping back in after time away, start here:
 
 1. **Start the dashboard:** `cd ui && npm run dev` → http://localhost:3000/dashboard
-2. **Go to Build tab** → select a palette approach → fill in a brief → approve IAs → generate all variants → review previews in new tabs.
+2. **Go to Build tab** → select a palette approach → fill in a brief → approve IAs → generate all variants → site view opens automatically with linked page navigation.
 3. **Default preset:** `tokens/mode-tokens.json` → `"active_preset"` controls which preset is pre-selected in the Build form. The form lets you switch per build without touching the file.
 4. **If you get a "Cannot find module 'mode-agent'" error:** run `npm install` from `ui/` to restore the symlink.
 5. **If the dashboard throws a JSON parse error on load:** delete `.next/` and restart (`rm -rf .next && npm run dev`).
@@ -225,12 +231,14 @@ When dropping back in after time away, start here:
 - **Palette Approach selector in the Build form** — all three presets selectable per build; no file editing or server restart required
 - **Palette tab** — editable palette map grid (click cells to cycle light/neutral/dark, save to `mode-tokens.json`) and brand accent editor (on_light / on_dark CTA color variants with live preview)
 - **Accent layer** — `accent` block in `mode-tokens.json`; `token-resolver.js` exposes `accent` + `resolveAccent(paletteMode)`; `accent_tokens` written into output JSON per build
+- **Multi-page site view** — after generation, a `site-{ts}.json` manifest is written; `/site?ts=&page=` renders any page from the build with a fixed dark nav bar linking all variants; BuildClient opens one site tab instead of N preview tabs
 
 ---
 
 ## What's next (as of June 2026)
 
-- **Multi-page demo site** — four pages proving cross-site coherence (see below). This is the prerequisite for demonstrating routing to anyone.
+- **Run the four-page Validator journey** — the site view infrastructure is built; now actually run four builds (awareness → consideration → decision → conversion) with consistent archetype and audience brief. The pages will be navigable via the site nav. This is the demo.
+- **Mover contrast build** — run the same four funnel stages with Mover archetype to make the methodology visible side-by-side. This is the demo moment.
 - **Runtime signal routing** — serving the right variant based on visitor signals. See "Unresolved: runtime signal routing" below. For the demo, routing is infrastructure; the product is the kit.
 - **Product data inputs** — see "Unresolved: product grounding" below.
 
@@ -447,7 +455,7 @@ This makes the expression layer / theme mapping separation (palette_modes → th
 
 ---
 
-## Unresolved: multi-page demo site
+## Multi-page demo site
 
 One page type doesn't prove the system — it proves the agent can generate a page. What the demo needs to show is **coherence across a site**.
 
@@ -474,14 +482,22 @@ This is what the dimensions were always for. The single-page view proves the mec
 
 Run the same brief with Mover archetype. The IA collapses — fewer sections, less proof, direct path to conversion. Side-by-side with Validator, this is where the methodology becomes undeniable: same product, same funnel stage, fundamentally different experience because of who the visitor is.
 
-**What this requires from the build system**
+**What the build system now supports**
 
-The current system generates N variants of one page type. A site demo needs N pages in a sequence — different page types at advancing funnel stages, same archetype threading through. Two options:
+The site view infrastructure is built. Each build run produces:
+- N variant page files (`page-{ts}-{variant}.json`)
+- One site manifest (`site-{ts}.json`) linking all variants
+- `/site?ts=&page=` renders any page with a fixed dark nav bar connecting all pages in the build
 
-- **Manual (now):** Run four separate builds, one per page type, advancing funnel stage in the brief. Stitch into a demo site manually. Works for the demo.
-- **Site brief (later):** Extend the agent to accept a site-level brief and generate all pages in one run with coherent semantic threading. The right long-term model.
+**What still needs to happen manually**
 
-The manual approach is the right next step — it proves the concept and reveals what the site brief model needs to handle before building it.
+A funnel journey isn't one build — it's four separate builds with advancing funnel stages. The system doesn't yet understand that "awareness → consideration → decision → conversion" is a sequence; it just knows how to build one stage at a time. To produce the demo:
+
+1. Run four builds with the same archetype/audience, advancing funnel_stage each time
+2. Each build opens its own site view with all funnel variants linked
+3. The four *site views* aren't cross-linked yet — that's the next layer
+
+**Site brief (later):** Extend the agent to accept a site-level brief and generate all pages in one run with coherent semantic threading. The right long-term model. The current manual approach reveals what the site brief needs to handle before building it.
 
 ---
 
