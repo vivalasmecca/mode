@@ -230,7 +230,8 @@ When dropping back in after time away, start here:
 
 ## What's next (as of June 2026)
 
-- **Runtime signal routing** — serving the right variant based on visitor signals (the end goal of the whole system). See "Unresolved: runtime signal routing" below.
+- **Multi-page demo site** — four pages proving cross-site coherence (see below). This is the prerequisite for demonstrating routing to anyone.
+- **Runtime signal routing** — serving the right variant based on visitor signals. See "Unresolved: runtime signal routing" below. For the demo, routing is infrastructure; the product is the kit.
 - **Product data inputs** — see "Unresolved: product grounding" below.
 
 ---
@@ -431,6 +432,48 @@ Tone of voice, messaging pillars, what claims are approved, what language is off
 **Current state:** The brief is the only input. The system is architecturally sound; the content is hallucinated product truth. For demos this is acceptable. For any real client deployment, both connection points need to be wired.
 
 *Come back to this when the system is being positioned for a real client or when the visual mapping tool question is resolved — both are likely to inform the data model here.*
+
+---
+
+## ICP and product model
+
+**ICP:** Code-first SaaS companies. They may have an existing design system or be starting fresh. What they're buying is the intelligence layer — the semantic config, the agent, the token resolver — not a managed service.
+
+**Product model: kit, not SaaS.** Buy and deploy yourself. The buyer integrates MODE into their existing Next.js/React stack and brings their own visual system (Radix theme, design tokens, component library). MODE provides the intent mapping, the generation pipeline, and the routing patterns. They wire it to their stack.
+
+This makes the expression layer / theme mapping separation (palette_modes → theme.json) architecturally important: the kit needs a clean handoff point where the buyer substitutes their own visual tokens without touching the intent layer.
+
+**On routing:** The buyer implements routing themselves using patterns MODE provides. The demo site will include a working routing layer to show what this looks like in practice — but it's demo infrastructure, not a service MODE runs.
+
+---
+
+## Unresolved: multi-page demo site
+
+One page type doesn't prove the system — it proves the agent can generate a page. What the demo needs to show is **coherence across a site**.
+
+The power of MODE isn't a single page that adapts. It's that a Validator landing on the homepage gets a consistent experience all the way through — the homepage reads them, the product page deepens the trust argument, the pricing page closes with the right weight. The semantic thread runs through the whole journey. That's what no other system can demonstrate.
+
+**The four-page Validator journey**
+
+| Page | Funnel stage | What shifts |
+|------|-------------|-------------|
+| Homepage | awareness | Broadest entry. All archetypes possible; Validator as default. |
+| Product category | consideration | IA shifts toward depth. Social proof increases. Feature detail increases. |
+| Single product page | decision | Heavy credibility, specific proof, pricing signal introduced. Palette visibly darkens vs. category. |
+| Pricing page | conversion | Stripped down, high contrast, single action. CTABanner logic is already built for this. |
+
+**The Mover contrast is the demo moment**
+
+Run the same brief with Mover archetype. The IA collapses — fewer sections, less proof, direct path to conversion. Side-by-side with Validator, this is where the methodology becomes undeniable: same product, same funnel stage, fundamentally different experience because of who the visitor is.
+
+**What this requires from the build system**
+
+The current system generates N variants of one page type. A site demo needs N pages in a sequence — different page types at advancing funnel stages, same archetype threading through. Two options:
+
+- **Manual (now):** Run four separate builds, one per page type, advancing funnel stage in the brief. Stitch into a demo site manually. Works for the demo.
+- **Site brief (later):** Extend the agent to accept a site-level brief and generate all pages in one run with coherent semantic threading. The right long-term model.
+
+The manual approach is the right next step — it proves the concept and reveals what the site brief model needs to handle before building it.
 
 ---
 
