@@ -462,6 +462,14 @@ The power of MODE isn't a single page that adapts. It's that a Validator landing
 | Single product page | decision | Heavy credibility, specific proof, pricing signal introduced. Palette visibly darkens vs. category. |
 | Pricing page | conversion | Stripped down, high contrast, single action. CTABanner logic is already built for this. |
 
+**The dimensions work at two scales**
+
+Within a page, the palette map does intra-page work: this section gets dark, that one gets light. Component-level emphasis decisions.
+
+Across pages, the funnel stage does macro work: the entire homepage is in an awareness register — light, open, low pressure. The entire pricing page is in a conversion register — dark, direct, high contrast. The palette shift isn't happening between sections anymore, it's happening between pages. The visitor experiences the system without seeing it.
+
+This is what the dimensions were always for. The single-page view proves the mechanics. The multi-page view proves the intent. Until the four-page build, evaluation was happening at the wrong scale.
+
 **The Mover contrast is the demo moment**
 
 Run the same brief with Mover archetype. The IA collapses — fewer sections, less proof, direct path to conversion. Side-by-side with Validator, this is where the methodology becomes undeniable: same product, same funnel stage, fundamentally different experience because of who the visitor is.
