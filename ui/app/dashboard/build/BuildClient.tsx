@@ -33,6 +33,7 @@ interface VariantResult {
   label: string;
   filename: string;
   previewUrl: string;
+  siteUrl: string;
 }
 
 type Step =
@@ -81,6 +82,7 @@ export default function BuildClient() {
   });
   const [variants, setVariants] = useState<VariantIA[]>([]);
   const [results, setResults] = useState<VariantResult[]>([]);
+  const [builtSiteUrl, setBuiltSiteUrl] = useState("");
   const [activeTab, setActiveTab] = useState(0);
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -157,9 +159,8 @@ export default function BuildClient() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Page generation failed");
       setResults(data.variants);
-      (data.variants as VariantResult[]).forEach((v) => {
-        window.open(v.previewUrl, "_blank", "noopener,noreferrer");
-      });
+      setBuiltSiteUrl(data.siteUrl ?? "");
+      window.open(data.siteUrl, "_blank", "noopener,noreferrer");
       setStep("done");
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : String(err));
@@ -223,13 +224,37 @@ export default function BuildClient() {
               {results.length} variant{results.length !== 1 ? "s" : ""} generated
             </h2>
             <p className="text-sm text-gray-500 mt-1">
-              Preview tabs should have opened. Use the links below if they were blocked.
+              A site view tab should have opened with all pages linked in the nav.
             </p>
           </div>
+
+          {/* Site view link */}
+          {builtSiteUrl && (
+            <div className="border border-gray-200 rounded-lg overflow-hidden">
+              <div className="bg-gray-50 border-b border-gray-200 px-4 py-2.5">
+                <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-500">
+                  Site View
+                </h3>
+              </div>
+              <div className="px-5 py-4 flex items-center justify-between">
+                <span className="text-sm text-gray-600">{results.length} pages — linked navigation</span>
+                <a
+                  href={builtSiteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors"
+                >
+                  Open site →
+                </a>
+              </div>
+            </div>
+          )}
+
+          {/* Individual pages */}
           <div className="border border-gray-200 rounded-lg overflow-hidden">
             <div className="bg-gray-50 border-b border-gray-200 px-4 py-2.5">
               <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-500">
-                Variants
+                Individual pages
               </h3>
             </div>
             <ul className="divide-y divide-gray-100">
@@ -237,21 +262,23 @@ export default function BuildClient() {
                 <li key={r.label} className="px-5 py-4 flex items-center justify-between">
                   <span className="text-sm font-medium text-gray-900 capitalize">{r.label}</span>
                   <a
-                    href={r.previewUrl}
+                    href={r.siteUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-indigo-600 hover:text-indigo-800 transition-colors"
+                    className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
                   >
-                    Open preview →
+                    Open →
                   </a>
                 </li>
               ))}
             </ul>
           </div>
+
           <button
             onClick={() => {
               setResults([]);
               setVariants([]);
+              setBuiltSiteUrl("");
               setStep("form");
             }}
             className="text-sm text-gray-500 hover:text-gray-700 transition-colors"

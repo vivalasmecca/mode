@@ -29,6 +29,7 @@ export async function POST(req: Request) {
     const { populateContent } = _require("mode-agent/content-generator");
 
     const timestamp = new Date().toISOString();
+    const ts = timestamp.replace(/[:.]/g, "-");
     const outputDir = path.resolve(process.cwd(), "../output");
     if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
 
@@ -54,8 +55,9 @@ export async function POST(req: Request) {
         );
 
         const safeLabel = label.toLowerCase().replace(/\s+/g, "-");
-        const filename = `page-${timestamp.replace(/[:.]/g, "-")}-${safeLabel}.json`;
+        const filename = `page-${ts}-${safeLabel}.json`;
         const previewUrl = `/preview?file=${filename}`;
+        const siteUrl = `/site?ts=${ts}&page=${safeLabel}`;
 
         const output = {
           schema_version: "1.1.0",
@@ -74,11 +76,41 @@ export async function POST(req: Request) {
 
         fs.writeFileSync(path.join(outputDir, filename), JSON.stringify(output, null, 2));
 
-        return { label, filename, previewUrl };
+        return { label, safeLabel, filename, previewUrl, siteUrl, presetName, paletteDriver, brief };
       })
     );
 
-    return Response.json({ success: true, variants: results });
+    // Write site manifest so /site can load all pages for this build.
+    const siteManifest = {
+      schema_version: "1.0.0",
+      built_at: timestamp,
+      ts,
+      preset: results[0].presetName,
+      palette_driver: results[0].paletteDriver,
+      brief: results[0].brief as Record<string, string>,
+      pages: results.map((r) => ({
+        label: r.safeLabel,
+        filename: r.filename,
+        previewUrl: r.previewUrl,
+        siteUrl: r.siteUrl,
+      })),
+    };
+    fs.writeFileSync(
+      path.join(outputDir, `site-${ts}.json`),
+      JSON.stringify(siteManifest, null, 2)
+    );
+
+    return Response.json({
+      success: true,
+      ts,
+      siteUrl: `/site?ts=${ts}`,
+      variants: results.map(({ label, filename, previewUrl, siteUrl }) => ({
+        label,
+        filename,
+        previewUrl,
+        siteUrl,
+      })),
+    });
   } catch (err) {
     return Response.json({ error: String(err) }, { status: 500 });
   }

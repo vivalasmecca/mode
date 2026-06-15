@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import type { PageOutput } from "./types";
+import type { PageOutput, SiteManifest } from "./types";
 
 /**
  * Reads a specific JSON output file by filename.
@@ -13,6 +13,21 @@ export function getOutputByFile(filename: string): PageOutput | null {
     const filepath = path.join(outputDir, path.basename(filename));
     if (!fs.existsSync(filepath)) return null;
     return JSON.parse(fs.readFileSync(filepath, "utf8")) as PageOutput;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Reads a site manifest by its timestamp slug (e.g. "2026-06-14T12-34-56-789Z").
+ * Written by /api/generate/page after a multi-variant build completes.
+ */
+export function getSiteManifest(ts: string): SiteManifest | null {
+  try {
+    const outputDir = path.resolve(process.cwd(), "../output");
+    const filepath = path.join(outputDir, `site-${path.basename(ts)}.json`);
+    if (!fs.existsSync(filepath)) return null;
+    return JSON.parse(fs.readFileSync(filepath, "utf8")) as SiteManifest;
   } catch {
     return null;
   }

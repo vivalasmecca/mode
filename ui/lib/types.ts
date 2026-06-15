@@ -81,6 +81,23 @@ export interface AccentTokens {
   on_dark: AccentVariant;
 }
 
+export interface SitePage {
+  label: string;
+  filename: string;
+  previewUrl: string;
+  siteUrl: string;
+}
+
+export interface SiteManifest {
+  schema_version: string;
+  built_at: string;
+  ts: string;
+  preset: string;
+  palette_driver: string;
+  brief: Record<string, string>;
+  pages: SitePage[];
+}
+
 export interface PageOutput {
   schema_version: string;
   generated_at: string;
