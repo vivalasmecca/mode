@@ -1,10 +1,29 @@
 {
-  "_note": "Product context injected into the content generator at build time. Populate via the Brand Setup tab or edit directly. Leave fields empty if unknown — do not invent.",
-  "product_name": "",
-  "one_liner": "",
+  "_note": "Product context injected into the content generator at build time. Populate via the Brand Setup tab or edit directly. Leave fields empty/null if unknown — do not invent.",
+  "product_name": "MODE",
+  "one_liner": "Design intelligence for code-first teams. Components that resolve to the right experience for every user, funnel stage, and context — without manual variants or QA overhead.",
   "features": [],
   "proof_points": [],
-  "pricing": [],
+  "pricing": {
+    "billing_periods": [],
+    "annual_discount": null,
+    "tiers": [],
+    "trial": {
+      "length": null,
+      "card_required": null
+    }
+  },
+  "checkout": {
+    "primary_url": null,
+    "trial_url": null,
+    "currency": "USD"
+  },
   "social_proof": [],
-  "differentiators": []
+  "differentiators": [
+    "Semantic intent layer — components resolve behavior across archetype, funnel stage, and context mode",
+    "No manual variants — the system makes the right call by default",
+    "Ships as a code kit — lives in your codebase, not a third-party tool",
+    "Built on Radix UI — zero new primitives to learn",
+    "Palette map — visual emphasis accumulates semantically toward conversion"
+  ]
 }

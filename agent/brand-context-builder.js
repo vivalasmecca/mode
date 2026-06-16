@@ -75,7 +75,9 @@ RULES:
 - Only include information explicitly present in the content.
 - Do not invent, infer, or embellish. Leave arrays empty if data is absent.
 - proof_points: only include if a specific number or metric is stated (e.g. "47% faster").
-- pricing: only include if pricing tiers are explicitly mentioned.
+- pricing.tiers: only include if pricing tiers are explicitly mentioned. Extract per-tier feature lists if present.
+- pricing.trial: only include if a free trial or free plan is explicitly stated.
+- checkout.primary_url: if a "Buy now", "Get started", or checkout link URL is present in the content, capture it here.
 - social_proof: only include real quotes or customer names mentioned.
 
 Return this exact JSON structure (no markdown fences, no explanation):
@@ -84,7 +86,27 @@ Return this exact JSON structure (no markdown fences, no explanation):
   "one_liner": "",
   "features": [{ "name": "", "description": "", "benefit": "" }],
   "proof_points": [{ "value": "", "label": "", "source": null }],
-  "pricing": [{ "tier": "", "price": "", "description": "" }],
+  "pricing": {
+    "billing_periods": [],
+    "annual_discount": null,
+    "tiers": [
+      {
+        "tier": "",
+        "monthly_price": null,
+        "annual_price": null,
+        "description": "",
+        "features": [],
+        "cta_label": "",
+        "cta_url": null
+      }
+    ],
+    "trial": { "length": null, "card_required": null }
+  },
+  "checkout": {
+    "primary_url": null,
+    "trial_url": null,
+    "currency": "USD"
+  },
   "social_proof": [{ "quote": "", "attribution": "", "company": null }],
   "differentiators": []
 }

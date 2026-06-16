@@ -175,6 +175,11 @@ async function callLLM(spec, brief, behavioral) {
   const { productContext, brandBrief } = loadBrandContext();
   const anthropic = getClient();
 
+  const checkoutUrl =
+    productContext?.checkout?.primary_url ||
+    productContext?.checkout?.trial_url ||
+    null;
+
   const productContextSection = productContext
     ? `\n\nPRODUCT CONTEXT — use this as the source of truth for all product facts. Do not invent claims that contradict or go beyond this data:\n${JSON.stringify(productContext, null, 2)}`
     : "";
@@ -202,8 +207,8 @@ ${toneGuide}${productContextSection}${brandBriefSection}
 SLOT TYPE RULES — follow exactly:
 - type "string"            → write a plain string value
 - type "string | null"     → write a string, or null if not warranted by the variant/archetype
-- type "CTAButton"         → return {"label": "...", "href": "#"}
-- type "CTAButton | null"  → return {"label": "...", "href": "#"} or null
+- type "CTAButton"         → return {"label": "...", "href": "${checkoutUrl || "#"}"}
+- type "CTAButton | null"  → return {"label": "...", "href": "${checkoutUrl || "#"}"} or null
 - type "array" with object item_template → return exactly count objects matching the template shape
 - type "array" with string item_template → return exactly count plain strings
 
