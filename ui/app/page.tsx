@@ -8,7 +8,10 @@ export const dynamic = "force-dynamic";
 
 function getRoutingConfig(): { ts: string } | null {
   try {
-    const configPath = path.resolve(process.cwd(), "../config/routing.json");
+    const dataRoot = process.env.VERCEL
+      ? path.join(process.cwd(), "mode-data")
+      : path.resolve(process.cwd(), "..");
+    const configPath = path.join(dataRoot, "config/routing.json");
     if (!fs.existsSync(configPath)) return null;
     const data = JSON.parse(fs.readFileSync(configPath, "utf8")) as { ts?: string };
     if (!data.ts) return null;

@@ -11,20 +11,12 @@ const nextConfig: NextConfig = {
     // mode/ from mode/package-lock.json and break Next.js module resolution.
     root: path.resolve(__dirname),
   },
-  // outputFileTracingRoot must equal turbopack.root (Next.js 16 requirement).
-  // Set to ui/ so the tracing root is the same as the Turbopack root.
-  // outputFileTracingIncludes paths are relative to this root, so "../"
-  // patterns correctly reference sibling directories in the repo.
-  outputFileTracingRoot: path.resolve(__dirname),
+  // On Vercel, vercel.json buildCommand pre-copies sibling directories
+  // (output/, tokens/, context/, manifest/, config/) into ui/mode-data/
+  // before the build runs. outputFileTracingIncludes uses paths within
+  // the Turbopack project root (no "../" prefix, which Turbopack forbids).
   outputFileTracingIncludes: {
-    "/**": [
-      "../output/**",
-      "../config/**",
-      "../tokens/**",
-      "../context/**",
-      "../manifest/**",
-      "../agent/**",
-    ],
+    "/**": ["mode-data/**"],
   },
 };
 

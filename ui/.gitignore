@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# pre-copy artifacts (created by vercel.json buildCommand, not committed)
+/mode-data
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

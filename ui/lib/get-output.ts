@@ -3,12 +3,23 @@ import * as path from "path";
 import type { PageOutput, SiteManifest } from "./types";
 
 /**
+ * Root directory containing the mode data directories (output/, config/, tokens/, …).
+ *
+ * - Locally: the parent of ui/ (i.e. mode/), because process.cwd() = ui/.
+ * - On Vercel: vercel.json buildCommand pre-copies those directories into
+ *   ui/mode-data/ before the build, so we read from there at runtime.
+ */
+const DATA_ROOT = process.env.VERCEL
+  ? path.join(process.cwd(), "mode-data")
+  : path.resolve(process.cwd(), "..");
+
+/**
  * Reads a specific JSON output file by filename.
  * Used by /preview?file= to address a named variant file.
  */
 export function getOutputByFile(filename: string): PageOutput | null {
   try {
-    const outputDir = path.resolve(process.cwd(), "../output");
+    const outputDir = path.join(DATA_ROOT, "output");
     // path.basename prevents directory traversal
     const filepath = path.join(outputDir, path.basename(filename));
     if (!fs.existsSync(filepath)) return null;
@@ -24,7 +35,7 @@ export function getOutputByFile(filename: string): PageOutput | null {
  */
 export function getSiteManifest(ts: string): SiteManifest | null {
   try {
-    const outputDir = path.resolve(process.cwd(), "../output");
+    const outputDir = path.join(DATA_ROOT, "output");
     const filepath = path.join(outputDir, `site-${path.basename(ts)}.json`);
     if (!fs.existsSync(filepath)) return null;
     return JSON.parse(fs.readFileSync(filepath, "utf8")) as SiteManifest;
@@ -39,7 +50,7 @@ export function getSiteManifest(ts: string): SiteManifest | null {
  */
 export function getLatestOutput(): PageOutput | null {
   try {
-    const outputDir = path.resolve(process.cwd(), "../output");
+    const outputDir = path.join(DATA_ROOT, "output");
 
     if (!fs.existsSync(outputDir)) return null;
 
