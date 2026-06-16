@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
+import { DATA_ROOT } from "@/lib/get-output";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,7 @@ export async function PUT(req: Request) {
       return Response.json({ error: "preset and paletteMap are required" }, { status: 400 });
     }
 
-    const tokensPath = path.resolve(process.cwd(), "../tokens/mode-tokens.json");
+    const tokensPath = path.join(DATA_ROOT, "tokens/mode-tokens.json");
     const tokens = JSON.parse(fs.readFileSync(tokensPath, "utf8"));
 
     if (!tokens.presets[preset]) {

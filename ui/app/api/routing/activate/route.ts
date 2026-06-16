@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
+import { DATA_ROOT } from "@/lib/get-output";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +16,7 @@ export async function PUT(request: Request) {
     }
 
     // Validate that a site manifest for this ts exists in output/
-    const outputDir = path.resolve(process.cwd(), "../output");
+    const outputDir = path.join(DATA_ROOT, "output");
     const manifestPath = path.join(outputDir, `site-${path.basename(ts)}.json`);
     if (!fs.existsSync(manifestPath)) {
       return Response.json(
@@ -25,7 +26,7 @@ export async function PUT(request: Request) {
     }
 
     // Ensure config/ directory exists (created on first activation)
-    const configDir = path.resolve(process.cwd(), "../config");
+    const configDir = path.join(DATA_ROOT, "config");
     if (!fs.existsSync(configDir)) {
       fs.mkdirSync(configDir, { recursive: true });
     }

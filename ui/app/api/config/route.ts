@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
+import { DATA_ROOT } from "@/lib/get-output";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +18,7 @@ const FIXED_DIMENSION: Record<string, string> = {
 
 export async function GET() {
   try {
-    const tokensPath = path.resolve(process.cwd(), "../tokens/mode-tokens.json");
+    const tokensPath = path.join(DATA_ROOT, "tokens/mode-tokens.json");
     const tokens = JSON.parse(fs.readFileSync(tokensPath, "utf8"));
 
     const activePreset = tokens.active_preset as string;

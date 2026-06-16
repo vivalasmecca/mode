@@ -1,6 +1,7 @@
 import { createRequire } from "module";
 import * as fs from "fs";
 import * as path from "path";
+import { DATA_ROOT } from "@/lib/get-output";
 
 // Anchor require resolution to the project root (mode/ui/) so Node.js finds
 // mode-agent in mode/ui/node_modules/ regardless of where Turbopack puts
@@ -13,7 +14,7 @@ export async function POST(req: Request) {
   try {
     const { baseBrief, variantDimension, variantValues, preset } = await req.json();
 
-    const manifestPath = path.resolve(process.cwd(), "../manifest/components.json");
+    const manifestPath = path.join(DATA_ROOT, "manifest/components.json");
     const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
 
     const { proposeIA } = _require("mode-agent/ia-planner");

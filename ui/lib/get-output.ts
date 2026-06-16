@@ -9,7 +9,7 @@ import type { PageOutput, SiteManifest } from "./types";
  * - On Vercel: vercel.json buildCommand pre-copies those directories into
  *   ui/mode-data/ before the build, so we read from there at runtime.
  */
-const DATA_ROOT = process.env.VERCEL
+export const DATA_ROOT = process.env.VERCEL
   ? path.join(process.cwd(), "mode-data")
   : path.resolve(process.cwd(), "..");
 

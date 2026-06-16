@@ -1,6 +1,7 @@
 import { createRequire } from "module";
 import * as fs from "fs";
 import * as path from "path";
+import { DATA_ROOT } from "@/lib/get-output";
 
 // Anchor require resolution to the project root (mode/ui/) so Node.js finds
 // mode-agent in mode/ui/node_modules/ regardless of where Turbopack puts
@@ -21,7 +22,7 @@ export async function POST(req: Request) {
   try {
     const { variants }: { variants: VariantInput[] } = await req.json();
 
-    const manifestPath = path.resolve(process.cwd(), "../manifest/components.json");
+    const manifestPath = path.join(DATA_ROOT, "manifest/components.json");
     const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
 
     const { selectComponents } = _require("mode-agent/component-selector");
@@ -30,7 +31,7 @@ export async function POST(req: Request) {
 
     const timestamp = new Date().toISOString();
     const ts = timestamp.replace(/[:.]/g, "-");
-    const outputDir = path.resolve(process.cwd(), "../output");
+    const outputDir = path.join(DATA_ROOT, "output");
     if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
 
     // Run the full pipeline for all variants in parallel.

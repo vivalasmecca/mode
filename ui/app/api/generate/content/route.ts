@@ -1,6 +1,7 @@
 import { createRequire } from "module";
 import * as fs from "fs";
 import * as path from "path";
+import { DATA_ROOT } from "@/lib/get-output";
 
 // Same anchor pattern as the other generate routes.
 const _require = createRequire(path.resolve(process.cwd(), "__route__"));
@@ -29,8 +30,8 @@ export async function POST(req: Request) {
       return Response.json({ error: "filenames array is required" }, { status: 400 });
     }
 
-    const outputDir = path.resolve(process.cwd(), "../output");
-    const manifestPath = path.resolve(process.cwd(), "../manifest/components.json");
+    const outputDir = path.join(DATA_ROOT, "output");
+    const manifestPath = path.join(DATA_ROOT, "manifest/components.json");
     const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
 
     const { populateContent } = _require("mode-agent/content-generator");

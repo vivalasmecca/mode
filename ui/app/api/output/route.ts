@@ -1,12 +1,13 @@
 import * as fs from "fs";
 import * as path from "path";
+import { DATA_ROOT } from "@/lib/get-output";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
     // Resolve output/ relative to the ui/ directory (one level up)
-    const outputDir = path.resolve(process.cwd(), "../output");
+    const outputDir = path.join(DATA_ROOT, "output");
 
     if (!fs.existsSync(outputDir)) {
       return Response.json({ error: "No output directory found" }, { status: 404 });

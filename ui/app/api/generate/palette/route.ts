@@ -1,6 +1,7 @@
 import { createRequire } from "module";
 import * as fs from "fs";
 import * as path from "path";
+import { DATA_ROOT } from "@/lib/get-output";
 
 const _require = createRequire(path.resolve(process.cwd(), "__route__"));
 
@@ -32,7 +33,7 @@ export async function POST(req: Request) {
       return Response.json({ error: "preset is required" }, { status: 400 });
     }
 
-    const outputDir = path.resolve(process.cwd(), "../output");
+    const outputDir = path.join(DATA_ROOT, "output");
     const { resolveTokens } = _require("mode-agent/token-resolver");
 
     const timestamp = new Date().toISOString();

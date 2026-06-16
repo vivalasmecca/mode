@@ -1,9 +1,10 @@
 import * as fs from "fs";
 import * as path from "path";
+import { DATA_ROOT } from "@/lib/get-output";
 
 export const dynamic = "force-dynamic";
 
-const contextDir = path.resolve(process.cwd(), "../context");
+const contextDir = path.join(DATA_ROOT, "context");
 
 export async function PUT(req: Request) {
   try {
