@@ -114,6 +114,7 @@ http://localhost:3000/site?ts={ts}&page={label} ← Specific page within a site 
 - **Overview** — shows preset, brief, behavioral tokens, token resolution table, and IA rationale for the latest output file
 - **Concepts** — static reference documentation for all brief fields and system concepts
 - **Build** — the main UI for generating pages (see below)
+- **Brand** — extract product context from URLs, edit brand brief; both feed every build
 - **Palette** — editable palette map grid + brand accent configuration (see below)
 - **Run** — (exists, purpose TBD)
 
@@ -145,6 +146,8 @@ This ensures Node.js resolves `mode-agent/*` from `ui/node_modules/` regardless 
 
 **Site manifest:** After each multi-variant build, `/api/generate/page` writes `output/site-{ts}.json` recording all variant files, preset, and base brief. The `/site` route reads this to power the linked nav bar — no database, just the same flat-file pattern as the page outputs.
 
+**Brand context:** `context/product-context.json` and `context/brand-brief.md` are read by `content-generator.js` on every build — no restart required. If `product_name` is empty, the files are ignored and the generator falls back to hallucinating product truth. If `checkout.primary_url` is set, CTA `href` values in generated pages point to the real checkout URL instead of `#`.
+
 ---
 
 ## File structure (current)
@@ -161,10 +164,14 @@ mode/
 │   ├── ia-planner.js                ← IA proposal (Claude Opus)
 │   ├── component-selector.js        ← component selection (Claude Haiku)
 │   ├── token-resolver.js            ← palette + behavioral token resolution
-│   ├── content-generator.js         ← slot population (Claude Sonnet)
+│   ├── content-generator.js         ← slot population; reads context/ files at build time
+│   ├── brand-context-builder.js     ← ingestion agent: URLs → product-context + brand-brief
 │   └── set-preset.js                ← CLI tool to switch active preset
 ├── tokens/
 │   └── mode-tokens.json             ← palette maps + behavioral tokens per preset + global accent
+├── context/
+│   ├── product-context.json         ← structured product facts (name, features, pricing, checkout URL)
+│   └── brand-brief.md               ← tone, messaging pillars, claim territory (markdown)
 ├── output/
 │   ├── page-{ts}-{variant}.json    ← generated page outputs (one per variant per run)
 │   └── site-{ts}.json              ← site manifest (all variants for a build, written after generation)
@@ -183,6 +190,9 @@ mode/
     │   │   ├── palette/
     │   │   │   ├── page.tsx         ← server: reads mode-tokens.json, passes to client
     │   │   │   └── PaletteClient.tsx ← "use client" — accent + palette map editor
+    │   │   ├── brand/
+    │   │   │   ├── page.tsx         ← server: reads context/ files, passes to client
+    │   │   │   └── BrandClient.tsx  ← "use client" — URL extractor, JSON + markdown editors
     │   │   └── run/page.tsx
     │   ├── preview/page.tsx         ← renders output JSON; supports ?file= param
     │   ├── site/page.tsx            ← site view: fixed dark nav + PreviewClient; reads site manifest
@@ -191,6 +201,9 @@ mode/
     │       ├── palette/
     │       │   ├── route.ts         ← PUT: save palette_map for a preset
     │       │   └── accent/route.ts  ← PUT: save accent tokens
+    │       ├── brand/
+    │       │   ├── ingest/route.ts  ← POST: fetch URLs → extract product context + draft brand brief
+    │       │   └── save/route.ts    ← PUT: write product-context.json and/or brand-brief.md
     │       └── generate/
     │           ├── ia/route.ts      ← POST: N IA proposals in parallel
     │           └── page/route.ts    ← POST: N full pages in parallel
@@ -232,15 +245,18 @@ When dropping back in after time away, start here:
 - **Palette tab** — editable palette map grid (click cells to cycle light/neutral/dark, save to `mode-tokens.json`) and brand accent editor (on_light / on_dark CTA color variants with live preview)
 - **Accent layer** — `accent` block in `mode-tokens.json`; `token-resolver.js` exposes `accent` + `resolveAccent(paletteMode)`; `accent_tokens` written into output JSON per build
 - **Multi-page site view** — after generation, a `site-{ts}.json` manifest is written; `/site?ts=&page=` renders any page from the build with a fixed dark nav bar linking all variants; BuildClient opens one site tab instead of N preview tabs
+- **Brand context agent** — `brand-context-builder.js` fetches URLs and uses Claude to extract `product-context.json` and draft `brand-brief.md`; both are injected into every build; CTAs use `checkout.primary_url` when set
+- **MODE product brief populated** — `context/product-context.json` has the real product one-liner, 10 features, two pricing tiers (MODE Kit $1199 one-time, MODE Studio TBD), and differentiators; checkout URL pending LemonSqueezy setup
 
 ---
 
 ## What's next (as of June 2026)
 
-- **Run the four-page Validator journey** — the site view infrastructure is built; now actually run four builds (awareness → consideration → decision → conversion) with consistent archetype and audience brief. The pages will be navigable via the site nav. This is the demo.
-- **Mover contrast build** — run the same four funnel stages with Mover archetype to make the methodology visible side-by-side. This is the demo moment.
-- **Runtime signal routing** — serving the right variant based on visitor signals. See "Unresolved: runtime signal routing" below. For the demo, routing is infrastructure; the product is the kit.
-- **Product data inputs** — see "Unresolved: product grounding" below.
+- **LemonSqueezy setup** — add `checkout.primary_url` to `context/product-context.json` once the product is configured; CTAs in generated pages will link to the real checkout automatically.
+- **Brand brief** — write `context/brand-brief.md` content (tone, pillars, claim territory); the Brand Setup tab has a markdown editor. This immediately improves copy register in builds.
+- **Run the four-page Validator journey** — the site view and product context are both ready; now run four builds (awareness → consideration → decision → conversion) with the MODE product brief. The pages will be navigable via the site nav and copy will be grounded. This is the demo.
+- **Mover contrast build** — run the same four funnel stages with Mover archetype. This is the demo moment.
+- **Runtime signal routing** — serving the right variant based on visitor signals. See "Unresolved: runtime signal routing" below.
 
 ---
 
@@ -421,7 +437,9 @@ Enhancement layers where existing systems plug in:
 
 ## Product grounding — brand context agent
 
-The current system generates content entirely from the brief (audience, goal, archetype, funnel stage, context mode). The LLM invents product claims, features, stats, and copy with no grounding in actual product truth. This is fine for demos; a real deployment needs real data flowing in.
+The product grounding layer is built. `context/product-context.json` and `context/brand-brief.md` are injected into every build by `content-generator.js`. The MODE product context is populated with a real one-liner, 10 features, two pricing tiers, and differentiators. The brand brief is still a template — needs content.
+
+The original problem: the system generated content entirely from the brief, inventing product claims with no grounding in actual product truth. That's now resolved for MODE itself. For other deployments, the Brand Setup tab handles extraction from URLs.
 
 **Two separate concerns**
 
