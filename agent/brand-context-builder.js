@@ -84,20 +84,19 @@ Return this exact JSON structure (no markdown fences, no explanation):
 {
   "product_name": "",
   "one_liner": "",
-  "features": [{ "name": "", "description": "", "benefit": "" }],
+  "features": [],
   "proof_points": [{ "value": "", "label": "", "source": null }],
   "pricing": {
     "billing_periods": [],
     "annual_discount": null,
     "tiers": [
       {
-        "tier": "",
-        "monthly_price": null,
-        "annual_price": null,
+        "name": "",
+        "price": null,
+        "billing_period": "",
         "description": "",
         "features": [],
-        "cta_label": "",
-        "cta_url": null
+        "cta": ""
       }
     ],
     "trial": { "length": null, "card_required": null }
