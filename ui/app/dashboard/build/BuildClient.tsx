@@ -87,6 +87,9 @@ export default function BuildClient() {
   const [errorMsg, setErrorMsg] = useState("");
   const [regenState, setRegenState] = useState<"idle" | "loading" | "done" | "error">("idle");
   const [regenError, setRegenError] = useState("");
+  const [repalettePreset, setRepalettePreset] = useState("");
+  const [repaletteState, setRepaletteState] = useState<"idle" | "loading" | "done" | "error">("idle");
+  const [repaletteError, setRepaletteError] = useState("");
 
   useEffect(() => {
     fetch("/api/config")
@@ -167,6 +170,27 @@ export default function BuildClient() {
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : String(err));
       setStep("error");
+    }
+  }
+
+  async function handleReppalette() {
+    setRepaletteState("loading");
+    setRepaletteError("");
+    try {
+      const res = await fetch("/api/generate/palette", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ filenames: results.map((r) => r.filename), preset: repalettePreset }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Palette re-application failed");
+      setResults(data.variants);
+      setBuiltSiteUrl(data.siteUrl ?? "");
+      window.open(data.siteUrl, "_blank", "noopener,noreferrer");
+      setRepaletteState("done");
+    } catch (err) {
+      setRepaletteError(err instanceof Error ? err.message : String(err));
+      setRepaletteState("error");
     }
   }
 
@@ -273,6 +297,50 @@ export default function BuildClient() {
             </div>
           )}
 
+          {/* Re-apply palette */}
+          <div className="border border-gray-200 rounded-lg overflow-hidden">
+            <div className="bg-gray-50 border-b border-gray-200 px-4 py-2.5">
+              <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-500">
+                Re-apply Palette
+              </h3>
+            </div>
+            <div className="px-5 py-4 space-y-3">
+              <p className="text-sm text-gray-500">
+                Switch to a different palette approach. Remaps visual emphasis per section — all copy is preserved exactly.
+              </p>
+              <div className="flex items-center gap-3">
+                <select
+                  value={repalettePreset}
+                  onChange={(e) => {
+                    setRepalettePreset(e.target.value);
+                    setRepaletteState("idle");
+                  }}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+                >
+                  <option value="">Select a palette approach…</option>
+                  {allPresets.map((p) => (
+                    <option key={p.key} value={p.key}>
+                      {p.key} — {PALETTE_DRIVER_LABELS[p.paletteDriver] ?? p.paletteDriver}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  onClick={handleReppalette}
+                  disabled={!repalettePreset || repaletteState === "loading"}
+                  className="px-4 py-2 bg-white border border-gray-300 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
+                >
+                  {repaletteState === "loading" ? "Applying…" : "Apply"}
+                </button>
+              </div>
+              {repaletteState === "error" && (
+                <p className="text-sm text-red-600 font-mono break-all">{repaletteError}</p>
+              )}
+              {repaletteState === "done" && (
+                <p className="text-sm text-green-700">Palette applied — site view opened.</p>
+              )}
+            </div>
+          </div>
+
           {/* Individual pages */}
           <div className="border border-gray-200 rounded-lg overflow-hidden">
             <div className="bg-gray-50 border-b border-gray-200 px-4 py-2.5">
@@ -331,6 +399,9 @@ export default function BuildClient() {
               setBuiltSiteUrl("");
               setRegenState("idle");
               setRegenError("");
+              setRepalettePreset("");
+              setRepaletteState("idle");
+              setRepaletteError("");
               setStep("form");
             }}
             className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
