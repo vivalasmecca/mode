@@ -1,0 +1,163 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-06-12T00:00:00.000Z",
+  "brief": {
+    "audience": "SaaS trial users",
+    "archetype": "Validator",
+    "funnel_stage": "decision",
+    "goal": "Convert trial to paid",
+    "context_mode": "organic"
+  },
+  "ia": {
+    "sections": [
+      {
+        "name": "Navigation",
+        "rationale": "Every page opens with navigation — Validator archetype benefits from a minimal nav that focuses attention on conversion at the decision stage.",
+        "candidate_components": ["NavigationHeader"]
+      },
+      {
+        "name": "Hero",
+        "rationale": "Hero section establishes immediate context for the Validator archetype — with-social-proof variant builds instant credibility at the decision moment.",
+        "candidate_components": ["HeroPrimary"]
+      },
+      {
+        "name": "Social proof",
+        "rationale": "Validator archetype requires credibility anchors — logos from recognizable brands reduce friction at the decision stage.",
+        "candidate_components": ["SocialProofBar"]
+      },
+      {
+        "name": "Features",
+        "rationale": "Decision-stage Validators need specific, outcome-oriented feature articulation — 3-col-icon layout supports systematic evaluation.",
+        "candidate_components": ["FeatureGrid"]
+      },
+      {
+        "name": "Testimonial",
+        "rationale": "Validator archetype converts on peer evidence — a single featured testimonial with attribution at the decision stage is the highest-trust signal.",
+        "candidate_components": ["TestimonialSingle"]
+      },
+      {
+        "name": "Pricing",
+        "rationale": "Decision-stage requires clear pricing commitment — highlighted variant focuses the Validator on the recommended plan.",
+        "candidate_components": ["PricingCard"]
+      },
+      {
+        "name": "Conversion",
+        "rationale": "Terminal conversion prompt for Validator at decision stage — split variant with trust signal addresses final objections.",
+        "candidate_components": ["CTABanner"]
+      },
+      {
+        "name": "Footer",
+        "rationale": "Every page closes with footer — with-cta variant recaptures departing Validators on this conversion-critical page.",
+        "candidate_components": ["FooterMinimal"]
+      }
+    ]
+  },
+  "page": [
+    {
+      "section": "Navigation",
+      "component": "NavigationHeader",
+      "variant": "minimal",
+      "reasoning": "Notes specify 'minimal variant for conversion-focused pages — strip nav_links, keep logo and single CTA only' — this is the decision stage.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_links": [],
+        "cta_primary": "[cta_primary]",
+        "cta_secondary": null
+      }
+    },
+    {
+      "section": "Hero",
+      "component": "HeroPrimary",
+      "variant": "with-social-proof",
+      "reasoning": "Notes specify 'with-social-proof variant places LogoStrip immediately below CTACluster' — Validator archetype needs instant credibility.",
+      "slots": {
+        "headline": "[headline]",
+        "subhead": null,
+        "cta_primary": "[cta_primary]",
+        "cta_secondary": null,
+        "media": null,
+        "trust_signal": null
+      }
+    },
+    {
+      "section": "Social proof",
+      "component": "SocialProofBar",
+      "variant": "logos-only",
+      "reasoning": "Notes specify 'logos-only is the highest-frequency placement' — silent credibility without copy overhead for Mover/Validator awareness pages.",
+      "slots": {
+        "headline": null,
+        "logos": [],
+        "quote": null,
+        "attribution": null,
+        "attribution_logo": null
+      }
+    },
+    {
+      "section": "Features",
+      "component": "FeatureGrid",
+      "variant": "3-col-icon",
+      "reasoning": "Notes specify 'Validator benefits from specific, outcome-oriented descriptions — not feature names, benefit statements' — 3-col-icon for 6 features.",
+      "slots": {
+        "headline": "[headline]",
+        "subhead": null,
+        "features": []
+      }
+    },
+    {
+      "section": "Testimonial",
+      "component": "TestimonialSingle",
+      "variant": "with-photo",
+      "reasoning": "Notes specify 'with-photo increases engagement and perceived authenticity' — Validator archetype needs humanized social proof.",
+      "slots": {
+        "quote": "[quote]",
+        "author_name": "[author_name]",
+        "author_title": "[author_title]",
+        "company": "[company]",
+        "photo": null,
+        "company_logo": null
+      }
+    },
+    {
+      "section": "Pricing",
+      "component": "PricingCard",
+      "variant": "highlighted",
+      "reasoning": "Notes specify 'highlighted variant for recommended plan — use sparingly' — Validator at decision stage needs a clear recommended path.",
+      "slots": {
+        "plan_name": "[plan_name]",
+        "badge": null,
+        "price": "[price]",
+        "billing_period": "[billing_period]",
+        "description": null,
+        "features": [],
+        "cta": "[cta]"
+      }
+    },
+    {
+      "section": "Conversion",
+      "component": "CTABanner",
+      "variant": "split",
+      "reasoning": "Notes specify 'split for section-end with directional copy on left, CTA on right' — Validator benefits from subhead and trust_signal addressing final objections.",
+      "slots": {
+        "headline": "[headline]",
+        "subhead": null,
+        "cta_primary": "[cta_primary]",
+        "cta_secondary": null,
+        "trust_signal": null
+      }
+    },
+    {
+      "section": "Footer",
+      "component": "FooterMinimal",
+      "variant": "with-cta",
+      "reasoning": "Notes specify 'with-cta variant recaptures departing users on key conversion pages — use on pricing and signup flows'.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_columns": [],
+        "legal_text": "[legal_text]",
+        "social_links": [],
+        "cta": null
+      }
+    }
+  ],
+  "preview_url": "http://localhost:3000/preview"
+}

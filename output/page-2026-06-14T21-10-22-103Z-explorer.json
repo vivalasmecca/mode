@@ -1,0 +1,129 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at": "2026-06-14T21:10:22.103Z",
+  "variant": "Explorer",
+  "preset": "archetype-driven",
+  "preset_description": "Dark = identity signal. Visual language expresses who the user is. Validator gets authority and weight (heavy dark). Mover gets minimal light with one dark CTA punch. Explorer gets all-neutral — open, spacious, no urgency.",
+  "palette_driver": "archetype",
+  "brief": {
+    "audience": "SaaS trial Users for an Intent-Based, AI-Ready Design System",
+    "goal": "Convert paid to trial",
+    "context_mode": "organic",
+    "funnel_stage": "decision",
+    "archetype": "Explorer"
+  },
+  "behavioral_tokens": {
+    "require_trust_signal": false,
+    "allow_secondary_cta": true,
+    "subhead_policy": "always",
+    "copy_density": "high",
+    "evidence_density": "medium"
+  },
+  "ia": {
+    "sections": [
+      {
+        "name": "Navigation",
+        "rationale": "Navigation — Explorer archetype at decision stage",
+        "candidate_components": [
+          "NavigationHeader"
+        ]
+      },
+      {
+        "name": "Features",
+        "rationale": "Features — Explorer archetype at decision stage",
+        "candidate_components": [
+          "FeatureGrid"
+        ]
+      },
+      {
+        "name": "Footer",
+        "rationale": "Footer — Explorer archetype at decision stage",
+        "candidate_components": [
+          "FooterMinimal"
+        ]
+      }
+    ]
+  },
+  "page": [
+    {
+      "section": "Navigation",
+      "component": "NavigationHeader",
+      "variant": "minimal",
+      "reasoning": "Explorer archetype at decision stage benefits from conversion focus. Notes specify: 'minimal variant for conversion-focused pages — strip nav_links, keep logo and single CTA only.' This reduces friction and maintains the persistent CTA identified as 'the most converted element on most SaaS pages.'",
+      "slots": {
+        "logo": "[logo]",
+        "nav_links": [],
+        "cta_primary": {
+          "label": "Upgrade to Pro",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "Explore the docs",
+          "href": "#"
+        }
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Features",
+      "component": "FeatureGrid",
+      "variant": "2-col-heavy",
+      "reasoning": "Explorer archetype requires deeper engagement with product capabilities. Notes state: 'Explorer variant uses 2-col-heavy with longer copy per feature,' enabling exploratory users to understand outcome-oriented benefits rather than feature names alone.",
+      "slots": {
+        "headline": "Everything your team needs to build with intent",
+        "subhead": "MODE is built for product teams who want their design system to understand context — not just enforce consistency.",
+        "features": [
+          {
+            "icon": "🧠",
+            "title": "Intent-Aware Components",
+            "description": "Every component in MODE carries semantic intent metadata, so your UI can respond to what a user is trying to do — not just what they clicked. This means fewer edge cases, more coherent flows, and a system that scales gracefully as your product complexity grows."
+          },
+          {
+            "icon": "⚡",
+            "title": "AI-Ready Token Architecture",
+            "description": "MODE's design token layer is structured for LLM consumption from the ground up. Feed your token schema directly into AI-assisted workflows and get outputs that actually respect your brand constraints — no manual correction loops required."
+          },
+          {
+            "icon": "🔄",
+            "title": "Adaptive State Management",
+            "description": "Components automatically surface the right variant based on session context, user state, and interaction history. Reduce the number of conditional branches your engineers write by encoding intent logic directly into the component contract."
+          },
+          {
+            "icon": "📐",
+            "title": "Composable Layout Primitives",
+            "description": "Build complex, responsive interfaces from a set of layout primitives that compose predictably at every breakpoint. MODE's grid and spacing system is constraint-based, so your layouts stay intentional — not accidental — as designs evolve."
+          },
+          {
+            "icon": "🔒",
+            "title": "Accessibility Baked In",
+            "description": "WCAG 2.2 AA compliance isn't a checklist you run at the end — it's embedded in every interactive component's default behaviour. Keyboard navigation, ARIA roles, and focus management are handled so your team can ship confidently without specialist audits on every release."
+          },
+          {
+            "icon": "📊",
+            "title": "Usage Analytics Integration",
+            "description": "Understand how your design system is actually being used across products with built-in adoption telemetry. Identify which components drive the most value, where teams diverge from the system, and where to focus your next iteration cycle."
+          }
+        ]
+      },
+      "palette": "neutral"
+    },
+    {
+      "section": "Footer",
+      "component": "FooterMinimal",
+      "variant": "with-cta",
+      "reasoning": "Decision-stage trial conversion requires recovery of departing users. Notes specify: 'with-cta variant recaptures departing users on key conversion pages — use on pricing and signup flows,' making this essential for converting paid-to-trial decisions.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_columns": [],
+        "legal_text": "© 2025 MODE Design Systems Inc. All rights reserved.",
+        "social_links": [],
+        "cta": {
+          "label": "Upgrade your trial",
+          "href": "#"
+        }
+      },
+      "palette": "light"
+    }
+  ],
+  "preview_url": "/preview?file=page-2026-06-14T21-10-22-103Z-explorer.json"
+}

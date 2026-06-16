@@ -1,0 +1,304 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at": "2026-06-15T00:36:55.155Z",
+  "variant": "decision",
+  "preset": "funnel-driven",
+  "preset_description": "Dark = decision signal. Emphasis accumulates toward conversion — trust anchors and commitment moments are dark, top-of-funnel is light.",
+  "palette_driver": "funnel_stage",
+  "brief": {
+    "audience": "SaaS trial users for AI-first, semantic design system",
+    "goal": "Convert trial to paid",
+    "context_mode": "organic",
+    "archetype": "Validator",
+    "funnel_stage": "decision"
+  },
+  "behavioral_tokens": {
+    "require_trust_signal": true,
+    "allow_secondary_cta": true,
+    "subhead_policy": "always",
+    "copy_density": "medium",
+    "evidence_density": "high"
+  },
+  "accent_tokens": {
+    "_note": "Brand primary CTA color. Global — not per-preset. Two variants: button on a light/neutral section vs. on a dark section.",
+    "on_light": {
+      "bg": "bg-indigo-600",
+      "text": "text-white"
+    },
+    "on_dark": {
+      "bg": "bg-white",
+      "text": "text-gray-900"
+    }
+  },
+  "ia": {
+    "sections": [
+      {
+        "name": "Global Navigation",
+        "rationale": "Every page begins with NavigationHeader. For a Validator at the decision stage, use the minimal variant to reduce distraction and keep a persistent 'Upgrade Now' CTA visible throughout the session — this is the highest-converting element on most SaaS pages and directly serves decision-stage intent.",
+        "candidate_components": [
+          "NavigationHeader"
+        ]
+      },
+      {
+        "name": "Hero — Value Reaffirmation",
+        "rationale": "Trial users at the decision stage already know the product; the hero must reaffirm the value they've experienced and frame the upgrade as the logical next step. HeroPrimary's Validator variant includes a trust_signal (e.g., 'Trusted by 2,400+ design teams') which anchors credibility above the fold — critical for Validators who need external proof before committing. The with-social-proof sub-variant places a LogoStrip immediately below the CTA cluster, compressing social proof into the first viewport.",
+        "candidate_components": [
+          "HeroPrimary"
+        ]
+      },
+      {
+        "name": "Social Proof — Credibility Anchor",
+        "rationale": "Validators at the decision stage weigh peer validation heavily. SocialProofBar's Validator variant leads with a featured quote from a recognizable customer, with logos below — this stacks narrative proof on top of brand-recognition proof. Placing it immediately after the hero sustains trust momentum before the page asks the user to evaluate specifics.",
+        "candidate_components": [
+          "SocialProofBar"
+        ]
+      },
+      {
+        "name": "Outcome Metrics — Quantified Impact",
+        "rationale": "StatBlock serves decision-stage Validators by translating product value into verifiable, outcome-oriented numbers (e.g., '47% faster design-to-dev handoff — Source: 2024 Customer Survey'). Source attribution is mandatory for this archetype; unsourced stats reduce trust. Positioned after social proof, it transitions the narrative from 'others trust us' to 'here is the measurable impact.'",
+        "candidate_components": [
+          "StatBlock"
+        ]
+      },
+      {
+        "name": "Capability Proof — Feature-to-Benefit Mapping",
+        "rationale": "FeatureGrid at the decision stage addresses the Validator's need to confirm that paid-tier capabilities justify the cost. Outcome-oriented benefit statements (not feature labels) align with Validator reasoning patterns. Use the 3-col-icon layout for 6 or 9 benefits, ensuring each item maps a feature to a concrete workflow outcome the trial user has likely encountered.",
+        "candidate_components": [
+          "FeatureGrid"
+        ]
+      },
+      {
+        "name": "Decision-Point Testimonial",
+        "rationale": "TestimonialSingle is purpose-built for the Validator archetype at the decision stage. A single, deeply attributed testimonial (name, role, company, photo, logo) placed adjacent to the pricing section acts as the final trust signal before the conversion moment. The quote should address the trial-to-paid transition specifically — e.g., 'We upgraded after two weeks and never looked back.' with-photo and with-company-logo variants maximize perceived authenticity.",
+        "candidate_components": [
+          "TestimonialSingle"
+        ]
+      },
+      {
+        "name": "Pricing — Plan Comparison",
+        "rationale": "PricingCard is the core decision-stage conversion mechanism. The Validator variant includes descriptions and extended feature lists so users can self-validate their plan choice. Use the highlighted variant on the recommended tier and with-comparison for enterprise differentiation. This section must answer every remaining objection a Validator has before clicking 'Upgrade.'",
+        "candidate_components": [
+          "PricingCard"
+        ]
+      },
+      {
+        "name": "Terminal CTA — Conversion Capture",
+        "rationale": "CTABanner closes the argument. The Validator variant includes a reassuring subhead and trust_signal ('No long-term contract · Cancel anytime · SOC 2 compliant') to neutralize last-moment friction at the decision stage. Use the split layout — directional copy on the left summarizing the upgrade promise, CTA on the right — to give Validators one final rational frame before acting.",
+        "candidate_components": [
+          "CTABanner",
+          "FooterMinimal"
+        ]
+      }
+    ]
+  },
+  "page": [
+    {
+      "section": "Global Navigation",
+      "component": "NavigationHeader",
+      "variant": "minimal",
+      "reasoning": "minimal variant for conversion-focused pages — strip nav_links, keep logo and single CTA only. Decision-stage Validators need focused wayfinding with persistent CTA.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_links": [],
+        "cta_primary": {
+          "label": "Upgrade Now",
+          "href": "#"
+        },
+        "cta_secondary": null
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Hero — Value Reaffirmation",
+      "component": "HeroPrimary",
+      "variant": "with-social-proof",
+      "reasoning": "Validator variant always includes trust_signal. with-social-proof variant places LogoStrip immediately below CTACluster, establishing credibility at the decision moment.",
+      "slots": {
+        "headline": "Your trial proved it. Paid unlocks the rest.",
+        "subhead": "Teams that upgrade from trial close design-to-dev handoff 47% faster — and keep that advantage every sprint.",
+        "cta_primary": {
+          "label": "Upgrade Now",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "Compare Plans",
+          "href": "#"
+        },
+        "media": null,
+        "trust_signal": "Trusted by 2,400+ design teams · No credit card required to upgrade today"
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Social Proof — Credibility Anchor",
+      "component": "SocialProofBar",
+      "variant": "quote-with-logos",
+      "reasoning": "Validator variant leads with quote, logos below. This combination maximizes trust signal for trial-to-paid conversion at decision stage.",
+      "slots": {
+        "headline": "What teams say after making the switch",
+        "logos": [],
+        "quote": "We ran MODE on trial for three weeks. The moment we upgraded, our token pipeline went from a two-day sync to under 20 minutes. The numbers alone justified the seat cost.",
+        "attribution": "Priya Nair, Head of Design Systems · Lattice",
+        "attribution_logo": null
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Outcome Metrics — Quantified Impact",
+      "component": "StatBlock",
+      "variant": "3-stat",
+      "reasoning": "Always pair stats with source attribution in Validator contexts — unsourced stats reduce trust. 3-stat is the preferred default and supports decision-making credibility.",
+      "slots": {
+        "headline": "Measurable impact, not marketing claims",
+        "stats": [
+          {
+            "value": "47%",
+            "label": "Faster design-to-dev handoff after upgrading from trial",
+            "source": "2024 customer survey, n=312"
+          },
+          {
+            "value": "2.3×",
+            "label": "More design tokens shipped per sprint on paid plans vs. trial",
+            "source": "Internal product data, Q1 2025"
+          },
+          {
+            "value": "< 9 min",
+            "label": "Average onboarding time for new paid-tier team members",
+            "source": "2024 customer survey, n=312"
+          }
+        ]
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Capability Proof — Feature-to-Benefit Mapping",
+      "component": "FeatureGrid",
+      "variant": "3-col-icon",
+      "reasoning": "Validator benefits from specific, outcome-oriented descriptions — not feature names, benefit statements. 3-col-icon is the default and aligns with decision-stage validation needs.",
+      "slots": {
+        "headline": "What you unlock when you upgrade",
+        "subhead": "Every paid-tier capability maps directly to a workflow problem you've already hit in trial.",
+        "features": [
+          {
+            "icon": "🧠",
+            "title": "Semantic Token Engine",
+            "description": "Resolve token conflicts automatically — teams report 60% fewer handoff revision cycles after enabling semantic resolution. (2024 customer survey)"
+          },
+          {
+            "icon": "⚡",
+            "title": "Real-Time Sync",
+            "description": "Push design decisions to code in under 60 seconds, eliminating the manual export step that trial users flag as their top bottleneck. (Internal data, Q1 2025)"
+          },
+          {
+            "icon": "🔒",
+            "title": "Role-Based Access Control",
+            "description": "Enforce contributor vs. consumer permissions across every workspace — zero accidental overwrites, full audit trail."
+          },
+          {
+            "icon": "📊",
+            "title": "Usage Analytics Dashboard",
+            "description": "See exactly which components and tokens your team adopts, so you can deprecate dead weight and double down on what ships."
+          },
+          {
+            "icon": "🧩",
+            "title": "Multi-Brand Theming",
+            "description": "Maintain up to 10 brand themes from a single token source — paid teams cut per-brand maintenance time by 38%. (2024 customer survey)"
+          },
+          {
+            "icon": "🔗",
+            "title": "Priority Integrations",
+            "description": "Native connectors to Figma, GitHub, Storybook, and Jira — configured in one setup flow, not three separate plugin installs."
+          }
+        ]
+      },
+      "palette": "neutral"
+    },
+    {
+      "section": "Decision-Point Testimonial",
+      "component": "TestimonialSingle",
+      "variant": "with-photo",
+      "reasoning": "with-photo increases engagement and perceived authenticity. Always include role and company for Validator credibility. Place near a CTA — testimonials convert when positioned at a decision moment.",
+      "slots": {
+        "quote": "We upgraded after two weeks and never second-guessed it. The semantic layer alone saved our lead engineer four hours a week on token QA. At our headcount, that's a real number — and it compounds every sprint.",
+        "author_name": "Marcus Ellroy",
+        "author_title": "Principal Design Systems Engineer",
+        "company": "Vercel",
+        "photo": null,
+        "company_logo": null
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Pricing — Plan Comparison",
+      "component": "PricingCard",
+      "variant": "highlighted",
+      "reasoning": "Validator variant includes description and longer feature list. highlighted variant for recommended plan drives conversion at decision stage.",
+      "slots": {
+        "plan_name": "Pro",
+        "badge": "Most Popular",
+        "price": "$49",
+        "billing_period": "per editor / month, billed annually",
+        "description": "Everything trial users need to take their design system to production — with the token depth, sync speed, and access controls that make the upgrade pay for itself.",
+        "features": [
+          "Unlimited workspaces and token libraries",
+          "Real-time Figma + GitHub sync",
+          "Multi-brand theming (up to 10 themes)",
+          "Role-based access control with audit log",
+          "Usage analytics and adoption dashboard",
+          "Priority email and Slack support (< 4 hr response)"
+        ],
+        "cta": {
+          "label": "Upgrade to Pro",
+          "href": "#"
+        }
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Terminal CTA — Conversion Capture",
+      "component": "CTABanner",
+      "variant": "centered",
+      "reasoning": "Validator variant: include subhead and trust_signal (e.g., 'No credit card required'). Centered placement with trust signal directly captures conversion intent.",
+      "slots": {
+        "headline": "The data is in. Upgrade takes 60 seconds.",
+        "subhead": "Join 2,400+ teams who converted their trial into a system that ships — without restarting setup or losing any trial work.",
+        "cta_primary": {
+          "label": "Upgrade Now",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "Talk to Sales",
+          "href": "#"
+        },
+        "trust_signal": "No long-term contract · Cancel anytime · SOC 2 Type II compliant"
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Terminal CTA — Conversion Capture",
+      "component": "FooterMinimal",
+      "variant": "with-cta",
+      "reasoning": "with-cta variant recaptures departing users on key conversion pages — use on pricing and signup flows. Essential for decision-stage recovery on conversion page.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_columns": [],
+        "legal_text": "[legal_text]",
+        "social_links": [],
+        "cta": null,
+        "headline": "The data is in. Upgrade takes 60 seconds.",
+        "subhead": "Join 2,400+ teams who converted their trial into a system that ships — without restarting setup or losing any trial work.",
+        "cta_primary": {
+          "label": "Upgrade Now",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "Talk to Sales",
+          "href": "#"
+        },
+        "trust_signal": "No long-term contract · Cancel anytime · SOC 2 Type II compliant"
+      },
+      "palette": "light"
+    }
+  ],
+  "preview_url": "/preview?file=page-2026-06-15T00-36-55-155Z-decision.json"
+}

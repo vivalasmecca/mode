@@ -1,0 +1,198 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at": "2026-06-15T07:34:20.902Z",
+  "variant": "awareness",
+  "preset": "funnel-driven",
+  "preset_description": "Dark = decision signal. Emphasis accumulates toward conversion — trust anchors and commitment moments are dark, top-of-funnel is light.",
+  "palette_driver": "funnel_stage",
+  "brief": {
+    "audience": "Ssas trial user for an ai-backed design system",
+    "goal": "Convert to trial",
+    "context_mode": "organic",
+    "archetype": "Mover",
+    "funnel_stage": "awareness"
+  },
+  "behavioral_tokens": {
+    "require_trust_signal": false,
+    "allow_secondary_cta": false,
+    "subhead_policy": "optional",
+    "copy_density": "low",
+    "evidence_density": "low"
+  },
+  "accent_tokens": {
+    "_note": "Brand primary CTA color. Global — not per-preset. Two variants: button on a light/neutral section vs. on a dark section.",
+    "on_light": {
+      "bg": "bg-indigo-600",
+      "text": "text-white"
+    },
+    "on_dark": {
+      "bg": "bg-white",
+      "text": "text-gray-900"
+    }
+  },
+  "ia": {
+    "sections": [
+      {
+        "name": "Global Navigation",
+        "rationale": "Every page opens with NavigationHeader. For a Mover archetype at the awareness stage, the minimal variant is ideal — strip distracting nav links, keep the logo for brand recognition and a single persistent 'Start Free Trial' CTA. Movers decide fast; the nav CTA must be visible from the first pixel.",
+        "candidate_components": [
+          "NavigationHeader"
+        ]
+      },
+      {
+        "name": "Hero — Single Message, Single Action",
+        "rationale": "HeroPrimary is the only hero component eligible for the Mover archetype at the awareness stage. The Mover variant suppresses the subhead and secondary CTA — one bold headline that names the transformation ('Ship design 10x faster with AI'), one primary CTA ('Start Free Trial'). At awareness, the job is instant context and immediate momentum, not explanation.",
+        "candidate_components": [
+          "HeroPrimary"
+        ]
+      },
+      {
+        "name": "Silent Credibility Strip",
+        "rationale": "SocialProofBar is explicitly tagged for Mover archetype and awareness funnel stage. The Mover variant is logos-only with no headline — silent credibility that lands in under a second. Placed directly below HeroPrimary per component notes, it answers 'Who else uses this?' before the Mover's attention drifts. At awareness, recognized logos do more trust-building than paragraphs of copy.",
+        "candidate_components": [
+          "SocialProofBar"
+        ]
+      },
+      {
+        "name": "Outcome Metrics — Pure Impact",
+        "rationale": "StatBlock supports the Mover archetype. While its primary funnel stages are consideration/decision, it serves a critical bridging role: for Movers at awareness, unsourced headline metrics ('3x faster design handoff', '50% fewer design iterations') create visceral momentum. The Mover variant suppresses sources and headlines — just three bold numbers that quantify the promise made in the hero. This converts awareness-stage curiosity into 'I want that' urgency.",
+        "candidate_components": [
+          "StatBlock"
+        ]
+      },
+      {
+        "name": "Hero Reinforcement — Secondary Context",
+        "rationale": "A second HeroPrimary instance (with-social-proof variant) can serve as a mid-page re-engagement point for Movers at awareness. This section reframes the value proposition from a different angle — e.g., shifting from speed ('Ship faster') to intelligence ('AI that learns your design system'). Movers respond to concentrated bursts of clarity, and a second hero-weight statement prevents the page from drifting into detail the Mover hasn't asked for yet.",
+        "candidate_components": [
+          "HeroPrimary"
+        ]
+      },
+      {
+        "name": "Closing Conversion Banner",
+        "rationale": "CTABanner is eligible for the Mover archetype. The Mover variant uses a strong headline and a single CTA with no subhead — terminal velocity toward conversion. Even at the awareness stage, Movers who've scrolled this far have self-qualified; this captures the decisive ones. Placed as the final content section before the footer, it serves as the page's gravitational endpoint.",
+        "candidate_components": [
+          "CTABanner"
+        ]
+      },
+      {
+        "name": "Footer",
+        "rationale": "Every page closes with FooterMinimal. The with-cta variant is appropriate here — it recaptures departing Movers who scrolled past the CTABanner. At awareness stage the recovery CTA reinforces the trial prompt one last time. Minimal styling keeps it clean and fast, matching the Mover's low-friction expectations.",
+        "candidate_components": [
+          "FooterMinimal"
+        ]
+      }
+    ]
+  },
+  "page": [
+    {
+      "section": "Global Navigation",
+      "component": "NavigationHeader",
+      "variant": "minimal",
+      "reasoning": "minimal variant for conversion-focused pages — strip nav_links, keep logo and single CTA only. Mover archetype in awareness stage requires focused conversion intent.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_links": [],
+        "cta_primary": {
+          "label": "Start Free Trial",
+          "href": "#"
+        },
+        "cta_secondary": null
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Hero — Single Message, Single Action",
+      "component": "HeroPrimary",
+      "variant": "text-only",
+      "reasoning": "Mover variant suppresses subhead and cta_secondary — one message, one action. Direct messaging aligns with Mover intent and organic awareness context.",
+      "slots": {
+        "headline": "Ship design 10x faster with AI.",
+        "subhead": null,
+        "cta_primary": {
+          "label": "Start Free Trial",
+          "href": "#"
+        },
+        "cta_secondary": null,
+        "media": null,
+        "trust_signal": "No credit card required."
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Silent Credibility Strip",
+      "component": "SocialProofBar",
+      "variant": "logos-only",
+      "reasoning": "Mover variant is logos-only, no headline — silent credibility. logos-only is the highest-frequency placement; drop directly below HeroPrimary on awareness pages.",
+      "slots": {
+        "headline": null,
+        "logos": [],
+        "quote": null,
+        "attribution": null,
+        "attribution_logo": null
+      },
+      "palette": "neutral"
+    },
+    {
+      "section": "Outcome Metrics — Pure Impact",
+      "component": "StatBlock",
+      "variant": "3-stat",
+      "reasoning": "Mover variant suppresses sources and headline; pure metric impact. 3-stat is the preferred default for high-impact metric clusters.",
+      "slots": {
+        "headline": null,
+        "stats": [
+          {
+            "value": "3x",
+            "label": "Faster design handoff",
+            "source": null
+          },
+          {
+            "value": "61%",
+            "label": "Fewer design iterations",
+            "source": null
+          },
+          {
+            "value": "< 9 min",
+            "label": "From prompt to production component",
+            "source": null
+          }
+        ]
+      },
+      "palette": "neutral"
+    },
+    {
+      "section": "Closing Conversion Banner",
+      "component": "CTABanner",
+      "variant": "minimal",
+      "reasoning": "Mover variant: strong headline, single CTA, no subhead. minimal for high-frequency use — appropriate for conversion-focused trial signup flow.",
+      "slots": {
+        "headline": "AI that learns your design system.",
+        "subhead": null,
+        "cta_primary": {
+          "label": "Start Free Trial",
+          "href": "#"
+        },
+        "cta_secondary": null,
+        "trust_signal": null
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Footer",
+      "component": "FooterMinimal",
+      "variant": "with-cta",
+      "reasoning": "with-cta variant recaptures departing users on key conversion pages — use on pricing and signup flows. Essential for trial conversion objective.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_columns": [],
+        "legal_text": "© 2025 MODE. All rights reserved.",
+        "social_links": [],
+        "cta": {
+          "label": "Start Free Trial",
+          "href": "#"
+        }
+      },
+      "palette": "light"
+    }
+  ],
+  "preview_url": "/preview?file=page-2026-06-15T07-34-20-902Z-awareness.json"
+}

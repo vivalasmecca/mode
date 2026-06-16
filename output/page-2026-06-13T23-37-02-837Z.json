@@ -1,0 +1,177 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-06-13T23:37:02.837Z",
+  "brief": {
+    "audience": "SaaS trial users",
+    "archetype": "Validator",
+    "funnel_stage": "decision",
+    "goal": "Convert trial to paid",
+    "context_mode": "organic"
+  },
+  "ia": {
+    "sections": [
+      {
+        "name": "Navigation",
+        "rationale": "Opens the page with minimal navigation optimized for decision-stage Validator users. The persistent CTA in the nav (e.g., 'Upgrade Now') serves as the highest-converting element throughout the session, giving trial users a constant path to paid conversion without distraction.",
+        "candidate_components": [
+          "NavigationHeader"
+        ]
+      },
+      {
+        "name": "Hero — Value Confirmation",
+        "rationale": "Establishes the core conversion argument above the fold for Validator users at the decision stage. The Validator variant includes a trust_signal (e.g., '10,000+ teams already upgraded') to immediately validate the decision to convert. Anchors the page with a clear, confident statement that reframes the trial experience as proof the product delivers.",
+        "candidate_components": [
+          "HeroPrimary"
+        ]
+      },
+      {
+        "name": "Social Proof — Credibility Anchor",
+        "rationale": "Placed directly after the hero to reinforce the opening claim with recognizable proof. The Validator variant leads with a featured quote from a named customer and displays logos below, providing the layered credibility that Validators require before advancing through a decision-stage page. Quote-first format ensures the trust argument is read, not just scanned.",
+        "candidate_components": [
+          "SocialProofBar"
+        ]
+      },
+      {
+        "name": "Outcome Metrics",
+        "rationale": "Validator users at the decision stage need quantified evidence that the product delivers measurable results. StatBlock with source attribution (required for Validator contexts) transforms abstract value claims into verifiable proof points — e.g., '47% faster onboarding (source: 2024 customer survey)'. Positioned after social proof to deepen the evidence layer before feature evaluation.",
+        "candidate_components": [
+          "StatBlock"
+        ]
+      },
+      {
+        "name": "Feature Value Grid",
+        "rationale": "Articulates what the paid plan unlocks using outcome-oriented benefit statements, which the Validator archetype responds to more than feature labels. At the decision stage, trial users are comparing what they have vs. what they'd get — FeatureGrid in list-style or 3-col-icon format maps this comparison clearly and reduces ambiguity about upgrade value.",
+        "candidate_components": [
+          "FeatureGrid"
+        ]
+      },
+      {
+        "name": "Customer Testimonial — Decision Moment",
+        "rationale": "TestimonialSingle is the primary trust signal for the Validator archetype. Placed strategically near the pricing section, it serves as the final piece of peer validation before the conversion decision. The with-photo and with-company-logo variants maximize perceived authenticity. Attribution with role and company is mandatory — anonymous quotes carry no weight for Validators.",
+        "candidate_components": [
+          "TestimonialSingle"
+        ]
+      },
+      {
+        "name": "Pricing — Upgrade Path",
+        "rationale": "The decisive conversion element for decision-stage Validator trial users. The Validator variant includes plan descriptions and longer feature lists so users can self-verify that the paid tier justifies the cost. The highlighted variant marks the recommended plan. with-comparison supports enterprise-tier differentiation. This section must answer every remaining 'is it worth it?' question.",
+        "candidate_components": [
+          "PricingCard"
+        ]
+      },
+      {
+        "name": "Final Conversion CTA",
+        "rationale": "Terminal action prompt for Validator users who have scrolled through the full decision-stage argument. The Validator variant includes a reassuring subhead and trust_signal (e.g., 'Cancel anytime — no long-term contract') to neutralize last-moment hesitation. The split variant pairs directional copy with a single CTA, giving the page a definitive close before the footer.",
+        "candidate_components": [
+          "CTABanner",
+          "FooterMinimal"
+        ]
+      }
+    ]
+  },
+  "page": [
+    {
+      "section": "Navigation",
+      "component": "NavigationHeader",
+      "variant": "full",
+      "reasoning": null,
+      "slots": {
+        "logo": "[logo]",
+        "nav_links": [],
+        "cta_primary": "[cta_primary]",
+        "cta_secondary": null
+      }
+    },
+    {
+      "section": "Hero — Value Confirmation",
+      "component": "HeroPrimary",
+      "variant": "with-social-proof",
+      "reasoning": null,
+      "slots": {
+        "headline": "[headline]",
+        "subhead": null,
+        "cta_primary": "[cta_primary]",
+        "cta_secondary": null,
+        "media": null,
+        "trust_signal": null
+      }
+    },
+    {
+      "section": "Social Proof — Credibility Anchor",
+      "component": "SocialProofBar",
+      "variant": "logos-only",
+      "reasoning": null,
+      "slots": {
+        "headline": null,
+        "logos": [],
+        "quote": null,
+        "attribution": null,
+        "attribution_logo": null
+      }
+    },
+    {
+      "section": "Outcome Metrics",
+      "component": "StatBlock",
+      "variant": "with-source",
+      "reasoning": null,
+      "slots": {
+        "headline": null,
+        "stats": []
+      }
+    },
+    {
+      "section": "Feature Value Grid",
+      "component": "FeatureGrid",
+      "variant": "3-col-icon",
+      "reasoning": null,
+      "slots": {
+        "headline": null,
+        "subhead": null,
+        "features": []
+      }
+    },
+    {
+      "section": "Customer Testimonial — Decision Moment",
+      "component": "TestimonialSingle",
+      "variant": "with-photo",
+      "reasoning": null,
+      "slots": {
+        "quote": "[quote]",
+        "author_name": "[author_name]",
+        "author_title": "[author_title]",
+        "company": "[company]",
+        "photo": null,
+        "company_logo": null
+      }
+    },
+    {
+      "section": "Pricing — Upgrade Path",
+      "component": "PricingCard",
+      "variant": "highlighted",
+      "reasoning": null,
+      "slots": {
+        "plan_name": "[plan_name]",
+        "badge": null,
+        "price": "[price]",
+        "billing_period": "[billing_period]",
+        "description": null,
+        "features": [],
+        "cta": "[cta]"
+      }
+    },
+    {
+      "section": "Final Conversion CTA",
+      "component": "CTABanner",
+      "variant": "centered",
+      "reasoning": null,
+      "slots": {
+        "headline": "[headline]",
+        "subhead": null,
+        "cta_primary": "[cta_primary]",
+        "cta_secondary": null,
+        "trust_signal": null
+      }
+    }
+  ],
+  "preview_url": "http://localhost:3000/preview"
+}

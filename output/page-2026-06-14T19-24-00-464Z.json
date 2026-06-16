@@ -1,0 +1,130 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at": "2026-06-14T19:24:00.464Z",
+  "preset": "archetype-driven",
+  "preset_description": "Dark = identity signal. Visual language expresses who the user is. Validator gets authority and weight (heavy dark). Mover gets minimal light with one dark CTA punch. Explorer gets all-neutral — open, spacious, no urgency.",
+  "palette_driver": "archetype",
+  "brief": {
+    "audience": "SaaS trial users for an intent-ready design system",
+    "goal": "Convert to trial",
+    "archetype": "Mover",
+    "funnel_stage": "consideration",
+    "context_mode": "organic"
+  },
+  "behavioral_tokens": {
+    "require_trust_signal": false,
+    "allow_secondary_cta": false,
+    "subhead_policy": "optional",
+    "copy_density": "low",
+    "evidence_density": "low"
+  },
+  "ia": {
+    "sections": [
+      {
+        "name": "Navigation",
+        "rationale": "Navigation — Mover archetype at consideration stage",
+        "candidate_components": [
+          "NavigationHeader"
+        ]
+      },
+      {
+        "name": "Hero",
+        "rationale": "Hero — Mover archetype at consideration stage",
+        "candidate_components": [
+          "HeroPrimary"
+        ]
+      },
+      {
+        "name": "Social proof",
+        "rationale": "Social proof — Mover archetype at consideration stage",
+        "candidate_components": [
+          "SocialProofBar"
+        ]
+      },
+      {
+        "name": "Features",
+        "rationale": "Features — Mover archetype at consideration stage",
+        "candidate_components": [
+          "StatBlock"
+        ]
+      },
+      {
+        "name": "Footer",
+        "rationale": "Footer — Mover archetype at consideration stage",
+        "candidate_components": [
+          "FooterMinimal"
+        ]
+      }
+    ]
+  },
+  "page": [
+    {
+      "section": "Navigation",
+      "component": "NavigationHeader",
+      "variant": "minimal",
+      "reasoning": null,
+      "slots": {
+        "logo": "[logo]",
+        "nav_links": [],
+        "cta_primary": "[cta_primary]",
+        "cta_secondary": null
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Hero",
+      "component": "HeroPrimary",
+      "variant": "text-only",
+      "reasoning": null,
+      "slots": {
+        "headline": "[headline]",
+        "subhead": null,
+        "cta_primary": "[cta_primary]",
+        "cta_secondary": null,
+        "media": null,
+        "trust_signal": null
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Social proof",
+      "component": "SocialProofBar",
+      "variant": "logos-only",
+      "reasoning": null,
+      "slots": {
+        "headline": null,
+        "logos": [],
+        "quote": null,
+        "attribution": null,
+        "attribution_logo": null
+      },
+      "palette": "neutral"
+    },
+    {
+      "section": "Features",
+      "component": "StatBlock",
+      "variant": "3-stat",
+      "reasoning": null,
+      "slots": {
+        "headline": null,
+        "stats": []
+      },
+      "palette": "neutral"
+    },
+    {
+      "section": "Footer",
+      "component": "FooterMinimal",
+      "variant": "minimal",
+      "reasoning": null,
+      "slots": {
+        "logo": "[logo]",
+        "nav_columns": [],
+        "legal_text": "[legal_text]",
+        "social_links": [],
+        "cta": null
+      },
+      "palette": "light"
+    }
+  ],
+  "preview_url": "http://localhost:3001/preview"
+}

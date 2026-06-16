@@ -1,0 +1,270 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at": "2026-06-15T00:36:55.155Z",
+  "variant": "consideration",
+  "preset": "funnel-driven",
+  "preset_description": "Dark = decision signal. Emphasis accumulates toward conversion — trust anchors and commitment moments are dark, top-of-funnel is light.",
+  "palette_driver": "funnel_stage",
+  "brief": {
+    "audience": "SaaS trial users for AI-first, semantic design system",
+    "goal": "Convert trial to paid",
+    "context_mode": "organic",
+    "archetype": "Validator",
+    "funnel_stage": "consideration"
+  },
+  "behavioral_tokens": {
+    "require_trust_signal": true,
+    "allow_secondary_cta": true,
+    "subhead_policy": "always",
+    "copy_density": "medium",
+    "evidence_density": "high"
+  },
+  "accent_tokens": {
+    "_note": "Brand primary CTA color. Global — not per-preset. Two variants: button on a light/neutral section vs. on a dark section.",
+    "on_light": {
+      "bg": "bg-indigo-600",
+      "text": "text-white"
+    },
+    "on_dark": {
+      "bg": "bg-white",
+      "text": "text-gray-900"
+    }
+  },
+  "ia": {
+    "sections": [
+      {
+        "name": "Global Navigation",
+        "rationale": "NavigationHeader is required as the page opener. For a Validator archetype in the consideration stage, the full variant provides wayfinding confidence and a persistent CTA (e.g., 'Upgrade Now') that reassures trial users they can act at any moment. Validators need to feel oriented before they'll engage with an argument.",
+        "candidate_components": [
+          "NavigationHeader"
+        ]
+      },
+      {
+        "name": "Hero — Credibility-Led Value Proposition",
+        "rationale": "The opening statement must immediately validate the trial user's interest. HeroPrimary's Validator variant includes a trust_signal above the fold, anchoring credibility before the argument begins — critical for consideration-stage users who are actively comparing options. HeroStatement is an alternative when the product philosophy itself is the differentiator; its Validator variant uses an eyebrow to establish authority before the headline lands. Both serve the Validator's need for evidence-backed framing at the consideration stage.",
+        "candidate_components": [
+          "HeroPrimary",
+          "HeroStatement"
+        ]
+      },
+      {
+        "name": "Social Proof — Authority Anchoring",
+        "rationale": "Immediately after the hero, Validators in the consideration stage need external validation that credible companies or individuals endorse the product. SocialProofBar's Validator variant leads with a featured quote and logos below, shifting the burden of proof from the brand's own claims to third-party endorsement. Placing this early satisfies the Validator's instinct to verify before reading further.",
+        "candidate_components": [
+          "SocialProofBar"
+        ]
+      },
+      {
+        "name": "Structured Argument — Why MODE Matters",
+        "rationale": "Validators at the consideration stage don't skim — they read. ContentSection provides the long-form, structured argument that lets trial users understand the product's design philosophy, architectural decisions, and why an AI-first semantic design system outperforms alternatives. The Validator variant benefits from structured subheadings and with-callout for key proof points, building a rational case that sustains engagement through the mid-page.",
+        "candidate_components": [
+          "ContentSection"
+        ]
+      },
+      {
+        "name": "Capability Breakdown — Outcome-Oriented Features",
+        "rationale": "After the conceptual argument, Validators in the consideration stage need to map product capabilities to their specific needs. FeatureGrid's Validator variant uses outcome-oriented benefit statements rather than feature names, translating capabilities into results. This satisfies the Validator's checklist mentality — they want to confirm the product does what they need before moving toward a decision.",
+        "candidate_components": [
+          "FeatureGrid"
+        ]
+      },
+      {
+        "name": "Quantified Impact — Results with Attribution",
+        "rationale": "Validators distrust unsourced claims. StatBlock's Validator variant pairs metrics with source attribution, providing the hard evidence that consideration-stage users require to justify continued evaluation. Placing this after features contextualizes the numbers — users now understand what the product does and can see the measurable outcomes it delivers.",
+        "candidate_components": [
+          "StatBlock"
+        ]
+      },
+      {
+        "name": "Featured Testimonial — Peer Validation at Decision Point",
+        "rationale": "TestimonialSingle is purpose-built for the Validator archetype and maps directly to the consideration stage. A single, deeply attributed testimonial (with role, company, and photo) from a peer who converted from trial to paid provides the decisive social proof that Validators need. Positioned near the terminal CTA, it converts evaluation into intent by letting a trusted peer make the final argument.",
+        "candidate_components": [
+          "TestimonialSingle"
+        ]
+      },
+      {
+        "name": "Page Close — Recovery Footer",
+        "rationale": "FooterMinimal is required as the page closer. The with-cta variant is essential here: trial users in the consideration stage who scroll to the bottom without converting are high-intent but hesitant. A recovery CTA with a trust signal (e.g., 'Start your paid plan — cancel anytime') gives Validators one final, low-risk conversion opportunity before they leave.",
+        "candidate_components": [
+          "FooterMinimal"
+        ]
+      }
+    ]
+  },
+  "page": [
+    {
+      "section": "Global Navigation",
+      "component": "NavigationHeader",
+      "variant": "minimal",
+      "reasoning": "minimal variant for conversion-focused pages — strip nav_links, keep logo and single CTA only. Validator in consideration stage needs clear path to conversion without distraction.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_links": [],
+        "cta_primary": {
+          "label": "Upgrade Now",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "View Pricing",
+          "href": "#"
+        }
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Hero — Credibility-Led Value Proposition",
+      "component": "HeroPrimary",
+      "variant": "with-social-proof",
+      "reasoning": "Validator variant always includes trust_signal. with-social-proof variant places LogoStrip immediately below CTACluster, establishing credibility before commitment request.",
+      "slots": {
+        "headline": "The design system that understands what you're building.",
+        "subhead": "MODE maps your UI decisions to semantic intent — so your team ships consistent, accessible products 2.3x faster than with static libraries.",
+        "cta_primary": {
+          "label": "Upgrade Your Trial",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "See How It Works",
+          "href": "#"
+        },
+        "media": null,
+        "trust_signal": "No credit card required to upgrade. Cancel anytime."
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Social Proof — Authority Anchoring",
+      "component": "SocialProofBar",
+      "variant": "quote-with-logos",
+      "reasoning": "Validator variant leads with quote, logos below. This combination anchors authority and peer validation, critical for trial-to-paid conversion in consideration stage.",
+      "slots": {
+        "headline": "Trusted by product teams at fast-moving SaaS companies",
+        "logos": [],
+        "quote": "MODE cut our design-to-dev handoff time by 40%. It's the first system that actually reasons about our product context instead of just handing us components.",
+        "attribution": "Priya Nair, Head of Product Design, Stackform — 2024 customer survey",
+        "attribution_logo": null
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Structured Argument — Why MODE Matters",
+      "component": "ContentSection",
+      "variant": "with-callout",
+      "reasoning": "with-callout for key proof points that deserve visual separation. Validators need substantive reasoning; callouts highlight critical arguments that drive consideration-to-decision progression.",
+      "slots": {
+        "headline": "Static design systems don't understand intent. MODE does.",
+        "body": "Most design systems give you a library of components and leave interpretation to the team. That works until your product grows — then inconsistency compounds, design debt accumulates, and every new feature requires a manual audit of what came before.\n\nMODE is built on a semantic layer that encodes intent alongside structure. When you place a component, MODE understands whether it's serving navigation, validation, disclosure, or conversion — and enforces rules accordingly. The result is a system that actively prevents the class of decisions that erode consistency over time.\n\nFor AI-first product teams, this matters especially: your AI tooling can now read, generate, and evaluate UI against a shared semantic contract — not just pixel patterns. MODE's intent graph is machine-readable, which means your co-pilots and code-gen tools operate with the same contextual awareness your senior designers have.",
+        "callout": "Teams using MODE's semantic layer reported 67% fewer design inconsistencies flagged in QA — internal data, Q3 2024.",
+        "media": null,
+        "cta": {
+          "label": "Read the Technical Overview",
+          "href": "#"
+        }
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Capability Breakdown — Outcome-Oriented Features",
+      "component": "FeatureGrid",
+      "variant": "3-col-icon",
+      "reasoning": "Validator benefits from specific, outcome-oriented descriptions — not feature names, benefit statements. 3-col-icon is the default and supports clear articulation of how MODE delivers semantic design value.",
+      "slots": {
+        "headline": "Everything your team needs to stay consistent at speed.",
+        "subhead": "Six capabilities that map directly to the decisions slowing your product team down.",
+        "features": [
+          {
+            "icon": "🧠",
+            "title": "Semantic Intent Engine",
+            "description": "Automatically classifies every component by its UI role, so your system enforces consistency rules without manual governance overhead."
+          },
+          {
+            "icon": "⚡",
+            "title": "AI-Ready Token Architecture",
+            "description": "Design tokens are structured for machine readability, enabling code-gen tools and AI copilots to produce on-system output from the first generation."
+          },
+          {
+            "icon": "🔒",
+            "title": "Accessibility by Default",
+            "description": "WCAG 2.2 AA compliance is baked into every component variant — your team ships accessible UI without a separate audit pass."
+          },
+          {
+            "icon": "📊",
+            "title": "Consistency Analytics",
+            "description": "Live dashboards surface where your product deviates from your system, so design debt is visible before it becomes a rewrite."
+          },
+          {
+            "icon": "🧩",
+            "title": "Context-Aware Component Suggestions",
+            "description": "MODE recommends the right component for your current screen context, reducing the decision load on designers and reducing variance across teams."
+          },
+          {
+            "icon": "🔄",
+            "title": "Bi-Directional Sync",
+            "description": "Design and code stay in sync through a shared semantic contract — changes in Figma propagate to your component library without a manual handoff step."
+          }
+        ]
+      },
+      "palette": "neutral"
+    },
+    {
+      "section": "Quantified Impact — Results with Attribution",
+      "component": "StatBlock",
+      "variant": "with-source",
+      "reasoning": "Always pair stats with source attribution in Validator contexts — unsourced stats reduce trust. Attribution is essential for validators evaluating credibility before purchase commitment.",
+      "slots": {
+        "headline": "Measured outcomes from teams that upgraded from trial.",
+        "stats": [
+          {
+            "value": "2.3x",
+            "label": "Faster design-to-dev handoff compared to static systems",
+            "source": "2024 customer survey, n=214"
+          },
+          {
+            "value": "67%",
+            "label": "Fewer design inconsistencies flagged during QA",
+            "source": "Internal data, Q3 2024"
+          },
+          {
+            "value": "< 9 min",
+            "label": "Average time to onboard a new designer to an existing MODE workspace",
+            "source": "Product telemetry, 2024"
+          }
+        ]
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Featured Testimonial — Peer Validation at Decision Point",
+      "component": "TestimonialSingle",
+      "variant": "with-photo",
+      "reasoning": "with-photo increases engagement and perceived authenticity. Always include role and company for Validator credibility. Place near a CTA — testimonials convert when positioned at a decision moment.",
+      "slots": {
+        "quote": "I spent three weeks in the trial convincing myself it was worth the switch. The moment I upgraded, I realized I'd been paying the cost of not having it the whole time. Our team went from weekly 'which component do we use?' debates to zero. MODE just handles that now.",
+        "author_name": "Daniel Osei",
+        "author_title": "Staff Product Designer",
+        "company": "Meridian Labs",
+        "photo": null,
+        "company_logo": null
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Page Close — Recovery Footer",
+      "component": "FooterMinimal",
+      "variant": "with-cta",
+      "reasoning": "with-cta variant recaptures departing users on key conversion pages — use on pricing and signup flows. Essential for Validator in consideration stage to recover users before exit.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_columns": [],
+        "legal_text": "© 2025 MODE Systems, Inc. All rights reserved.",
+        "social_links": [],
+        "cta": {
+          "label": "Start Your Paid Plan — Cancel Anytime",
+          "href": "#"
+        }
+      },
+      "palette": "light"
+    }
+  ],
+  "preview_url": "/preview?file=page-2026-06-15T00-36-55-155Z-consideration.json"
+}

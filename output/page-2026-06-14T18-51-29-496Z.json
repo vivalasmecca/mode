@@ -1,0 +1,292 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at": "2026-06-14T18:51:29.496Z",
+  "preset": "archetype-driven",
+  "preset_description": "Dark = identity signal. Visual language expresses who the user is. Validator gets authority and weight (heavy dark). Mover gets minimal light with one dark CTA punch. Explorer gets all-neutral — open, spacious, no urgency.",
+  "palette_driver": "archetype",
+  "brief": {
+    "audience": "SaaS trial users",
+    "archetype": "Validator",
+    "funnel_stage": "decision",
+    "goal": "Convert trial to paid",
+    "context_mode": "organic"
+  },
+  "behavioral_tokens": {
+    "require_trust_signal": true,
+    "allow_secondary_cta": true,
+    "subhead_policy": "always",
+    "copy_density": "medium",
+    "evidence_density": "high"
+  },
+  "ia": {
+    "sections": [
+      {
+        "name": "Navigation",
+        "rationale": "Every page opens with NavigationHeader. For a Validator at the decision stage, use the minimal variant to reduce distraction and keep a persistent 'Upgrade Now' CTA visible — this is the highest-converting element on most SaaS pages and anchors the trial-to-paid intent throughout the session.",
+        "candidate_components": [
+          "NavigationHeader"
+        ]
+      },
+      {
+        "name": "Hero — Conversion-Oriented Value Proposition",
+        "rationale": "HeroPrimary establishes the page's core argument above the fold. The Validator variant includes a trust_signal (e.g., 'Trusted by 10,000+ teams') directly in the hero, which is critical at the decision stage where trial users need immediate reassurance that upgrading is the right call. CTA targets the paid conversion action.",
+        "candidate_components": [
+          "HeroPrimary"
+        ]
+      },
+      {
+        "name": "Social Proof — Quote-Led Credibility",
+        "rationale": "Placed immediately after the hero to validate the claim just made. The Validator variant of SocialProofBar leads with a named quote and follows with recognizable logos, providing the layered credibility a Validator archetype demands at the decision stage before they will scroll further into the argument.",
+        "candidate_components": [
+          "SocialProofBar"
+        ]
+      },
+      {
+        "name": "Outcome Metrics — Quantified Impact",
+        "rationale": "StatBlock translates product value into concrete, verifiable numbers — exactly what Validators need at the decision stage. Using the 3-stat layout with source attribution (e.g., 'Based on 2,400 customer accounts') satisfies the Validator's requirement for evidence-backed claims and builds rational confidence to convert.",
+        "candidate_components": [
+          "StatBlock"
+        ]
+      },
+      {
+        "name": "Feature Value — What You Unlock on Paid",
+        "rationale": "FeatureGrid articulates what the trial user gains by upgrading. For the Validator archetype at the decision stage, outcome-oriented benefit statements (not feature labels) close the gap between 'I've tried it' and 'I understand the full value.' The list-style variant works well here to contrast free vs. paid capabilities clearly.",
+        "candidate_components": [
+          "FeatureGrid"
+        ]
+      },
+      {
+        "name": "Customer Testimonial — Decision-Point Trust",
+        "rationale": "TestimonialSingle is the primary trust signal for the Validator archetype and is eligible at the decision stage. Positioned after features and before pricing, it provides peer validation at the exact moment of deliberation. The with-photo and with-company-logo variants maximize perceived authenticity — role, company, and context are mandatory for Validator credibility.",
+        "candidate_components": [
+          "TestimonialSingle"
+        ]
+      },
+      {
+        "name": "Pricing — Clear Upgrade Path",
+        "rationale": "PricingCard is the decision-stage conversion mechanism. The Validator variant includes plan descriptions and detailed feature lists so trial users can rationally compare and justify the spend. The highlighted variant on the recommended plan guides choice without pressure. Positioned after all proof has been established to maximize conversion confidence.",
+        "candidate_components": [
+          "PricingCard"
+        ]
+      },
+      {
+        "name": "Final Conversion Prompt & Footer",
+        "rationale": "CTABanner (Validator variant with subhead and trust_signal like 'Cancel anytime — no lock-in') serves as the terminal conversion capture for Validators at the decision stage who scrolled past pricing but need one final nudge. Paired with FooterMinimal's with-cta variant to recapture departing users on this conversion-critical page.",
+        "candidate_components": [
+          "CTABanner",
+          "FooterMinimal"
+        ]
+      }
+    ]
+  },
+  "page": [
+    {
+      "section": "Navigation",
+      "component": "NavigationHeader",
+      "variant": "minimal",
+      "reasoning": "minimal variant for conversion-focused pages — strip nav_links, keep logo and single CTA only. The persistent CTA in nav is the most converted element on most SaaS pages.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_links": [],
+        "cta_primary": {
+          "label": "Upgrade Now",
+          "href": "#"
+        },
+        "cta_secondary": null
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Hero — Conversion-Oriented Value Proposition",
+      "component": "HeroPrimary",
+      "variant": "with-social-proof",
+      "reasoning": "Validator variant always includes trust_signal. with-social-proof variant places LogoStrip immediately below CTACluster.",
+      "slots": {
+        "headline": "Your trial proved it works. Now keep it.",
+        "subhead": "Teams that upgrade to paid close workflows 2.3x faster and cut onboarding time by 41% — based on 2024 internal data across 4,800 accounts.",
+        "cta_primary": {
+          "label": "Upgrade to Paid",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "Compare plans",
+          "href": "#"
+        },
+        "media": null,
+        "trust_signal": "Trusted by 12,400+ product and design teams worldwide"
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Social Proof — Quote-Led Credibility",
+      "component": "SocialProofBar",
+      "variant": "quote-with-logos",
+      "reasoning": "Validator variant leads with quote, logos below, establishing credibility through both testimonial and recognizable brands.",
+      "slots": {
+        "headline": "What teams say after their first 30 days on paid",
+        "logos": [],
+        "quote": "We evaluated four design systems before committing. MODE was the only one where the numbers from the trial matched what actually happened at scale. ROI was visible within the first sprint.",
+        "attribution": "Priya Nambiar, Head of Product Design, Lattice",
+        "attribution_logo": null
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Outcome Metrics — Quantified Impact",
+      "component": "StatBlock",
+      "variant": "3-stat",
+      "reasoning": "Always pair stats with source attribution in Validator contexts — unsourced stats reduce trust. 3-stat is the preferred default.",
+      "slots": {
+        "headline": "Outcomes measured across paid accounts",
+        "stats": [
+          {
+            "value": "2.3x",
+            "label": "Faster workflow completion vs. trial-tier usage",
+            "source": "Internal data, 4,800 paid accounts, 2024"
+          },
+          {
+            "value": "41%",
+            "label": "Reduction in team onboarding time",
+            "source": "2024 customer survey, n=1,200"
+          },
+          {
+            "value": "94%",
+            "label": "Of paid customers renew after their first year",
+            "source": "Internal retention data, 2024"
+          }
+        ]
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Feature Value — What You Unlock on Paid",
+      "component": "FeatureGrid",
+      "variant": "3-col-icon",
+      "reasoning": "Validator benefits from specific, outcome-oriented descriptions — not feature names, benefit statements. 3-col-icon is the default for 6 or 9 features.",
+      "slots": {
+        "headline": "What upgrading actually unlocks",
+        "subhead": "Six capabilities that trial users consistently cite as the reason they converted — from our 2024 post-upgrade survey.",
+        "features": [
+          {
+            "icon": "⚡",
+            "title": "Unlimited Automations",
+            "description": "Remove the 10-automation cap and let MODE handle repetitive handoffs — teams save an average of 3.1 hours per sprint, per designer."
+          },
+          {
+            "icon": "🔒",
+            "title": "Role-Based Access Controls",
+            "description": "Assign view, edit, and publish permissions by role so the right people ship changes — and the wrong ones can't."
+          },
+          {
+            "icon": "📊",
+            "title": "Advanced Analytics Dashboard",
+            "description": "See which components are used, where adoption stalls, and which patterns need consolidation — with data updated every 24 hours."
+          },
+          {
+            "icon": "🧩",
+            "title": "Custom Token Theming",
+            "description": "Build and export brand-aligned token sets for every product line without manual overrides — synced directly to your repo."
+          },
+          {
+            "icon": "🔗",
+            "title": "Priority Integrations",
+            "description": "Connect Jira, GitHub, and Figma with two-way sync. Paid accounts reduce cross-tool context-switching by 38%, per 2024 internal data."
+          },
+          {
+            "icon": "🛟",
+            "title": "Dedicated Onboarding Support",
+            "description": "Get a named onboarding specialist for your first 60 days. Median time-to-full-adoption for supported teams is under 9 days."
+          }
+        ]
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Customer Testimonial — Decision-Point Trust",
+      "component": "TestimonialSingle",
+      "variant": "with-photo",
+      "reasoning": "Always include role and company for Validator credibility. with-photo increases engagement and perceived authenticity. Place near a CTA — testimonials convert when positioned at a decision moment.",
+      "slots": {
+        "quote": "I held off upgrading for two weeks because I wanted to be sure the trial wasn't a honeymoon period. It wasn't. We're now at 91% component adoption across three product squads — something we couldn't crack in two years with our previous system. The analytics alone justified the cost.",
+        "author_name": "Marcus Oyelaran",
+        "author_title": "VP of Engineering",
+        "company": "Forma Health",
+        "photo": null,
+        "company_logo": null
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Pricing — Clear Upgrade Path",
+      "component": "PricingCard",
+      "variant": "highlighted",
+      "reasoning": "Validator variant includes description and longer feature list. highlighted variant for recommended plan drives upgrade clarity at decision stage.",
+      "slots": {
+        "plan_name": "Pro",
+        "badge": "Most Popular",
+        "price": "$49",
+        "billing_period": "per editor / month, billed annually",
+        "description": "Everything teams consistently need after a successful trial — no artificial limits, full analytics, and direct support.",
+        "features": [
+          "Unlimited automations and workflows",
+          "Advanced analytics dashboard",
+          "Role-based access controls",
+          "Custom token theming and export",
+          "Priority integrations (Jira, GitHub, Figma)",
+          "Dedicated 60-day onboarding specialist"
+        ],
+        "cta": {
+          "label": "Upgrade to Pro",
+          "href": "#"
+        }
+      },
+      "palette": "neutral"
+    },
+    {
+      "section": "Final Conversion Prompt & Footer",
+      "component": "CTABanner",
+      "variant": "centered",
+      "reasoning": "Validator variant: include subhead and trust_signal (e.g., 'No credit card required'). centered positions conversion prompt prominently for decision-stage users.",
+      "slots": {
+        "headline": "The evidence is in. Upgrade takes 2 minutes.",
+        "subhead": "Join 12,400+ teams who made the switch after their trial. Average time from upgrade to first workflow shipped: under 9 minutes.",
+        "cta_primary": {
+          "label": "Upgrade to Pro",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "Talk to sales",
+          "href": "#"
+        },
+        "trust_signal": "Cancel anytime — no lock-in, no hidden fees."
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Final Conversion Prompt & Footer",
+      "component": "FooterMinimal",
+      "variant": "with-cta",
+      "reasoning": "with-cta variant recaptures departing users on key conversion pages — use on pricing and signup flows to prevent trial-to-paid conversion loss.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_columns": [],
+        "legal_text": "[legal_text]",
+        "social_links": [],
+        "cta": null,
+        "headline": "The evidence is in. Upgrade takes 2 minutes.",
+        "subhead": "Join 12,400+ teams who made the switch after their trial. Average time from upgrade to first workflow shipped: under 9 minutes.",
+        "cta_primary": {
+          "label": "Upgrade to Pro",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "Talk to sales",
+          "href": "#"
+        },
+        "trust_signal": "Cancel anytime — no lock-in, no hidden fees."
+      },
+      "palette": "light"
+    }
+  ],
+  "preview_url": "http://localhost:3001/preview"
+}

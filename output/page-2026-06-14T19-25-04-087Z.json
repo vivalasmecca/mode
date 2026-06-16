@@ -1,0 +1,113 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at": "2026-06-14T19:25:04.087Z",
+  "preset": "archetype-driven",
+  "preset_description": "Dark = identity signal. Visual language expresses who the user is. Validator gets authority and weight (heavy dark). Mover gets minimal light with one dark CTA punch. Explorer gets all-neutral — open, spacious, no urgency.",
+  "palette_driver": "archetype",
+  "brief": {
+    "audience": "SaaS Trial Users for an intent-ready design system",
+    "goal": "Convert to trial",
+    "archetype": "Validator",
+    "funnel_stage": "conversion",
+    "context_mode": "campaign"
+  },
+  "behavioral_tokens": {
+    "require_trust_signal": true,
+    "allow_secondary_cta": true,
+    "subhead_policy": "always",
+    "copy_density": "medium",
+    "evidence_density": "high"
+  },
+  "ia": {
+    "sections": [
+      {
+        "name": "Navigation",
+        "rationale": "Navigation — Validator archetype at conversion stage",
+        "candidate_components": [
+          "NavigationHeader"
+        ]
+      },
+      {
+        "name": "Pricing",
+        "rationale": "Pricing — Validator archetype at conversion stage",
+        "candidate_components": [
+          "PricingCard"
+        ]
+      },
+      {
+        "name": "Conversion",
+        "rationale": "Conversion — Validator archetype at conversion stage",
+        "candidate_components": [
+          "CTABanner"
+        ]
+      },
+      {
+        "name": "Footer",
+        "rationale": "Footer — Validator archetype at conversion stage",
+        "candidate_components": [
+          "FooterMinimal"
+        ]
+      }
+    ]
+  },
+  "page": [
+    {
+      "section": "Navigation",
+      "component": "NavigationHeader",
+      "variant": "full",
+      "reasoning": null,
+      "slots": {
+        "logo": "[logo]",
+        "nav_links": [],
+        "cta_primary": "[cta_primary]",
+        "cta_secondary": null
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Pricing",
+      "component": "PricingCard",
+      "variant": "highlighted",
+      "reasoning": null,
+      "slots": {
+        "plan_name": "[plan_name]",
+        "badge": null,
+        "price": "[price]",
+        "billing_period": "[billing_period]",
+        "description": null,
+        "features": [],
+        "cta": "[cta]"
+      },
+      "palette": "neutral"
+    },
+    {
+      "section": "Conversion",
+      "component": "CTABanner",
+      "variant": "centered",
+      "reasoning": null,
+      "slots": {
+        "headline": "[headline]",
+        "subhead": null,
+        "cta_primary": "[cta_primary]",
+        "cta_secondary": null,
+        "trust_signal": null
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Footer",
+      "component": "FooterMinimal",
+      "variant": "standard",
+      "reasoning": null,
+      "slots": {
+        "logo": "[logo]",
+        "nav_columns": [],
+        "legal_text": "[legal_text]",
+        "social_links": [],
+        "cta": null
+      },
+      "palette": "light"
+    }
+  ],
+  "preview_url": "http://localhost:3001/preview"
+}

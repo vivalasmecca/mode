@@ -11,6 +11,21 @@ const nextConfig: NextConfig = {
     // mode/ from mode/package-lock.json and break Next.js module resolution.
     root: path.resolve(__dirname),
   },
+  // outputFileTracingRoot must equal turbopack.root (Next.js 16 requirement).
+  // Set to ui/ so the tracing root is the same as the Turbopack root.
+  // outputFileTracingIncludes paths are relative to this root, so "../"
+  // patterns correctly reference sibling directories in the repo.
+  outputFileTracingRoot: path.resolve(__dirname),
+  outputFileTracingIncludes: {
+    "/**": [
+      "../output/**",
+      "../config/**",
+      "../tokens/**",
+      "../context/**",
+      "../manifest/**",
+      "../agent/**",
+    ],
+  },
 };
 
 export default nextConfig;
