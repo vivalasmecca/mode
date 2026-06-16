@@ -83,6 +83,9 @@ export default function BuildClient() {
   const [variants, setVariants] = useState<VariantIA[]>([]);
   const [results, setResults] = useState<VariantResult[]>([]);
   const [builtSiteUrl, setBuiltSiteUrl] = useState("");
+  const [builtTs, setBuiltTs] = useState("");
+  const [activateState, setActivateState] = useState<"idle" | "loading" | "done" | "error">("idle");
+  const [activateError, setActivateError] = useState("");
   const [activeTab, setActiveTab] = useState(0);
   const [errorMsg, setErrorMsg] = useState("");
   const [regenState, setRegenState] = useState<"idle" | "loading" | "done" | "error">("idle");
@@ -165,6 +168,9 @@ export default function BuildClient() {
       if (!res.ok) throw new Error(data.error || "Page generation failed");
       setResults(data.variants);
       setBuiltSiteUrl(data.siteUrl ?? "");
+      setBuiltTs(new URLSearchParams((data.siteUrl ?? "").split("?")[1] ?? "").get("ts") ?? "");
+      setActivateState("idle");
+      setActivateError("");
       window.open(data.siteUrl, "_blank", "noopener,noreferrer");
       setStep("done");
     } catch (err) {
@@ -186,6 +192,9 @@ export default function BuildClient() {
       if (!res.ok) throw new Error(data.error || "Palette re-application failed");
       setResults(data.variants);
       setBuiltSiteUrl(data.siteUrl ?? "");
+      setBuiltTs(new URLSearchParams((data.siteUrl ?? "").split("?")[1] ?? "").get("ts") ?? "");
+      setActivateState("idle");
+      setActivateError("");
       window.open(data.siteUrl, "_blank", "noopener,noreferrer");
       setRepaletteState("done");
     } catch (err) {
@@ -207,11 +216,32 @@ export default function BuildClient() {
       if (!res.ok) throw new Error(data.error || "Regeneration failed");
       setResults(data.variants);
       setBuiltSiteUrl(data.siteUrl ?? "");
+      setBuiltTs(new URLSearchParams((data.siteUrl ?? "").split("?")[1] ?? "").get("ts") ?? "");
+      setActivateState("idle");
+      setActivateError("");
       window.open(data.siteUrl, "_blank", "noopener,noreferrer");
       setRegenState("done");
     } catch (err) {
       setRegenError(err instanceof Error ? err.message : String(err));
       setRegenState("error");
+    }
+  }
+
+  async function handleActivate() {
+    setActivateState("loading");
+    setActivateError("");
+    try {
+      const res = await fetch("/api/routing/activate", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ts: builtTs }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Activation failed");
+      setActivateState("done");
+    } catch (err) {
+      setActivateError(err instanceof Error ? err.message : String(err));
+      setActivateState("error");
     }
   }
 
@@ -365,6 +395,46 @@ export default function BuildClient() {
             </ul>
           </div>
 
+          {/* Activate */}
+          <div className="border border-gray-200 rounded-lg overflow-hidden">
+            <div className="bg-gray-50 border-b border-gray-200 px-4 py-2.5">
+              <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-500">
+                Activate
+              </h3>
+            </div>
+            <div className="px-5 py-4 space-y-3">
+              <p className="text-sm text-gray-500">
+                Serve this build at{" "}
+                <code className="font-mono text-xs text-gray-700">/</code>. Routing resolves the
+                right variant per visitor from UTM params, cookies, and device signals.
+              </p>
+              {activateState === "error" && (
+                <p className="text-sm text-red-600 font-mono break-all">{activateError}</p>
+              )}
+              {activateState === "done" ? (
+                <p className="text-sm text-green-700">
+                  Active — live at{" "}
+                  <a
+                    href="/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline hover:text-green-800 transition-colors"
+                  >
+                    /
+                  </a>
+                </p>
+              ) : (
+                <button
+                  onClick={handleActivate}
+                  disabled={!builtTs || activateState === "loading"}
+                  className="px-4 py-2 bg-white border border-gray-300 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {activateState === "loading" ? "Activating…" : "Activate"}
+                </button>
+              )}
+            </div>
+          </div>
+
           {/* Regenerate copy */}
           <div className="border border-gray-200 rounded-lg overflow-hidden">
             <div className="bg-gray-50 border-b border-gray-200 px-4 py-2.5">
@@ -397,6 +467,9 @@ export default function BuildClient() {
               setResults([]);
               setVariants([]);
               setBuiltSiteUrl("");
+              setBuiltTs("");
+              setActivateState("idle");
+              setActivateError("");
               setRegenState("idle");
               setRegenError("");
               setRepalettePreset("");

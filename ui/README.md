@@ -1,36 +1,100 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MODE — Dashboard UI
 
-## Getting Started
+Next.js 16 dashboard for the MODE page builder agent. Generates intent-aware landing pages, previews output, and routes live visitors to the right variant.
 
-First, run the development server:
+## Getting started
 
 ```bash
+cd ui
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The dashboard runs at `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Routes
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| URL | Description |
+|-----|-------------|
+| `/` | Live routing — serves the active build's correct variant per visitor |
+| `/dashboard/build` | Generate multi-variant page builds |
+| `/dashboard/palette` | Edit palette maps and brand accent |
+| `/dashboard/brand` | Extract product context from URLs; edit brand brief |
+| `/dashboard/concepts` | Reference documentation for brief fields |
+| `/preview` | Render the latest output file |
+| `/preview?file=page-{ts}-{variant}.json` | Render a specific variant |
+| `/site?ts={ts}` | Site view — all variants from a build with linked nav |
 
-## Learn More
+## Build flow
 
-To learn more about Next.js, take a look at the following resources:
+1. Go to `/dashboard/build`
+2. Select a palette approach (funnel-driven, feature-emphasis, or archetype-driven)
+3. Fill in the brief (audience, goal, fixed dimension)
+4. Review proposed information architectures per variant
+5. Approve → generates all variants in parallel
+6. **Activate** → sets this build as live at `/`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Runtime routing (`/`)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+`/` is driven by `proxy.ts` (edge layer) + `app/page.tsx` (server component).
 
-## Deploy on Vercel
+**Signal detection (priority order)**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Funnel stage:
+1. `?page=` or `?funnel_stage=` — direct override (testing)
+2. `?utm_medium=email|newsletter` → consideration
+3. `?utm_medium=retargeting|cpc|paid` → decision
+4. `?utm_campaign=` matching `checkout|purchase|buy|cart` → conversion
+5. `mode_funnel_stage` cookie — advances one stage per visit
+6. Default → awareness
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Archetype:
+1. `?archetype=` — direct override
+2. `?utm_content=` — UTM-declared archetype
+3. `mode_archetype` cookie — sticky once set
+4. Mobile user agent → Mover
+5. Default → Validator
+
+**Cookie behavior**
+
+- `mode_funnel_stage` — stores the *next* stage so each return visit advances one step (awareness → consideration → decision → conversion; conversion stays). 30-day max-age.
+- `mode_archetype` — sticky. Set on first detection, preserved thereafter. 30-day max-age.
+
+**Activating a build**
+
+After generating a build, click **Activate** in the done state. This calls `PUT /api/routing/activate` with the build's `ts`, which writes `config/routing.json`:
+
+```json
+{ "ts": "2026-06-16T03-55-29-918Z" }
+```
+
+`/` reads this file on every request, loads `output/site-{ts}.json`, resolves the right variant for the visitor, and renders it. If no build is active, `/` shows a "No active build" state with a link to the Build tab.
+
+## Config files read at runtime
+
+| File | Purpose |
+|------|---------|
+| `../tokens/mode-tokens.json` | Palette maps, behavioral tokens, active preset |
+| `../context/product-context.json` | Product facts injected into every build |
+| `../context/brand-brief.md` | Tone and messaging guidelines |
+| `../config/routing.json` | Active build pointer (written by Activate) |
+| `../output/site-{ts}.json` | Site manifest for the active build |
+| `../output/page-{ts}-{variant}.json` | Individual variant page files |
+
+Paths are relative to `ui/` (where `process.cwd()` resolves at runtime).
+
+## API routes
+
+| Route | Method | Description |
+|-------|--------|-------------|
+| `/api/config` | GET | Active preset + all preset configs |
+| `/api/generate/ia` | POST | Propose N information architectures in parallel |
+| `/api/generate/page` | POST | Run full pipeline for N variants; writes output files |
+| `/api/generate/content` | POST | Re-run content generation only (preserves IA + components) |
+| `/api/generate/palette` | POST | Re-apply a different palette preset to existing pages |
+| `/api/routing/activate` | PUT | Set active build for `/` routing |
+| `/api/palette` | PUT | Save palette map for a preset |
+| `/api/palette/accent` | PUT | Save brand accent tokens |
+| `/api/brand/ingest` | POST | Extract product context from URLs |
+| `/api/brand/save` | PUT | Write product-context.json and/or brand-brief.md |
+| `/api/output` | GET | Latest output file (JSON) |
