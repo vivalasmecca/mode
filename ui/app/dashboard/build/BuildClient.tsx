@@ -85,6 +85,8 @@ export default function BuildClient() {
   const [builtSiteUrl, setBuiltSiteUrl] = useState("");
   const [activeTab, setActiveTab] = useState(0);
   const [errorMsg, setErrorMsg] = useState("");
+  const [regenState, setRegenState] = useState<"idle" | "loading" | "done" | "error">("idle");
+  const [regenError, setRegenError] = useState("");
 
   useEffect(() => {
     fetch("/api/config")
@@ -165,6 +167,27 @@ export default function BuildClient() {
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : String(err));
       setStep("error");
+    }
+  }
+
+  async function handleRegenerate() {
+    setRegenState("loading");
+    setRegenError("");
+    try {
+      const res = await fetch("/api/generate/content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ filenames: results.map((r) => r.filename) }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Regeneration failed");
+      setResults(data.variants);
+      setBuiltSiteUrl(data.siteUrl ?? "");
+      window.open(data.siteUrl, "_blank", "noopener,noreferrer");
+      setRegenState("done");
+    } catch (err) {
+      setRegenError(err instanceof Error ? err.message : String(err));
+      setRegenState("error");
     }
   }
 
@@ -274,11 +297,40 @@ export default function BuildClient() {
             </ul>
           </div>
 
+          {/* Regenerate copy */}
+          <div className="border border-gray-200 rounded-lg overflow-hidden">
+            <div className="bg-gray-50 border-b border-gray-200 px-4 py-2.5">
+              <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-500">
+                Regenerate Copy
+              </h3>
+            </div>
+            <div className="px-5 py-4 space-y-3">
+              <p className="text-sm text-gray-500">
+                Re-run only content generation. Preserves the IA and component selection from this build — only slot values change.
+              </p>
+              {regenState === "error" && (
+                <p className="text-sm text-red-600 font-mono break-all">{regenError}</p>
+              )}
+              {regenState === "done" && (
+                <p className="text-sm text-green-700">New copy generated — site view opened.</p>
+              )}
+              <button
+                onClick={handleRegenerate}
+                disabled={regenState === "loading"}
+                className="px-4 py-2 bg-white border border-gray-300 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {regenState === "loading" ? "Generating…" : "Regenerate copy"}
+              </button>
+            </div>
+          </div>
+
           <button
             onClick={() => {
               setResults([]);
               setVariants([]);
               setBuiltSiteUrl("");
+              setRegenState("idle");
+              setRegenError("");
               setStep("form");
             }}
             className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
