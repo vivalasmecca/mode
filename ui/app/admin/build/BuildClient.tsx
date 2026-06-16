@@ -93,6 +93,8 @@ export default function BuildClient() {
   const [repalettePreset, setRepalettePreset] = useState("");
   const [repaletteState, setRepaletteState] = useState<"idle" | "loading" | "done" | "error">("idle");
   const [repaletteError, setRepaletteError] = useState("");
+  const [deployState, setDeployState] = useState<"idle" | "loading" | "done" | "error">("idle");
+  const [deployMessage, setDeployMessage] = useState("");
 
   useEffect(() => {
     fetch("/api/config")
@@ -242,6 +244,21 @@ export default function BuildClient() {
     } catch (err) {
       setActivateError(err instanceof Error ? err.message : String(err));
       setActivateState("error");
+    }
+  }
+
+  async function handleDeploy() {
+    setDeployState("loading");
+    setDeployMessage("");
+    try {
+      const res = await fetch("/api/admin/deploy", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Deploy failed");
+      setDeployState("done");
+      setDeployMessage(data.message || "Pushed.");
+    } catch (e) {
+      setDeployState("error");
+      setDeployMessage(String(e));
     }
   }
 
@@ -435,6 +452,35 @@ export default function BuildClient() {
             </div>
           </div>
 
+          {/* Deploy to Vercel */}
+          <div className="border border-gray-200 rounded-lg overflow-hidden">
+            <div className="bg-gray-50 border-b border-gray-200 px-4 py-2.5">
+              <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-500">
+                Deploy to Vercel
+              </h3>
+            </div>
+            <div className="px-5 py-4 space-y-3">
+              <p className="text-sm text-gray-500">
+                Commit output and config files, then push to trigger a Vercel deployment.
+              </p>
+              {deployState === "error" && (
+                <p className="text-sm text-red-600 font-mono break-all">{deployMessage}</p>
+              )}
+              {deployState === "done" && (
+                <p className="text-sm text-green-700">{deployMessage}</p>
+              )}
+              {deployState !== "done" && (
+                <button
+                  onClick={handleDeploy}
+                  disabled={activateState !== "done" || deployState === "loading"}
+                  className="px-4 py-2 bg-white border border-gray-300 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {deployState === "loading" ? "Deploying…" : "Deploy"}
+                </button>
+              )}
+            </div>
+          </div>
+
           {/* Regenerate copy */}
           <div className="border border-gray-200 rounded-lg overflow-hidden">
             <div className="bg-gray-50 border-b border-gray-200 px-4 py-2.5">
@@ -470,6 +516,8 @@ export default function BuildClient() {
               setBuiltTs("");
               setActivateState("idle");
               setActivateError("");
+              setDeployState("idle");
+              setDeployMessage("");
               setRegenState("idle");
               setRegenError("");
               setRepalettePreset("");

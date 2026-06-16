@@ -4,12 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const TABS = [
-  { label: "Overview", href: "/dashboard" },
-  { label: "Concepts", href: "/dashboard/concepts" },
-  { label: "Build", href: "/dashboard/build" },
-  { label: "Brand", href: "/dashboard/brand" },
-  { label: "Palette", href: "/dashboard/palette" },
-  { label: "Run", href: "/dashboard/run" },
+  { label: "Overview", href: "/admin" },
+  { label: "Concepts", href: "/admin/concepts" },
+  { label: "Build", href: "/admin/build" },
+  { label: "Brand", href: "/admin/brand" },
+  { label: "Palette", href: "/admin/palette" },
+  { label: "Run", href: "/admin/run" },
 ];
 
 export default function TabNav() {

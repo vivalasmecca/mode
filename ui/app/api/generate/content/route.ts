@@ -57,8 +57,8 @@ export async function POST(req: Request) {
 
         const safeLabel = existing.variant.toLowerCase().replace(/\s+/g, "-");
         const newFilename = `page-${ts}-${safeLabel}.json`;
-        const previewUrl = `/preview?file=${newFilename}`;
-        const siteUrl = `/site?ts=${ts}&page=${safeLabel}`;
+        const previewUrl = `/admin/preview?file=${newFilename}`;
+        const siteUrl = `/admin/site?ts=${ts}&page=${safeLabel}`;
 
         const output = {
           ...existing,
@@ -109,7 +109,7 @@ export async function POST(req: Request) {
     return Response.json({
       success: true,
       ts,
-      siteUrl: `/site?ts=${ts}`,
+      siteUrl: `/admin/site?ts=${ts}`,
       variants: results.map(({ label, filename, previewUrl, siteUrl }) => ({
         label,
         filename,

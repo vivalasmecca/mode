@@ -57,8 +57,8 @@ export async function POST(req: Request) {
 
         const safeLabel = label.toLowerCase().replace(/\s+/g, "-");
         const filename = `page-${ts}-${safeLabel}.json`;
-        const previewUrl = `/preview?file=${filename}`;
-        const siteUrl = `/site?ts=${ts}&page=${safeLabel}`;
+        const previewUrl = `/admin/preview?file=${filename}`;
+        const siteUrl = `/admin/site?ts=${ts}&page=${safeLabel}`;
 
         const output = {
           schema_version: "1.1.0",
@@ -104,7 +104,7 @@ export async function POST(req: Request) {
     return Response.json({
       success: true,
       ts,
-      siteUrl: `/site?ts=${ts}`,
+      siteUrl: `/admin/site?ts=${ts}`,
       variants: results.map(({ label, filename, previewUrl, siteUrl }) => ({
         label,
         filename,

@@ -29,7 +29,7 @@ function NoActiveBuild() {
         Generate a build in the dashboard, then click Activate.
       </p>
       <a
-        href="/dashboard/build"
+        href="/admin/build"
         className="mt-4 text-xs text-indigo-600 hover:text-indigo-800 transition-colors"
       >
         Go to Build →

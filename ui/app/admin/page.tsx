@@ -170,7 +170,7 @@ export default function DashboardPage() {
         {/* Preview link */}
         <div className="flex justify-end">
           <a
-            href="/preview"
+            href="/admin/preview"
             className="inline-flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800"
           >
             View preview →
