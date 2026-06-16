@@ -12,6 +12,8 @@
  */
 
 const Anthropic = require("@anthropic-ai/sdk");
+const fs = require("fs");
+const path = require("path");
 
 let _client;
 function getClient() {
@@ -136,9 +138,50 @@ function buildSpec(ia, page, manifest) {
   });
 }
 
+/**
+ * Reads product-context.json and brand-brief.md from context/ if they exist
+ * and have meaningful content. Re-read on every call so edits take effect
+ * without a server restart.
+ */
+function loadBrandContext() {
+  const contextDir = path.resolve(__dirname, "../context");
+
+  let productContext = null;
+  try {
+    const pcPath = path.join(contextDir, "product-context.json");
+    if (fs.existsSync(pcPath)) {
+      const parsed = JSON.parse(fs.readFileSync(pcPath, "utf8"));
+      if (parsed.product_name) productContext = parsed;
+    }
+  } catch {}
+
+  let brandBrief = null;
+  try {
+    const bbPath = path.join(contextDir, "brand-brief.md");
+    if (fs.existsSync(bbPath)) {
+      const text = fs.readFileSync(bbPath, "utf8").trim();
+      // Skip the template placeholder
+      if (text && !text.includes("_Populate via the Brand Setup tab")) {
+        brandBrief = text;
+      }
+    }
+  } catch {}
+
+  return { productContext, brandBrief };
+}
+
 async function callLLM(spec, brief, behavioral) {
   const toneGuide = buildToneGuide(brief.archetype, behavioral);
+  const { productContext, brandBrief } = loadBrandContext();
   const anthropic = getClient();
+
+  const productContextSection = productContext
+    ? `\n\nPRODUCT CONTEXT — use this as the source of truth for all product facts. Do not invent claims that contradict or go beyond this data:\n${JSON.stringify(productContext, null, 2)}`
+    : "";
+
+  const brandBriefSection = brandBrief
+    ? `\n\nBRAND BRIEF — follow the tone, messaging pillars, and claim territory defined here:\n${brandBrief}`
+    : "";
 
   const message = await anthropic.messages.create({
     model: "claude-sonnet-4-6",
@@ -154,7 +197,7 @@ BRIEF:
 ${JSON.stringify(brief, null, 2)}
 
 TONE — ${brief.archetype} archetype:
-${toneGuide}
+${toneGuide}${productContextSection}${brandBriefSection}
 
 SLOT TYPE RULES — follow exactly:
 - type "string"            → write a plain string value

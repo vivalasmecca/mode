@@ -1,0 +1,10 @@
+{
+  "_note": "Product context injected into the content generator at build time. Populate via the Brand Setup tab or edit directly. Leave fields empty if unknown — do not invent.",
+  "product_name": "",
+  "one_liner": "",
+  "features": [],
+  "proof_points": [],
+  "pricing": [],
+  "social_proof": [],
+  "differentiators": []
+}
