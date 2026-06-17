@@ -9,15 +9,73 @@ Intent-aware page builder for SaaS. Takes a brief, proposes an information archi
 ## Quick start
 
 ```bash
-# Run the agent (from mode/)
-node agent/page-builder.js
-
-# Start the preview UI (from mode/ui/)
+# Start the UI (from mode/ui/)
 npm run dev
-# → http://localhost:3001/preview
+# → http://localhost:3000/admin
 ```
 
-The agent pauses at the IA approval step. Type `y` to continue, or describe changes (revision flow TBD).
+All generation happens through the dashboard. The CLI agent (`node agent/page-builder.js`) still works but the UI is the primary interface.
+
+---
+
+## Deploying to Vercel
+
+Output files (generated pages + routing config) live in the repo and are committed so Vercel can serve them. The workflow is always local → commit → push → Vercel redeploys.
+
+### How it works
+
+Vercel's `buildCommand` (in `vercel.json`) pre-copies `output/`, `config/`, `tokens/`, `context/`, and `manifest/` into `ui/mode-data/` before the Next.js build runs. At runtime, the app reads from `mode-data/` instead of the parent directory. No database, no external storage — the output JSON files are the source of truth and travel with the repo.
+
+`config/routing.json` is the pointer. The homepage reads it to know which build's files to serve:
+
+```json
+{ "ts": "2026-06-16T03-55-29-918Z" }
+```
+
+If this file doesn't exist, the homepage shows "No active build."
+
+### The workflow
+
+1. **Build** — go to `/admin/build`, fill in a brief, approve the IA proposals, generate all variants. Output JSON files land in `mode/output/`.
+
+2. **Activate** — click **Activate** in the Build tab. This writes `config/routing.json` locally pointing at the new build's timestamp. The homepage (`/`) will now serve this build.
+
+3. **Deploy** — click **Deploy** (only enabled after Activate). This calls `POST /api/admin/deploy`, which:
+   - `git add output/ config/`
+   - `git commit -m "Deploy 2026-06-16 10:30"`
+   - `git push origin main`
+
+4. **Vercel picks it up** — a push to `main` triggers a Vercel build. The build copies the committed files into `mode-data/` and deploys. The live site now serves the new build.
+
+### Admin routes
+
+The dashboard and preview routes are under `/admin` and are blocked on Vercel (403) unless `ADMIN_KEY` is set. They are only accessible locally.
+
+| Local URL | Purpose |
+|-----------|---------|
+| `localhost:3000/admin` | Overview — latest output metadata |
+| `localhost:3000/admin/build` | Build tab — generate, activate, deploy |
+| `localhost:3000/admin/brand` | Brand context editor |
+| `localhost:3000/admin/palette` | Palette map editor |
+| `localhost:3000/admin/preview?file=page-{ts}-{variant}.json` | Preview a specific variant |
+| `localhost:3000/admin/site?ts={ts}` | Site view — all variants from a build with linked nav |
+
+### If the live site shows "No active build"
+
+Either `config/routing.json` doesn't exist, or it points to a build whose output files aren't committed. Fix:
+
+```bash
+# Check what's in routing.json
+cat config/routing.json
+
+# Check that the referenced output files are committed
+git ls-files output/ | grep {ts}
+
+# If missing, commit and push
+git add output/ config/
+git commit -m "Activate build {ts}"
+git push origin main
+```
 
 ---
 
