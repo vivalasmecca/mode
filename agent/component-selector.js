@@ -29,6 +29,11 @@ function getClient() {
 async function selectComponents(ia, brief, manifest) {
   const componentMap = Object.fromEntries(manifest.components.map((c) => [c.name, c]));
 
+  // Build beat lookup: section name → beat name
+  const beatBySection = Object.fromEntries(
+    ia.sections.map((s) => [s.name, s.beat ?? null])
+  );
+
   try {
     const selections = await llmSelectComponents(ia, brief, componentMap);
     return selections.map((sel) => {
@@ -44,6 +49,7 @@ async function selectComponents(ia, brief, manifest) {
 
       return {
         section: sel.section,
+        beat: beatBySection[sel.section] ?? null,
         component: sel.component,
         variant,
         reasoning: sel.reasoning,
@@ -56,10 +62,11 @@ async function selectComponents(ia, brief, manifest) {
       const selected = pickComponent(section.candidate_components, brief, componentMap);
       const component = componentMap[selected];
       if (!component) {
-        return { section: section.name, component: selected, variant: null, reasoning: null, slots: {} };
+        return { section: section.name, beat: section.beat ?? null, component: selected, variant: null, reasoning: null, slots: {} };
       }
       return {
         section: section.name,
+        beat: section.beat ?? null,
         component: selected,
         variant: pickVariant(component, brief),
         reasoning: null,

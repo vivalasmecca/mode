@@ -126,6 +126,7 @@ export default function DashboardPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-xs text-gray-400 uppercase tracking-wide border-b border-gray-100">
+                <th className="pb-2 pr-4 font-medium">Beat</th>
                 <th className="pb-2 pr-4 font-medium">Section</th>
                 <th className="pb-2 pr-4 font-medium">Component</th>
                 <th className="pb-2 pr-4 font-medium">Variant</th>
@@ -135,6 +136,15 @@ export default function DashboardPage() {
             <tbody>
               {page.map((s, i) => (
                 <tr key={i} className="border-b border-gray-50 last:border-0">
+                  <td className="py-2 pr-4">
+                    {s.beat ? (
+                      <span className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-gray-600">
+                        {s.beat}
+                      </span>
+                    ) : (
+                      <span className="text-gray-300">—</span>
+                    )}
+                  </td>
                   <td className="py-2 pr-4 text-gray-700">{s.section}</td>
                   <td className="py-2 pr-4 font-mono text-xs text-gray-600">{s.component}</td>
                   <td className="py-2 pr-4 font-mono text-xs text-gray-500">{s.variant ?? "—"}</td>
@@ -149,11 +159,35 @@ export default function DashboardPage() {
 
         {/* IA rationale */}
         <Section title="Information Architecture">
+          {/* Beat sequence */}
+          {ia.beats && ia.beats.length > 0 && (
+            <div className="mb-4 pb-4 border-b border-gray-100">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-2">
+                Beat sequence
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {ia.beats.map((b, i) => (
+                  <span key={i} className="flex items-center gap-1">
+                    {i > 0 && <span className="text-gray-300 text-xs">→</span>}
+                    <span className="rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700">
+                      {b.name}
+                    </span>
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+          {/* Sections */}
           <div className="space-y-3">
             {ia.sections.map((s, i) => (
               <div key={i} className="border-b border-gray-100 pb-3 last:border-0 last:pb-0">
                 <div className="flex items-baseline gap-2">
                   <span className="text-xs text-gray-400 tabular-nums w-4">{i + 1}.</span>
+                  {s.beat && (
+                    <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-semibold text-gray-500">
+                      {s.beat}
+                    </span>
+                  )}
                   <span className="text-sm font-medium text-gray-900">{s.name}</span>
                   {s.candidate_components.length > 0 && (
                     <span className="text-xs text-gray-400 font-mono">

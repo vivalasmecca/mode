@@ -16,8 +16,14 @@ interface ConfigResponse {
   presets: PresetConfig[];
 }
 
+interface IABeat {
+  name: string;
+  rationale: string;
+}
+
 interface IASection {
   name: string;
+  beat: string;
   rationale: string;
   candidate_components: string[];
 }
@@ -25,7 +31,7 @@ interface IASection {
 interface VariantIA {
   label: string;
   brief: Record<string, string>;
-  ia: { sections: IASection[] };
+  ia: { beats: IABeat[]; sections: IASection[] };
   preset: string;
 }
 
@@ -570,6 +576,25 @@ export default function BuildClient() {
               ))}
             </div>
 
+            {/* Beat sequence */}
+            {active.ia.beats && active.ia.beats.length > 0 && (
+              <div className="px-5 py-3 border-b border-gray-100 bg-gray-50">
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mr-1">
+                    Beats
+                  </span>
+                  {active.ia.beats.map((b, i) => (
+                    <span key={i} className="flex items-center gap-1">
+                      {i > 0 && <span className="text-gray-300 text-xs">→</span>}
+                      <span className="rounded bg-white border border-gray-200 px-2 py-0.5 text-xs font-medium text-gray-600">
+                        {b.name}
+                      </span>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Active variant sections */}
             <ol className="divide-y divide-gray-100">
               {active.ia.sections.map((section, i) => (
@@ -578,6 +603,11 @@ export default function BuildClient() {
                     <span className="flex-shrink-0 w-5 h-5 rounded-full bg-gray-100 text-gray-500 text-xs font-semibold flex items-center justify-center">
                       {i + 1}
                     </span>
+                    {section.beat && (
+                      <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-semibold text-gray-500">
+                        {section.beat}
+                      </span>
+                    )}
                     <span className="text-sm font-medium text-gray-900">{section.name}</span>
                   </div>
                   <p className="text-xs text-gray-500 pl-8">{section.rationale}</p>

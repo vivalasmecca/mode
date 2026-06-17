@@ -30,9 +30,12 @@ interface PreviewClientProps {
 export function PreviewClient({ output }: PreviewClientProps) {
   const [labelsOn, setLabelsOn] = useState(false);
 
-  // Index IA rationale by section name for O(1) lookup
+  // Index IA rationale and beat by section name for O(1) lookup
   const rationaleMap = Object.fromEntries(
     output.ia.sections.map((s) => [s.name, s.rationale])
+  );
+  const beatMap = Object.fromEntries(
+    output.ia.sections.map((s) => [s.name, s.beat])
   );
 
   return (
@@ -46,6 +49,7 @@ export function PreviewClient({ output }: PreviewClientProps) {
               {labelsOn && (
                 <SectionLabel
                   sectionName={section.section}
+                  beat={section.beat ?? beatMap[section.section]}
                   component={section.component}
                   variant={section.variant}
                   reasoning={section.reasoning}

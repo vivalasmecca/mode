@@ -14,6 +14,8 @@ const ARCHETYPE_STYLES: Record<string, { border: string; tag: string }> = {
 
 interface SectionLabelProps {
   sectionName: string;
+  /** Narrative beat this section belongs to */
+  beat?: string;
   component: string;
   variant: string | null;
   /** Component selector reasoning — why this module for this slot */
@@ -26,6 +28,7 @@ interface SectionLabelProps {
 
 export function SectionLabel({
   sectionName,
+  beat,
   component,
   variant,
   reasoning,
@@ -47,6 +50,11 @@ export function SectionLabel({
     <div className={`border-l-2 ${styles.border} bg-gray-950 px-4 py-2.5`}>
       {/* Row 1: identifiers */}
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        {beat && (
+          <span className="rounded bg-gray-700 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-gray-200">
+            {beat}
+          </span>
+        )}
         <span className="text-[10px] font-semibold uppercase tracking-widest text-gray-500">
           {sectionName}
         </span>

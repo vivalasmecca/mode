@@ -48,14 +48,21 @@ export interface PageBrief {
   context_mode: string;
 }
 
+export interface IABeat {
+  name: string;
+  rationale: string;
+}
+
 export interface IASection {
   name: string;
+  beat: string;
   rationale: string;
   candidate_components: string[];
 }
 
 export interface PageSection {
   section: string;
+  beat?: string;
   component: string;
   variant: string | null;
   reasoning: string | null;
@@ -108,7 +115,7 @@ export interface PageOutput {
   brief: PageBrief;
   behavioral_tokens?: BehavioralTokens;
   accent_tokens?: AccentTokens;
-  ia: { sections: IASection[] };
+  ia: { beats: IABeat[]; sections: IASection[] };
   page: PageSection[];
   preview_url: string;
 }
