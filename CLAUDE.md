@@ -101,13 +101,15 @@ Output is written to `output/page-{timestamp}-{variant}.json`. Multi-variant bui
 The dashboard is a Next.js 16 app in `ui/`. Start it with `npm run dev` from `ui/`.
 
 ```
-http://localhost:3000/dashboard       ← Overview (latest output)
-http://localhost:3000/dashboard/build ← Build form (multi-variant generation)
-http://localhost:3000/preview         ← Latest output rendered
-http://localhost:3000/preview?file=page-{ts}-{variant}.json ← Specific variant
-http://localhost:3000/site?ts={ts}    ← Site view: all variants from a build with linked nav
-http://localhost:3000/site?ts={ts}&page={label} ← Specific page within a site build
+http://localhost:3000/admin                                    ← Overview (latest output)
+http://localhost:3000/admin/build                              ← Build form (multi-variant generation)
+http://localhost:3000/admin/preview                            ← Latest output rendered
+http://localhost:3000/admin/preview?file=page-{ts}-{variant}.json ← Specific variant
+http://localhost:3000/admin/site?ts={ts}                       ← Site view: all variants from a build with linked nav
+http://localhost:3000/admin/site?ts={ts}&page={label}          ← Specific page within a site build
 ```
+
+All admin routes are local-only. On Vercel they return 403 unless `ADMIN_KEY` is set.
 
 ### Dashboard tabs
 
@@ -126,7 +128,7 @@ http://localhost:3000/site?ts={ts}&page={label} ← Specific page within a site 
 4. Submits → selected preset + brief sent to `/api/generate/ia` → N IA proposals in parallel
 5. IA review with tabs — one tab per variant, shows sections + rationale
 6. "Approve & Generate All N" → full pipeline runs in parallel for each variant (preset passed to token resolver)
-7. Output files saved + `site-{ts}.json` manifest written → one `/site?ts=` tab opens with all pages linked in the nav bar
+7. Output files saved + `site-{ts}.json` manifest written → one `/admin/site?ts=` tab opens with all pages linked in the nav bar
 
 ### Key architecture decisions in the UI
 
@@ -144,7 +146,7 @@ This ensures Node.js resolves `mode-agent/*` from `ui/node_modules/` regardless 
 
 **Palette tab:** Two sections — Brand Accent (global, not per-preset) and Palette Map (per-preset grid). Accent has `on_light` and `on_dark` variants for branded CTA buttons. Palette map cells cycle light → neutral → dark on click. Both have independent save states; saves write directly to `mode-tokens.json`.
 
-**Site manifest:** After each multi-variant build, `/api/generate/page` writes `output/site-{ts}.json` recording all variant files, preset, and base brief. The `/site` route reads this to power the linked nav bar — no database, just the same flat-file pattern as the page outputs.
+**Site manifest:** After each multi-variant build, `/api/generate/page` writes `output/site-{ts}.json` recording all variant files, preset, and base brief. The `/admin/site` route reads this to power the linked nav bar — no database, just the same flat-file pattern as the page outputs.
 
 **Brand context:** `context/product-context.json` and `context/brand-brief.md` are read by `content-generator.js` on every build — no restart required. If `product_name` is empty, the files are ignored and the generator falls back to hallucinating product truth. If `checkout.primary_url` is set, CTA `href` values in generated pages point to the real checkout URL instead of `#`.
 
@@ -178,14 +180,16 @@ mode/
 └── ui/                              ← Next.js 16 dashboard + preview
     ├── next.config.ts               ← turbopack.root + serverExternalPackages
     ├── package.json                 ← includes mode-agent as file: dependency
+    ├── proxy.ts                     ← signal detection + /admin block (local-only admin routes)
     ├── app/
-    │   ├── dashboard/
+    │   ├── robots.ts                ← disallows /admin/ and /api/ for crawlers
+    │   ├── admin/                   ← all utility routes (local-only; 403 on Vercel)
     │   │   ├── layout.tsx           ← reads latest output, wraps all tabs
     │   │   ├── page.tsx             ← Overview tab
     │   │   ├── TabNav.tsx
     │   │   ├── build/
     │   │   │   ├── page.tsx
-    │   │   │   └── BuildClient.tsx  ← "use client" — full build flow
+    │   │   │   └── BuildClient.tsx  ← "use client" — full build flow + Deploy button
     │   │   ├── concepts/page.tsx    ← static reference docs
     │   │   ├── palette/
     │   │   │   ├── page.tsx         ← server: reads mode-tokens.json, passes to client
@@ -193,11 +197,13 @@ mode/
     │   │   ├── brand/
     │   │   │   ├── page.tsx         ← server: reads context/ files, passes to client
     │   │   │   └── BrandClient.tsx  ← "use client" — URL extractor, JSON + markdown editors
-    │   │   └── run/page.tsx
-    │   ├── preview/page.tsx         ← renders output JSON; supports ?file= param
-    │   ├── site/page.tsx            ← site view: fixed dark nav + PreviewClient; reads site manifest
+    │   │   ├── run/page.tsx
+    │   │   ├── preview/page.tsx     ← renders output JSON; supports ?file= param
+    │   │   └── site/page.tsx        ← site view: fixed dark nav + PreviewClient; reads site manifest
     │   └── api/
     │       ├── config/route.ts      ← GET: active preset + variant config
+    │       ├── admin/
+    │       │   └── deploy/route.ts  ← POST: commit output/ + config/, push to trigger Vercel deploy
     │       ├── palette/
     │       │   ├── route.ts         ← PUT: save palette_map for a preset
     │       │   └── accent/route.ts  ← PUT: save accent tokens
@@ -226,7 +232,7 @@ mode/
 
 When dropping back in after time away, start here:
 
-1. **Start the dashboard:** `cd ui && npm run dev` → http://localhost:3000/dashboard
+1. **Start the dashboard:** `cd ui && npm run dev` → http://localhost:3000/admin
 2. **Go to Build tab** → select a palette approach → fill in a brief → approve IAs → generate all variants → site view opens automatically with linked page navigation.
 3. **Default preset:** `tokens/mode-tokens.json` → `"active_preset"` controls which preset is pre-selected in the Build form. The form lets you switch per build without touching the file.
 4. **If you get a "Cannot find module 'mode-agent'" error:** run `npm install` from `ui/` to restore the symlink.
@@ -239,12 +245,12 @@ When dropping back in after time away, start here:
 - Full pipeline: brief → IA → component selection → token resolution → content generation
 - Multi-variant generation: one build run produces N variant files (N = 4 for funnel-driven, 3 for archetype-driven)
 - IA review with tabs before committing to generation
-- Preview at `/preview?file={filename}` for any specific variant
+- Preview at `/admin/preview?file={filename}` for any specific variant
 - Dashboard overview shows latest output (behavioral tokens, IA rationale, token resolution table)
 - **Palette Approach selector in the Build form** — all three presets selectable per build; no file editing or server restart required
 - **Palette tab** — editable palette map grid (click cells to cycle light/neutral/dark, save to `mode-tokens.json`) and brand accent editor (on_light / on_dark CTA color variants with live preview)
 - **Accent layer** — `accent` block in `mode-tokens.json`; `token-resolver.js` exposes `accent` + `resolveAccent(paletteMode)`; `accent_tokens` written into output JSON per build
-- **Multi-page site view** — after generation, a `site-{ts}.json` manifest is written; `/site?ts=&page=` renders any page from the build with a fixed dark nav bar linking all variants; BuildClient opens one site tab instead of N preview tabs
+- **Multi-page site view** — after generation, a `site-{ts}.json` manifest is written; `/admin/site?ts=&page=` renders any page from the build with a fixed dark nav bar linking all variants; BuildClient opens one site tab instead of N preview tabs
 - **Brand context agent** — `brand-context-builder.js` fetches URLs and uses Claude to extract `product-context.json` and draft `brand-brief.md`; both are injected into every build; CTAs use `checkout.primary_url` when set
 - **MODE product brief populated** — `context/product-context.json` has the real product one-liner, 10 features, two pricing tiers (MODE Kit $1199 one-time, MODE Studio TBD), and differentiators; checkout URL pending LemonSqueezy setup
 
@@ -368,7 +374,7 @@ The visual mapping tool is a **1D grid** — components on rows, dimension value
 
 **Step 2: Build a read-only palette map visualizer ✓ done**
 
-Palette tab at `/dashboard/palette` — components on rows, dimension values on columns, cells color-coded light/neutral/dark. Three preset tabs to compare all maps.
+Palette tab at `/admin/palette` — components on rows, dimension values on columns, cells color-coded light/neutral/dark. Three preset tabs to compare all maps.
 
 **Step 3: Make the grid editable ✓ done**
 
@@ -406,7 +412,7 @@ Hard (need external data):
 
 **Where routing logic lives**
 
-The cleanest option for the current architecture is **edge middleware** (Vercel Edge Middleware runs before the page loads, reads signals, rewrites to `/preview?file=page-{ts}-{variant}.json`). No client-side flash, no server round-trip, works with the static JSON output files as-is. The routing logic itself is a lookup table: detected signals → variant label → filename.
+The cleanest option for the current architecture is **edge middleware** (Vercel Edge Middleware runs before the page loads, reads signals, rewrites to `/admin/preview?file=page-{ts}-{variant}.json`). No client-side flash, no server round-trip, works with the static JSON output files as-is. The routing logic itself is a lookup table: detected signals → variant label → filename.
 
 **What's genuinely tricky**
 
@@ -567,7 +573,7 @@ Run the same brief with Mover archetype. The IA collapses — fewer sections, le
 The site view infrastructure is built. Each build run produces:
 - N variant page files (`page-{ts}-{variant}.json`)
 - One site manifest (`site-{ts}.json`) linking all variants
-- `/site?ts=&page=` renders any page with a fixed dark nav bar connecting all pages in the build
+- `/admin/site?ts=&page=` renders any page with a fixed dark nav bar connecting all pages in the build
 
 **What still needs to happen manually**
 
