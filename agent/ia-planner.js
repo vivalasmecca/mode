@@ -136,21 +136,39 @@ function ruleBasedBeats(brief) {
 }
 
 /**
+ * Human-readable section name for a content beat.
+ * These become the unique keys used by the content generator.
+ */
+const BEAT_SECTION_NAMES = {
+  Orientation: "Hero",
+  Credibility: "Social proof",
+  Value:       "Features",
+  Evidence:    "Proof points",
+  Decision:    "Pricing",
+  Conversion:  "CTA",
+};
+
+/**
  * Build sections from the beat sequence deterministically.
- * For each beat, finds components with that beat affinity that are also
- * eligible for the brief's archetype and funnel stage.
+ *
+ * NavigationHeader and FooterMinimal are pinned as fixed structural sections
+ * (always first and last) and are excluded from the content beat candidate
+ * pools — this prevents section name collisions in the content generator.
+ *
+ * Each content beat gets a descriptive, unique section name (e.g. "Hero",
+ * "Features") so the content generator can key output by section name without
+ * collisions.
  */
 function buildSectionsFromBeats(beats, brief, manifest) {
-  // NavigationHeader and FooterMinimal are always eligible.
-  const always = ["NavigationHeader", "FooterMinimal"];
+  const PINNED = ["NavigationHeader", "FooterMinimal"];
 
-  // Index: beat name → eligible component names
+  // Index: beat name → eligible component names (pinned components excluded)
   const beatIndex = {};
   for (const c of manifest.components) {
+    if (PINNED.includes(c.name)) continue;
     const eligible =
-      always.includes(c.name) ||
-      (c.archetypes.includes(brief.archetype) &&
-        c.funnel_stages.includes(brief.funnel_stage));
+      c.archetypes.includes(brief.archetype) &&
+      c.funnel_stages.includes(brief.funnel_stage);
     if (!eligible) continue;
     for (const beat of c.beats ?? []) {
       if (!beatIndex[beat]) beatIndex[beat] = [];
@@ -158,15 +176,36 @@ function buildSectionsFromBeats(beats, brief, manifest) {
     }
   }
 
-  // One section per beat; drop beats with no eligible components.
-  const sections = beats
-    .map((beat) => ({
-      name: beat.name,
+  const sections = [];
+
+  // Pinned: navigation always first
+  sections.push({
+    name: "Navigation",
+    beat: "Orientation",
+    rationale: "Global navigation — wayfinding and persistent CTA for the session.",
+    candidate_components: ["NavigationHeader"],
+  });
+
+  // One content section per beat (Recovery is handled by the pinned footer)
+  for (const beat of beats) {
+    if (beat.name === "Recovery") continue;
+    const candidates = beatIndex[beat.name] ?? [];
+    if (candidates.length === 0) continue;
+    sections.push({
+      name: BEAT_SECTION_NAMES[beat.name] ?? beat.name,
       beat: beat.name,
       rationale: beat.rationale,
-      candidate_components: beatIndex[beat.name] ?? [],
-    }))
-    .filter((s) => s.candidate_components.length > 0);
+      candidate_components: candidates,
+    });
+  }
+
+  // Pinned: footer always last
+  sections.push({
+    name: "Footer",
+    beat: "Recovery",
+    rationale: "Page close — brand mark, minimal navigation, and legal.",
+    candidate_components: ["FooterMinimal"],
+  });
 
   return { beats, sections };
 }
