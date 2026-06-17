@@ -188,6 +188,24 @@ async function callLLM(spec, brief, behavioral) {
     ? `\n\nBRAND BRIEF — follow the tone, messaging pillars, and claim territory defined here:\n${brandBrief}`
     : "";
 
+  // Funnel stage context: tells the LLM how to interpret the audience field
+  // at each stage. Without this, "SaaS trial users" in consideration stage
+  // reads as "people already in a trial" rather than "people evaluating".
+  const FUNNEL_STAGE_CONTEXT = {
+    awareness:     "Visitor is discovering this product for the first time. Write as if they have not yet signed up, trialed, or committed to anything. Focus on problem framing and initial intrigue.",
+    consideration: "Visitor is evaluating this product against alternatives. They may not have trialed yet — do not assume they have. Focus on education, differentiation, and helping them evaluate confidently.",
+    decision:      "Visitor is actively deciding. They may be mid-trial or post-demo. Focus on resolving objections, reinforcing specific value, and making the decision feel safe.",
+    conversion:    "Visitor is at the commitment moment. They are ready to act. Remove friction, maximise confidence, and make the next step obvious and easy.",
+  };
+  const funnelContext = FUNNEL_STAGE_CONTEXT[brief.funnel_stage] || "";
+  const funnelSection = funnelContext
+    ? `\n\nAUDIENCE CONTEXT — ${brief.funnel_stage} stage:\n${funnelContext}`
+    : "";
+
+  const contentNotesSection = brief.content_notes
+    ? `\n\nCONTENT DIRECTION — additional instructions from the author, follow these exactly:\n${brief.content_notes}`
+    : "";
+
   const message = await anthropic.messages.create({
     model: "claude-sonnet-4-6",
     max_tokens: 8192,
@@ -202,7 +220,7 @@ BRIEF:
 ${JSON.stringify(brief, null, 2)}
 
 TONE — ${brief.archetype} archetype:
-${toneGuide}${productContextSection}${brandBriefSection}
+${toneGuide}${funnelSection}${productContextSection}${brandBriefSection}${contentNotesSection}
 
 SLOT TYPE RULES — follow exactly:
 - type "string"            → write a plain string value

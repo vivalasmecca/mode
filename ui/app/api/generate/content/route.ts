@@ -24,7 +24,7 @@ export const maxDuration = 120;
  */
 export async function POST(req: Request) {
   try {
-    const { filenames }: { filenames: string[] } = await req.json();
+    const { filenames, content_notes }: { filenames: string[]; content_notes?: string } = await req.json();
 
     if (!Array.isArray(filenames) || filenames.length === 0) {
       return Response.json({ error: "filenames array is required" }, { status: 400 });
@@ -47,10 +47,17 @@ export async function POST(req: Request) {
 
         // Re-run only content generation. The IA, component structure, palette,
         // and behavioral tokens are all preserved from the source file.
+        // content_notes override (if provided) replaces whatever was in the
+        // original brief so the author can iterate without a full rebuild.
+        const brief =
+          content_notes !== undefined
+            ? { ...existing.brief, content_notes }
+            : existing.brief;
+
         const populatedPage = await populateContent(
           existing.ia,
           existing.page,
-          existing.brief,
+          brief,
           manifest,
           existing.behavioral_tokens ?? null
         );
@@ -63,6 +70,7 @@ export async function POST(req: Request) {
         const output = {
           ...existing,
           generated_at: timestamp,
+          brief,
           page: populatedPage,
           preview_url: previewUrl,
           _regen_from: path.basename(filename),

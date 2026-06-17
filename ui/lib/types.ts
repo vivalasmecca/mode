@@ -46,6 +46,7 @@ export interface PageBrief {
   funnel_stage: string;
   goal: string;
   context_mode: string;
+  content_notes?: string;
 }
 
 export interface IABeat {

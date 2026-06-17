@@ -85,6 +85,7 @@ export default function BuildClient() {
     audience: "",
     goal: "",
     context_mode: "organic",
+    content_notes: "",
   });
   const [variants, setVariants] = useState<VariantIA[]>([]);
   const [results, setResults] = useState<VariantResult[]>([]);
@@ -96,6 +97,7 @@ export default function BuildClient() {
   const [errorMsg, setErrorMsg] = useState("");
   const [regenState, setRegenState] = useState<"idle" | "loading" | "done" | "error">("idle");
   const [regenError, setRegenError] = useState("");
+  const [regenNotes, setRegenNotes] = useState("");
   const [repalettePreset, setRepalettePreset] = useState("");
   const [repaletteState, setRepaletteState] = useState<"idle" | "loading" | "done" | "error">("idle");
   const [repaletteError, setRepaletteError] = useState("");
@@ -179,6 +181,7 @@ export default function BuildClient() {
       setBuiltTs(new URLSearchParams((data.siteUrl ?? "").split("?")[1] ?? "").get("ts") ?? "");
       setActivateState("idle");
       setActivateError("");
+      setRegenNotes(baseBrief.content_notes ?? "");
       window.open(data.siteUrl, "_blank", "noopener,noreferrer");
       setStep("done");
     } catch (err) {
@@ -218,7 +221,10 @@ export default function BuildClient() {
       const res = await fetch("/api/generate/content", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ filenames: results.map((r) => r.filename) }),
+        body: JSON.stringify({
+          filenames: results.map((r) => r.filename),
+          content_notes: regenNotes,
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Regeneration failed");
@@ -496,8 +502,27 @@ export default function BuildClient() {
             </div>
             <div className="px-5 py-4 space-y-3">
               <p className="text-sm text-gray-500">
-                Re-run only content generation. Preserves the IA and component selection from this build — only slot values change.
+                Re-run only content generation. Preserves the IA and component selection — only slot values change.
               </p>
+              <div className="space-y-1.5">
+                <label
+                  htmlFor="regen-notes"
+                  className="block text-xs font-semibold uppercase tracking-widest text-gray-500"
+                >
+                  Content direction
+                </label>
+                <textarea
+                  id="regen-notes"
+                  rows={3}
+                  value={regenNotes}
+                  onChange={(e) => {
+                    setRegenNotes(e.target.value);
+                    setRegenState("idle");
+                  }}
+                  placeholder="Optional notes — edit here to steer the next pass without rebuilding. E.g. 'In consideration, don't assume the visitor has trialed. Keep copy educational.'"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-y"
+                />
+              </div>
               {regenState === "error" && (
                 <p className="text-sm text-red-600 font-mono break-all">{regenError}</p>
               )}
@@ -526,6 +551,7 @@ export default function BuildClient() {
               setDeployMessage("");
               setRegenState("idle");
               setRegenError("");
+              setRegenNotes("");
               setRepalettePreset("");
               setRepaletteState("idle");
               setRepaletteError("");
@@ -790,6 +816,22 @@ export default function BuildClient() {
                 <option value="campaign">campaign</option>
                 <option value="retargeting">retargeting</option>
               </select>
+            </Field>
+
+            <Field label="Content direction" htmlFor="content_notes">
+              <textarea
+                id="content_notes"
+                rows={3}
+                value={baseBrief.content_notes ?? ""}
+                onChange={(e) =>
+                  setBaseBrief((b) => ({ ...b, content_notes: e.target.value }))
+                }
+                placeholder="Optional notes for the copywriter — e.g. 'In consideration stage, don't assume the visitor has trialed yet. Focus on evaluation and education, not conversion pressure.'"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-y"
+              />
+              <p className="text-xs text-gray-400 mt-1">
+                Applied to all variants. Survives to Regenerate Copy so you can iterate.
+              </p>
             </Field>
           </div>
 
