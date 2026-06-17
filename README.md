@@ -60,6 +60,31 @@ The dashboard and preview routes are under `/admin` and are blocked on Vercel (4
 | `localhost:3000/admin/preview?file=page-{ts}-{variant}.json` | Preview a specific variant |
 | `localhost:3000/admin/site?ts={ts}` | Site view — all variants from a build with linked nav |
 
+### Testing routing on the live site
+
+The proxy reads query params as direct overrides, making it easy to test any variant without touching cookies.
+
+**Direct overrides** (clearest for testing):
+
+| URL | Variant served |
+|-----|---------------|
+| `mode-nu.vercel.app/?page=awareness` | awareness |
+| `mode-nu.vercel.app/?page=consideration` | consideration |
+| `mode-nu.vercel.app/?page=decision` | decision |
+| `mode-nu.vercel.app/?page=conversion` | conversion |
+
+**UTM signals** (tests the real routing logic):
+
+| URL | Detected stage |
+|-----|---------------|
+| `mode-nu.vercel.app/?utm_medium=email` | consideration |
+| `mode-nu.vercel.app/?utm_medium=retargeting` | decision |
+| `mode-nu.vercel.app/?utm_campaign=checkout-now` | conversion |
+
+**Cookie progression** — visit any UTM URL first, then go to the bare `/`. The proxy advances the funnel stage one step and stores it in a `mode_funnel_stage` cookie, so the next bare visit automatically loads the next stage. Clear cookies to reset to awareness.
+
+**Default** — `mode-nu.vercel.app/` with no params and no cookie → awareness.
+
 ### If the live site shows "No active build"
 
 Either `config/routing.json` doesn't exist, or it points to a build whose output files aren't committed. Fix:
