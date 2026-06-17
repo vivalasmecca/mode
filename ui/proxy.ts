@@ -59,6 +59,13 @@ function advanceStage(stage: string): string {
 }
 
 export function proxy(request: NextRequest) {
+  if (request.nextUrl.pathname.startsWith("/admin")) {
+    if (process.env.VERCEL && !process.env.ADMIN_KEY) {
+      return new Response("Admin routes are only available in local development.", { status: 403 });
+    }
+    return NextResponse.next();
+  }
+
   const url = new URL(request.url);
   const cookieFunnel = request.cookies.get("mode_funnel_stage")?.value;
   const cookieArchetype = request.cookies.get("mode_archetype")?.value;
@@ -95,4 +102,4 @@ export function proxy(request: NextRequest) {
   return response;
 }
 
-export const config = { matcher: ["/"] };
+export const config = { matcher: ["/", "/admin/:path*"] };
