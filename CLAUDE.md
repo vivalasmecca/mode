@@ -116,10 +116,11 @@ All admin routes are local-only. On Vercel they return 403 unless `ADMIN_KEY` is
 
 - **Overview** — shows preset, brief, behavioral tokens, token resolution table, and IA rationale for the latest output file
 - **Concepts** — static reference documentation for all brief fields and system concepts
-- **Build** — the main UI for generating pages (see below)
+- **Build** — the main UI for generating pages. Red "Foundational" chip warns that a build overwrites all Edit-tab changes.
+- **Edit** — slot editor: left panel lists all sections; right panel shows editable fields for every slot in the selected section. Supports string, CTA (label + href), array, and read-only fields. **Links panel** across the top lets you set named link tokens (e.g. `checkout`) that populate HrefField shortcuts in the slot editor and write to `context/product-context.json`.
 - **Brand** — extract product context from URLs, edit brand brief; both feed every build
 - **Palette** — editable palette map grid + brand accent configuration (see below)
-- **Run** — (exists, purpose TBD)
+- **Run** — Deploy panel: lists active build timestamp and variant labels, shows last deploy time, and provides a "Deploy" button that commits `output/` + `config/` and pushes to trigger a Vercel build (content-lane deploy, separate from code-lane git push).
 
 ### Build tab flow
 
@@ -147,6 +148,12 @@ This ensures Node.js resolves `mode-agent/*` from `ui/node_modules/` regardless 
 
 **Palette tab:** Two sections — Brand Accent (global, not per-preset) and Palette Map (per-preset grid). Accent has `on_light` and `on_dark` variants for branded CTA buttons. Palette map cells cycle light → neutral → dark on click. Both have independent save states; saves write directly to `mode-tokens.json`.
 
+**CSS variables layer:** `tokens/theme.json` holds palette color values as hex/CSS strings (not Tailwind classes). `ui/lib/palette-vars.ts` reads the file at request time and returns a `Record<string, string>` of CSS custom properties (e.g. `--mode-dark-bg: #111827`). These are applied to `<html style>` by `app/layout.tsx`. `ui/lib/palette.ts` is permanently static — it references CSS variables via Tailwind arbitrary-value syntax (`bg-[var(--mode-dark-bg)]`). Changing `theme.json` takes effect on the next request with no rebuild or code change.
+
+**Named links:** `context/product-context.json` → `named_links` holds a map of token names to URLs (e.g. `checkout → https://...`). The Edit tab's Links panel reads and writes these. In the slot editor, HrefField inputs show named link tokens as quick-select shortcuts alongside free-text URL entry. `PUT /api/brand/links` merges updates into the file.
+
+**Two deployment lanes:** Code changes (`git push` → Vercel auto-build) and content changes (Deploy button → commits `output/` + `config/`, pushes to trigger build) are separate. "Nothing to deploy" from the Deploy button means no content files changed; code-lane deploys happen independently.
+
 **Site manifest:** After each multi-variant build, `/api/generate/page` writes `output/site-{ts}.json` recording all variant files, preset, and base brief. The `/admin/site` route reads this to power the linked nav bar — no database, just the same flat-file pattern as the page outputs.
 
 **Brand context:** `context/product-context.json` and `context/brand-brief.md` are read by `content-generator.js` on every build — no restart required. If `product_name` is empty, the files are ignored and the generator falls back to hallucinating product truth. If `checkout.primary_url` is set, CTA `href` values in generated pages point to the real checkout URL instead of `#`.
@@ -171,9 +178,10 @@ mode/
 │   ├── brand-context-builder.js     ← ingestion agent: URLs → product-context + brand-brief
 │   └── set-preset.js                ← CLI tool to switch active preset
 ├── tokens/
-│   └── mode-tokens.json             ← palette maps + behavioral tokens per preset + global accent
+│   ├── mode-tokens.json             ← palette maps + behavioral tokens per preset + global accent
+│   └── theme.json                   ← visual expression layer: hex/CSS color values for light/neutral/dark modes + accent. Changes take effect on next request (no rebuild).
 ├── context/
-│   ├── product-context.json         ← structured product facts (name, features, pricing, checkout URL)
+│   ├── product-context.json         ← structured product facts (name, features, pricing, named_links)
 │   └── brand-brief.md               ← tone, messaging pillars, claim territory (markdown)
 ├── output/
 │   ├── page-{ts}-{variant}.json    ← generated page outputs (one per variant per run)
@@ -182,15 +190,21 @@ mode/
     ├── next.config.ts               ← turbopack.root + serverExternalPackages
     ├── package.json                 ← includes mode-agent as file: dependency
     ├── proxy.ts                     ← signal detection + /admin block (local-only admin routes)
+    ├── public/
+    │   └── wordmark.svg             ← brand wordmark; rendered directly in NavigationHeader + FooterMinimal
     ├── app/
     │   ├── robots.ts                ← disallows /admin/ and /api/ for crawlers
+    │   ├── layout.tsx               ← applies palette CSS vars to <html style> via getPaletteVars()
     │   ├── admin/                   ← all utility routes (local-only; 403 on Vercel)
     │   │   ├── layout.tsx           ← reads latest output, wraps all tabs
     │   │   ├── page.tsx             ← Overview tab
     │   │   ├── TabNav.tsx
     │   │   ├── build/
-    │   │   │   ├── page.tsx
-    │   │   │   └── BuildClient.tsx  ← "use client" — full build flow + Deploy button
+    │   │   │   ├── page.tsx         ← "Foundational" red warning chip + BuildClient
+    │   │   │   └── BuildClient.tsx  ← "use client" — full build flow + Activate button
+    │   │   ├── edit/
+    │   │   │   ├── page.tsx         ← server: reads output + named links, passes to EditClient
+    │   │   │   └── EditClient.tsx   ← "use client" — Links panel + split-panel slot editor
     │   │   ├── concepts/page.tsx    ← static reference docs
     │   │   ├── palette/
     │   │   │   ├── page.tsx         ← server: reads mode-tokens.json, passes to client
@@ -198,11 +212,16 @@ mode/
     │   │   ├── brand/
     │   │   │   ├── page.tsx         ← server: reads context/ files, passes to client
     │   │   │   └── BrandClient.tsx  ← "use client" — URL extractor, JSON + markdown editors
-    │   │   ├── run/page.tsx
+    │   │   ├── run/
+    │   │   │   ├── page.tsx         ← server: reads active build ts + variant labels
+    │   │   │   └── RunClient.tsx    ← "use client" — Deploy button + deploy status panel
     │   │   ├── preview/page.tsx     ← renders output JSON; supports ?file= param
     │   │   └── site/page.tsx        ← site view: fixed dark nav + PreviewClient; reads site manifest
     │   └── api/
     │       ├── config/route.ts      ← GET: active preset + variant config
+    │       ├── output/
+    │       │   ├── route.ts         ← GET: list output files
+    │       │   └── save/route.ts    ← PUT: merge updated slots into output file (slot editor save)
     │       ├── admin/
     │       │   └── deploy/route.ts  ← POST: commit output/ + config/, push to trigger Vercel deploy
     │       ├── palette/
@@ -210,9 +229,14 @@ mode/
     │       │   └── accent/route.ts  ← PUT: save accent tokens
     │       ├── brand/
     │       │   ├── ingest/route.ts  ← POST: fetch URLs → extract product context + draft brand brief
+    │       │   ├── links/route.ts   ← PUT: merge named_links into product-context.json
     │       │   └── save/route.ts    ← PUT: write product-context.json and/or brand-brief.md
+    │       ├── routing/
+    │       │   └── activate/route.ts ← POST: write active build ts to config/routing.json
     │       └── generate/
     │           ├── ia/route.ts      ← POST: N IA proposals in parallel
+    │           ├── content/route.ts ← POST: generate content for a single section
+    │           ├── palette/route.ts ← POST: AI-assisted palette suggestion
     │           └── page/route.ts    ← POST: N full pages in parallel
     ├── components/
     │   ├── preview/
@@ -223,8 +247,9 @@ mode/
     │   └── blocks/                  ← micro-block primitives
     └── lib/
         ├── get-output.ts            ← getLatestOutput() + getOutputByFile(filename) + getSiteManifest(ts)
-        ├── types.ts                 ← schema contract (PageOutput, PageBrief, etc.)
-        └── palette.ts               ← getPalette() utility
+        ├── palette-vars.ts          ← getPaletteVars(): reads theme.json at request time → CSS var object
+        ├── palette.ts               ← getPalette(): static CSS var references (never needs updating)
+        └── types.ts                 ← schema contract (PageOutput, PageBrief, etc.)
 ```
 
 ---
@@ -253,36 +278,38 @@ When dropping back in after time away, start here:
 - **Accent layer** — `accent` block in `mode-tokens.json`; `token-resolver.js` exposes `accent` + `resolveAccent(paletteMode)`; `accent_tokens` written into output JSON per build
 - **Multi-page site view** — after generation, a `site-{ts}.json` manifest is written; `/admin/site?ts=&page=` renders any page from the build with a fixed dark nav bar linking all variants; BuildClient opens one site tab instead of N preview tabs
 - **Brand context agent** — `brand-context-builder.js` fetches URLs and uses Claude to extract `product-context.json` and draft `brand-brief.md`; both are injected into every build; CTAs use `checkout.primary_url` when set
-- **MODE product brief populated** — `context/product-context.json` has the real product one-liner, 10 features, two pricing tiers (MODE Kit $1199 one-time, MODE Studio TBD), and differentiators; checkout URL pending LemonSqueezy setup
+- **MODE product brief populated** — `context/product-context.json` has the real product one-liner, 10 features, two pricing tiers (MODE Kit $1199 one-time, MODE Studio TBD), and differentiators
+- **CSS variables layer** ✓ — `tokens/theme.json` stores palette colors as hex/CSS values. `palette-vars.ts` reads the file server-side and injects CSS custom properties on `<html style>`. `palette.ts` uses static Tailwind arbitrary-value classes (`bg-[var(--mode-dark-bg)]`). Changing `theme.json` takes effect on the next request — no rebuild, no code change.
+- **Inline slot editor** ✓ — Edit tab at `/admin/edit`. Left panel: section list with component/variant/palette badges and unsaved indicators. Right panel: slot fields rendered by inferred type (string → textarea, CTA → label+href inputs, array → item cards with add/remove). Per-section Save button writes to disk via `PUT /api/output/save`.
+- **Links panel** ✓ — horizontal strip above the slot editor. Named link tokens (e.g. `checkout`) map to real URLs and appear as shortcuts in HrefField inputs. Saved via `PUT /api/brand/links` → `context/product-context.json`.
+- **Wordmark** ✓ — `ui/public/wordmark.svg`; rendered as `<img>` directly in NavigationHeader (h-7) and FooterMinimal (h-6). No slot dependency.
+- **Build tab foundational warning** ✓ — red "Foundational" chip at top of Build tab reminds that a build overwrites all slot edits.
+- **Run / Deploy panel** ✓ — shows active build timestamp + variant labels, last deploy time, and a Deploy button that commits `output/` + `config/` and pushes (content-lane deploy separate from code git push).
 
 ---
 
 ## What's next (as of June 2026)
 
-The priority order has shifted. The demo needs human-in-the-loop tooling before it can be iterated into something tight enough to show. Even at 90% LLM quality, the remaining 10% requires tooling that doesn't exist yet. These three items unlock that iteration loop:
+The human-in-the-loop editing layer is now complete. The iteration loop is open. Priority shifts to output quality and the demo moment.
 
-### 1. theme.json — visual control layer ✓ done (partial)
-`palette_modes` and `accent` now live in `tokens/theme.json`. The agent reads from it. The Palette tab writes to it. The intent layer (`mode-tokens.json`) no longer contains any visual values.
+### 1. Colors — theme.json tuning
+The CSS variables layer is wired. `theme.json` is now the single source of truth for palette visual expression. The conversation to have: what should `light`, `neutral`, and `dark` actually look like for MODE? The defaults are functional but generic. This is the place to set brand tone.
 
-**Remaining: CSS variables layer.** `ui/lib/palette.ts` is still hardcoded — client-bundled components can't read the filesystem, and Turbopack blocks imports outside `ui/`. The fix is to replace static Tailwind class strings with CSS custom properties: `theme.json` defines variable values, a server component sets them on `<html>`, and components use `var(--palette-light-bg)` instead of `bg-white`. This makes `theme.json` the single true source end-to-end with no manual sync. Until then, `palette.ts` must be updated alongside `theme.json` whenever palette values change.
+### 2. CMS integration — persistent content layer
+The inline slot editor proves the editing workflow. When ready to add multi-session persistence, versioning, and multi-user editing, connect to a headless CMS. **Payload CMS** is the right fit: TypeScript-native, runs locally alongside Next.js, self-hosted, schema defined in code. Content types map directly to the slot schema already defined in `lib/types.ts`. **Sanity** is an alternative: managed, excellent editing UX, free tier — better if local service overhead is unwanted.
 
-### 2. Inline slot editor — copy control layer
-A structured editing panel in the admin showing each section's slots as editable fields. Human reviews LLM output, makes micro-edits to headlines, subheads, and copy, saves back to the output JSON. No external dependencies — the output files are already JSON with a known schema, and file-writing API routes already exist. This teaches the shape of the CMS integration before committing to one.
-
-### 3. CMS integration — persistent content layer
-Once the inline editor proves the editing workflow, connect to a headless CMS for multi-session persistence, versioning, and eventually multi-user editing. **Payload CMS** is the right fit: TypeScript-native, runs locally alongside Next.js, self-hosted, schema defined in code. Content types map directly to the slot schema already defined in `lib/types.ts`. **Sanity** is an alternative: managed (no local service), excellent editing UX, free tier — better if local service overhead is unwanted.
-
-The CMS integration waits until the content schema is stable. Every component slot addition currently requires no migration; a CMS would require one. Build the inline editor first, stabilize the schema, then migrate.
+The CMS integration waits until the content schema is stable. Every component slot addition currently requires no migration; a CMS would require one. Schema is stable enough now to consider starting.
 
 ---
 
-### Remaining level 1 items
-- **Mover contrast build** — run archetype-driven preset with Mover. Same product, same funnel stage, different IA and copy register. This is the demo moment and requires no code — just a build run.
-- **Analytics attribution** — fire a page-load event with variant served + signals used. Needed to evaluate routing in production.
+### Level 1 — demo readiness
+- **Mover contrast build** — run archetype-driven preset with Mover. Same product, same funnel stage, different IA and copy register. This is the demo moment. Requires no code — just a build run.
+- **LemonSqueezy setup** — add checkout URL via the Edit tab Links panel (`checkout` token). CTAs point to real checkout automatically on next build. No code change needed.
+- **Analytics attribution** — fire a page-load event with variant served + signals used. Needed to evaluate whether routing is working in production.
 
-### Level 2 (output quality)
-- **Brand brief** — write `context/brand-brief.md` (tone, pillars, claim territory). Immediately improves copy register. Brand Setup tab has the editor.
-- **LemonSqueezy setup** — add `checkout.primary_url` to `context/product-context.json`; CTAs point to real checkout automatically.
+### Level 2 — output quality
+- **Brand brief** — write `context/brand-brief.md` (tone, pillars, claim territory). Immediately improves copy register. Brand tab has the editor.
+- **Colors** — tune `tokens/theme.json` for visual brand expression. No rebuild required.
 
 **Done:**
 - Four-page Validator funnel journey ✓
@@ -290,6 +317,12 @@ The CMS integration waits until the content schema is stable. Every component sl
 - Page beats (7-beat narrative taxonomy, IA planning, section naming) ✓
 - Expressive hero variants (editorial layout for awareness stage) ✓
 - Component library tab in admin dashboard ✓
+- theme.json / CSS variables layer ✓ (palette-vars.ts → html style → static palette.ts)
+- Inline slot editor / Edit tab ✓
+- Named links panel ✓
+- Wordmark ✓
+- Build tab foundational warning ✓
+- Run / Deploy panel ✓
 
 ---
 
