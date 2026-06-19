@@ -1,37 +1,37 @@
 {
-  "_note": "MODE expression layer. Defines what light, neutral, and dark palette modes look like visually. This is the brand's responsibility — swap these values to apply your own visual language without touching the intent layer (mode-tokens.json). Values are CSS color strings (hex, hsl, oklch, etc.). Changes take effect on next request — no rebuild required.",
+  "_note": "MODE expression layer. Maps semantic palette tokens to color scale references (see color-scale.json). This is the brand's responsibility — reassign these references to apply your visual language without touching the intent layer (mode-tokens.json). Use dot notation to reference scale entries: \"gray.900\", \"indigo.600\". Top-level entries like \"white\" are referenced by name. Changes take effect on next request — no rebuild required.",
   "palette_modes": {
     "light": {
       "_description": "Neutral canvas. Chrome, top-of-funnel, low-emphasis sections.",
-      "bg":      "#ffffff",
-      "text":    "#111827",
-      "subtext": "#4b5563",
-      "muted":   "#9ca3af",
-      "border":  "#f3f4f6",
-      "iconBg":  "#f3f4f6"
+      "bg":      "white",
+      "text":    "gray.900",
+      "subtext": "gray.600",
+      "muted":   "gray.400",
+      "border":  "gray.100",
+      "iconBg":  "gray.100"
     },
     "neutral": {
       "_description": "Mild separation. Supporting context, informational sections.",
-      "bg":      "#f9fafb",
-      "text":    "#111827",
-      "subtext": "#4b5563",
-      "muted":   "#6b7280",
-      "border":  "#e5e7eb",
-      "iconBg":  "#f3f4f6"
+      "bg":      "gray.50",
+      "text":    "gray.900",
+      "subtext": "gray.600",
+      "muted":   "gray.500",
+      "border":  "gray.200",
+      "iconBg":  "gray.100"
     },
     "dark": {
       "_description": "High emphasis. Spotlights whatever the preset assigns it to.",
-      "bg":      "#111827",
-      "text":    "#ffffff",
-      "subtext": "#d1d5db",
-      "muted":   "#6b7280",
-      "border":  "#374151",
-      "iconBg":  "#1f2937"
+      "bg":      "gray.900",
+      "text":    "white",
+      "subtext": "gray.300",
+      "muted":   "gray.500",
+      "border":  "gray.700",
+      "iconBg":  "gray.800"
     }
   },
   "accent": {
     "_note": "Brand primary CTA color. Global — not per-preset. Two variants: button on a light/neutral section vs. on a dark section.",
-    "on_light": { "bg": "#4f46e5", "text": "#ffffff" },
-    "on_dark":  { "bg": "#ffffff", "text": "#111827" }
+    "on_light": { "bg": "indigo.600", "text": "white" },
+    "on_dark":  { "bg": "white",      "text": "gray.900" }
   }
 }

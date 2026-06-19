@@ -1,0 +1,33 @@
+{
+  "_note": "MODE color vocabulary. This is the brand's color scale — the set of values that theme.json can reference. Replace or extend with your own design system's scale. References in theme.json use dot notation: \"gray.900\", \"indigo.600\". Top-level strings (\"white\", \"black\") are referenced by name. Literal CSS values in theme.json also pass through if no scale entry matches.",
+  "_source": "Tailwind CSS v3 gray + indigo scales. Default for zero-to-one deployments. Swap for Radix Colors, your brand scale, or any W3C-format token set.",
+
+  "white": "#ffffff",
+  "black": "#000000",
+
+  "gray": {
+    "50":  "#f9fafb",
+    "100": "#f3f4f6",
+    "200": "#e5e7eb",
+    "300": "#d1d5db",
+    "400": "#9ca3af",
+    "500": "#6b7280",
+    "600": "#4b5563",
+    "700": "#374151",
+    "800": "#1f2937",
+    "900": "#111827"
+  },
+
+  "indigo": {
+    "50":  "#eef2ff",
+    "100": "#e0e7ff",
+    "200": "#c7d2fe",
+    "300": "#a5b4fc",
+    "400": "#818cf8",
+    "500": "#6366f1",
+    "600": "#4f46e5",
+    "700": "#4338ca",
+    "800": "#3730a3",
+    "900": "#312e81"
+  }
+}
