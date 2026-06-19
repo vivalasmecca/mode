@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { PresetData, AccentData } from "./page";
+import type { PresetData, AccentData, ResolvedColors } from "./page";
 
 // ─── Palette map ────────────────────────────────────────────────────────────
 
@@ -11,10 +11,10 @@ const CYCLE: Record<string, string> = {
   dark: "light",
 };
 
-const CELL: Record<string, { bg: string; text: string; border: string }> = {
-  light:   { bg: "bg-white",    text: "text-gray-400", border: "border border-gray-200" },
-  neutral: { bg: "bg-gray-100", text: "text-gray-500", border: "border border-gray-200" },
-  dark:    { bg: "bg-gray-900", text: "text-gray-400", border: "border border-gray-700" },
+const CELL: Record<string, { text: string; border: string }> = {
+  light:   { text: "text-gray-700", border: "border border-gray-200" },
+  neutral: { text: "text-gray-600", border: "border border-gray-200" },
+  dark:    { text: "text-gray-300", border: "border border-gray-700" },
 };
 
 type PaletteMap = Record<string, Record<string, string>>;
@@ -26,11 +26,14 @@ function deepEqual<T>(a: T, b: T) {
 
 // ─── Accent preview ─────────────────────────────────────────────────────────
 
-function AccentPreview({ bg, text, label }: { bg: string; text: string; label: string }) {
+function AccentPreview({ bgHex, textHex, label }: { bgHex: string; textHex: string; label: string }) {
   return (
     <div className="space-y-1.5">
       <p className="text-xs text-gray-400">{label}</p>
-      <div className={`inline-flex items-center px-3 py-1.5 rounded text-xs font-medium ${bg} ${text}`}>
+      <div
+        className="inline-flex items-center px-3 py-1.5 rounded text-xs font-medium"
+        style={{ backgroundColor: bgHex, color: textHex }}
+      >
         Get started
       </div>
     </div>
@@ -43,10 +46,12 @@ export default function PaletteClient({
   presets,
   activePreset,
   accent: initialAccent,
+  resolved,
 }: {
   presets: PresetData[];
   activePreset: string;
   accent: AccentData;
+  resolved: ResolvedColors;
 }) {
   // Palette map state
   const [selectedKey, setSelectedKey] = useState(activePreset);
@@ -190,8 +195,8 @@ export default function PaletteClient({
                     <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">{label}</p>
                     <div className={`rounded-lg p-4 space-y-3 ${sectionBg} border border-gray-200`}>
                       <AccentPreview
-                        bg={accent[variant].bg}
-                        text={accent[variant].text}
+                        bgHex={resolved.accent[variant].bg}
+                        textHex={resolved.accent[variant].text}
                         label="Preview"
                       />
                       <div className="space-y-2">
@@ -305,13 +310,15 @@ export default function PaletteClient({
                         const mode = currentMap[component]?.[val] ?? "light";
                         const original = originals[selectedKey][component]?.[val] ?? "light";
                         const changed = mode !== original;
-                        const style = CELL[mode] ?? CELL.light;
+                        const cellStyle = CELL[mode] ?? CELL.light;
+                        const modeBgHex = resolved.modeBgs[mode as keyof typeof resolved.modeBgs] ?? "#ffffff";
                         return (
                           <td key={val} className="px-4 py-3.5 text-center">
                             <button
                               onClick={() => handleCellClick(component, val)}
                               title={`Click to cycle: ${CYCLE[mode]}`}
-                              className={`inline-flex items-center justify-center w-20 h-7 rounded text-xs font-medium transition-opacity hover:opacity-80 cursor-pointer ${style.bg} ${style.text} ${style.border} ${changed ? "ring-2 ring-indigo-400 ring-offset-1" : ""}`}
+                              className={`inline-flex items-center justify-center w-20 h-7 rounded text-xs font-medium transition-opacity hover:opacity-80 cursor-pointer ${cellStyle.text} ${cellStyle.border} ${changed ? "ring-2 ring-indigo-400 ring-offset-1" : ""}`}
+                              style={{ backgroundColor: modeBgHex }}
                             >
                               {mode}
                             </button>
