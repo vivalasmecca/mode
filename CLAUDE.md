@@ -74,8 +74,9 @@ The palette driver determines which runtime signal remaps the visual design toke
 | `funnel-driven` | funnel stage | `funnel_stage` | awareness, consideration, decision, conversion |
 | `feature-emphasis` | editorial intent | `funnel_stage` | awareness, consideration, decision, conversion |
 | `archetype-driven` | archetype | `archetype` | Mover, Validator, Explorer |
+| `expression-dial` *(planned)* | none — flat palette | `funnel_stage` | awareness, consideration, decision, conversion |
 
-**`funnel-driven` is the most common and should be the default.** Archetype-driven is valid and important for the connection between visitor identity and visual expression, but used less frequently.
+**`funnel-driven` is the most common and should be the default.** The planned `expression-dial` preset is a simpler usage mode: palette is flat (no color shifts), and funnel stage drives layout expressiveness and copy register only. See "Two usage modes" below. Archetype-driven is valid and important for the connection between visitor identity and visual expression, but used less frequently.
 
 The active preset is set in `tokens/mode-tokens.json` → `"active_preset"` and determines the **default** selection in the Build form. The Build form lets the user switch presets per build — the selected preset is passed through the full pipeline without requiring a file edit or server restart. (`token-resolver.js` still caches `mode-tokens.json` at module load, but now accepts an optional preset override at call time so all presets can be used from a single server session.)
 
@@ -352,41 +353,50 @@ A higher-level concept above the visual mapping tool. The idea: a studio-like ex
 ## Unresolved: expression intensity layer
 
 ### The insight
-Funnel stage currently drives palette mode (light/neutral/dark) and behavioral tokens (copy density, evidence level, CTA rules). It does not yet drive brand expression intensity — how much visual personality, editorial risk, and layout variety the page carries.
+Funnel stage currently drives palette mode (light/neutral/dark) and behavioral tokens (copy density, evidence level, CTA rules). It does not yet drive brand expression intensity — how much visual personality, editorial risk, and layout variant a page carries at different funnel stages.
 
-At awareness, expression should be high: asymmetric layouts, typographic anchors, full-bleed brand moments, breathing room, photography doing real work. The brand earns attention here.
+At awareness, expression should be high: editorial hero layouts, full-bleed brand moments, breathing room. The brand earns attention here.
 
-At conversion, expression should be minimal: get out of the way, clean and direct, no visual competition with the action. The product does the talking.
+At conversion, expression should be minimal: get out of the way, clean and direct, no visual competition with the action.
 
-This is the musicality principle — knowing when to be loud and when to be quiet. It's a dial, not a switch.
+This is the musicality principle — knowing when to be loud and when to be quiet.
 
-### Where it fits in the architecture
-Expression intensity is a behavioral token alongside copy density and evidence level. Proposed values:
+### Narrower scope than it sounds
+Expression intensity does not need to be a system-wide token applied to every component. Most components — stat blocks, pricing cards, testimonials, nav, footer — are utility sections where expressiveness doesn't apply.
 
-```json
-"expression_intensity": {
-  "awareness": "high",
-  "consideration": "medium",
-  "decision": "low",
-  "conversion": "minimal"
-}
-```
+The dial only matters for a small set of layout-expressive components:
+- Hero sections (editorial vs. centered vs. split variants)
+- Possibly a full-bleed statement or brand moment section
+- Possibly a feature section with an editorial layout option alongside the grid option
 
-Components with brand-expressive variants — hero layouts, section spacing, typography scale, editorial patterns — read this token and dial accordingly.
-
-### What this reveals about the component manifest
-The current 11 components skew toward utility and conversion patterns. High-expression awareness components are largely absent:
-- Typographic anchor (large statement, no card, whitespace-led)
-- Asymmetric editorial layout (dominant/subordinate split)
-- Full-bleed brand moment (quote, guarantee, or claim at page width)
-- Density shift section (sparse following dense, or vice versa)
-
-These need to be added to the manifest when the five-page demo surfaces the gap visually.
+The practical implementation is: add expressive variant options to 2–3 components in the manifest, and let the component selector use funnel stage to choose between them. No new token required — variant selection logic already exists and funnel stage is already available at selection time.
 
 ### When to build this
-After the five-page demo is complete. Do not introduce expression intensity into the token resolver or component manifest mid-build — finish the demo first, see where the gap shows up, then expand.
+The funnel-stage demo is complete. The next step is to look at the awareness-stage pages and identify where the gap is visible — that's the right moment to add expressive variants to the specific components that need them.
 
-The five-page demo will make the missing components obvious by showing what awareness-stage pages look like without high-expression patterns. That's the right moment to define what needs to be added.
+---
+
+## Two usage modes: semantic palette vs. expression dial
+
+These are distinct value propositions that emerged from thinking about expression intensity. Both are valid; they target different buyers.
+
+### Mode A — Semantic palette (what MODE is now)
+The palette shifts across funnel stages. Color weight, behavioral tokens, and copy register all change. Dark sections at high-emphasis moments; light sections at low-emphasis moments. The visual system is doing intentional semantic work.
+
+This requires the site owner to understand the intent layer — why this section is dark, why that one is light. The buyer is purchasing the methodology.
+
+### Mode B — Expression dial (a potential future preset)
+Palette is flat — no color shifts across funnel stages. The brand stays visually stable. What changes is the *energy* of the page: layout expressiveness, component variant selection, and copy register dial up at awareness and down at conversion. Colors don't move; personality does.
+
+Simpler mental model. "Your hero at awareness is full-bleed and editorial. At conversion it's stripped and focused. The copy shifts. The colors don't." No explanation of palette modes required.
+
+### Relationship to the current architecture
+Mode B is a preset configuration, not a new system. It would be a flat palette map (all sections light, or all sections brand) combined with funnel-stage-aware variant selection. The component selector and content generator already have everything needed — the palette map is just zeroed out.
+
+This would be a fourth preset type alongside `funnel-driven`, `feature-emphasis`, and `archetype-driven`.
+
+### When to build this
+Not now. The insight is worth preserving because it clarifies the addressable market. Mode A buyers want semantic control. Mode B buyers want better pages with a simpler interface. These are different products sharing the same underlying engine. Build Mode A fully first; Mode B follows naturally once the variant selection logic is mature.
 
 ---
 
