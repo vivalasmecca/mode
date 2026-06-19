@@ -5,6 +5,97 @@ import Link from "next/link";
 import type { PageOutput } from "@/lib/types";
 import type { VariantData } from "./page";
 
+// ---------------------------------------------------------------------------
+// Href combobox — text input + named link dropdown
+// ---------------------------------------------------------------------------
+
+function HrefField({
+  value,
+  onChange,
+  namedLinks,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  namedLinks?: Record<string, string>;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const hasLinks = namedLinks && Object.keys(namedLinks).length > 0;
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    if (!open) return;
+    function handle(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handle);
+    return () => document.removeEventListener("mousedown", handle);
+  }, [open]);
+
+  // Detect if current value matches a named link
+  const matchingToken = namedLinks
+    ? (Object.entries(namedLinks).find(([, url]) => url === value)?.[0] ?? null)
+    : null;
+
+  return (
+    <div className="relative" ref={ref}>
+      <div className="flex gap-1">
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="min-w-0 flex-1 rounded-md border border-gray-300 px-3 py-1.5 font-mono text-sm text-gray-900 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+        />
+        {hasLinks && (
+          <button
+            type="button"
+            onClick={() => setOpen((o) => !o)}
+            className={`flex-shrink-0 rounded-md border px-2.5 text-xs font-medium transition-colors ${
+              open
+                ? "border-indigo-400 bg-indigo-50 text-indigo-700"
+                : "border-gray-300 text-gray-500 hover:border-gray-400 hover:text-gray-700"
+            }`}
+            title="Named links"
+          >
+            Links
+          </button>
+        )}
+      </div>
+
+      {/* Token match indicator */}
+      {matchingToken && (
+        <p className="mt-0.5 text-xs font-medium text-indigo-500">
+          → {matchingToken}
+        </p>
+      )}
+
+      {/* Dropdown */}
+      {open && hasLinks && (
+        <div className="absolute left-0 right-0 top-full z-30 mt-1 rounded-md border border-gray-200 bg-white shadow-md">
+          {Object.entries(namedLinks!).map(([name, url]) => (
+            <button
+              key={name}
+              type="button"
+              onClick={() => {
+                onChange(url);
+                setOpen(false);
+              }}
+              className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm transition-colors hover:bg-gray-50"
+            >
+              <span className="font-medium text-gray-800">{name}</span>
+              <span className="max-w-[60%] truncate font-mono text-xs text-gray-400">
+                {url}
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // Keys shown read-only — not editable via this panel
 const SKIP_KEYS = new Set(["logo", "media", "nav_links"]);
 
@@ -75,9 +166,11 @@ interface CTAValue {
 function CTASlotEditor({
   value,
   onChange,
+  namedLinks,
 }: {
   value: CTAValue;
   onChange: (v: CTAValue) => void;
+  namedLinks?: Record<string, string>;
 }) {
   return (
     <div className="space-y-2 rounded-md border border-gray-200 bg-gray-50 p-3">
@@ -92,11 +185,10 @@ function CTASlotEditor({
       </div>
       <div>
         <label className="mb-1 block text-xs font-medium text-gray-500">Href</label>
-        <input
-          type="text"
+        <HrefField
           value={value.href}
-          onChange={(e) => onChange({ ...value, href: e.target.value })}
-          className="w-full rounded-md border border-gray-300 px-3 py-1.5 font-mono text-sm text-gray-900 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          onChange={(v) => onChange({ ...value, href: v })}
+          namedLinks={namedLinks}
         />
       </div>
       {"variant" in value && (
@@ -255,10 +347,12 @@ function SlotField({
   slotKey,
   value,
   onChange,
+  namedLinks,
 }: {
   slotKey: string;
   value: unknown;
   onChange: (v: unknown) => void;
+  namedLinks?: Record<string, string>;
 }) {
   const type = inferSlotType(slotKey, value);
 
@@ -280,6 +374,7 @@ function SlotField({
         <CTASlotEditor
           value={value as CTAValue}
           onChange={(v) => onChange(v)}
+          namedLinks={namedLinks}
         />
       );
     case "array":
@@ -373,9 +468,10 @@ type CommittedMap = Record<number, Record<number, Record<string, unknown>>>;
 interface EditClientProps {
   variants: VariantData[];
   preset?: string;
+  namedLinks?: Record<string, string>;
 }
 
-export function EditClient({ variants, preset }: EditClientProps) {
+export function EditClient({ variants, preset, namedLinks }: EditClientProps) {
   const [activeVariant, setActiveVariant] = useState(0);
   const [selectedSection, setSelectedSection] = useState<number | null>(
     variants[0]?.output.page.length > 0 ? 0 : null
@@ -387,6 +483,7 @@ export function EditClient({ variants, preset }: EditClientProps) {
     type: "saving" | "saved" | "error";
   } | null>(null);
   const [savingKey, setSavingKey] = useState<string | null>(null);
+  const [syncing, setSyncing] = useState(false);
 
   const draftsRef = useRef<DraftMap>(drafts);
   useEffect(() => {
@@ -489,6 +586,73 @@ export function EditClient({ variants, preset }: EditClientProps) {
       }
     }
   }, [saveSection]);
+
+  /**
+   * Sync the current slot state for a section to the matching section
+   * (matched by section name) in every other variant file in this build.
+   * Also saves to the active variant if there's an unsaved draft.
+   */
+  const syncSection = useCallback(
+    async (activeVIdx: number, sectionName: string, slots: Record<string, unknown>) => {
+      setSyncing(true);
+      setToast({ message: "Syncing to all variants…", type: "saving" });
+
+      let synced = 0;
+
+      for (const [vIdx, variant] of variants.entries()) {
+        // Find the section with the same name in this variant
+        const sIdx = variant.output.page.findIndex(
+          (s) => s.section === sectionName
+        );
+        if (sIdx === -1) continue;
+
+        try {
+          const res = await fetch("/api/output/save", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              file: variant.filename,
+              sectionIndex: sIdx,
+              slots,
+            }),
+          });
+          if (!res.ok) throw new Error();
+
+          // Update committed state for this variant
+          setCommitted((prev) => ({
+            ...prev,
+            [vIdx]: { ...prev[vIdx], [sIdx]: slots },
+          }));
+
+          // Clear draft for the active variant (it was just saved)
+          if (vIdx === activeVIdx) {
+            setDrafts((prev) => {
+              const vDrafts = { ...prev[vIdx] };
+              delete vDrafts[sIdx];
+              const next = { ...prev, [vIdx]: vDrafts };
+              if (Object.keys(next[vIdx] ?? {}).length === 0) delete next[vIdx];
+              return next;
+            });
+          }
+
+          synced++;
+        } catch {
+          // continue to next variant
+        }
+      }
+
+      const others = synced - 1; // exclude current variant
+      setToast({
+        message:
+          others > 0
+            ? `Saved + synced to ${others} other variant${others !== 1 ? "s" : ""}`
+            : "Saved",
+        type: "saved",
+      });
+      setSyncing(false);
+    },
+    [variants]
+  );
 
   // Total unsaved count across all variants
   const unsavedCount = Object.values(drafts).reduce(
@@ -639,7 +803,7 @@ export function EditClient({ variants, preset }: EditClientProps) {
           {/* Slot editor */}
           {selectedSectionData && selectedSlots && selectedSection !== null ? (
             <div className="max-w-2xl px-6 py-6">
-              {/* Section header + save button */}
+              {/* Section header + save / sync buttons */}
               <div className="mb-6 flex items-start justify-between gap-4">
                 <div>
                   <h2 className="text-base font-semibold text-gray-900">
@@ -655,22 +819,39 @@ export function EditClient({ variants, preset }: EditClientProps) {
                       : ""}
                   </p>
                 </div>
-                <button
-                  onClick={() => saveSection(activeVariant, selectedSection)}
-                  disabled={
-                    !hasUnsaved(activeVariant, selectedSection) ||
-                    savingKey === `${activeVariant}:${selectedSection}`
-                  }
-                  className={`flex-shrink-0 rounded-md px-4 py-1.5 text-sm font-semibold transition-colors ${
-                    hasUnsaved(activeVariant, selectedSection)
-                      ? "bg-indigo-600 text-white hover:bg-indigo-700"
-                      : "cursor-not-allowed bg-gray-100 text-gray-400"
-                  }`}
-                >
-                  {savingKey === `${activeVariant}:${selectedSection}`
-                    ? "Saving…"
-                    : "Save"}
-                </button>
+                <div className="flex flex-shrink-0 flex-col items-end gap-1">
+                  <button
+                    onClick={() => saveSection(activeVariant, selectedSection)}
+                    disabled={
+                      !hasUnsaved(activeVariant, selectedSection) ||
+                      savingKey === `${activeVariant}:${selectedSection}`
+                    }
+                    className={`rounded-md px-4 py-1.5 text-sm font-semibold transition-colors ${
+                      hasUnsaved(activeVariant, selectedSection)
+                        ? "bg-indigo-600 text-white hover:bg-indigo-700"
+                        : "cursor-not-allowed bg-gray-100 text-gray-400"
+                    }`}
+                  >
+                    {savingKey === `${activeVariant}:${selectedSection}`
+                      ? "Saving…"
+                      : "Save"}
+                  </button>
+                  {variants.length > 1 && (
+                    <button
+                      onClick={() =>
+                        syncSection(
+                          activeVariant,
+                          selectedSectionData.section,
+                          getSlotsFor(activeVariant, selectedSection)
+                        )
+                      }
+                      disabled={syncing}
+                      className="text-xs text-gray-400 transition-colors hover:text-gray-700 disabled:cursor-not-allowed"
+                    >
+                      {syncing ? "Syncing…" : "Sync to all variants"}
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Fields */}
@@ -693,6 +874,7 @@ export function EditClient({ variants, preset }: EditClientProps) {
                       <SlotField
                         slotKey={key}
                         value={value}
+                        namedLinks={namedLinks}
                         onChange={(v) => {
                           if (type !== "skip") {
                             updateSlot(activeVariant, selectedSection, key, v);

@@ -63,6 +63,12 @@
     "trial_url": null,
     "currency": "USD"
   },
+  "named_links": {
+    "_note": "Named link tokens for the slot editor — appear as selectable shortcuts in CTA href fields. Add any destination the site links to.",
+    "checkout": null,
+    "trial": null,
+    "demo": null
+  },
   "social_proof": [],
   "differentiators": [
     "Semantic intent layer — components resolve behavior across archetype, funnel stage, and context mode",

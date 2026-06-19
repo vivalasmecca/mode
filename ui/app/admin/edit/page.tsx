@@ -65,6 +65,41 @@ function variantsFromManifest(manifest: SiteManifest): VariantData[] {
     .filter((v): v is VariantData => v !== null);
 }
 
+/**
+ * Reads named link tokens from product-context.json.
+ * Merges checkout.primary_url (existing field) with the named_links map.
+ * Filters out nulls and empty strings — only populated entries are returned.
+ */
+function getNamedLinks(): Record<string, string> {
+  try {
+    const filepath = path.join(DATA_ROOT, "context", "product-context.json");
+    if (!fs.existsSync(filepath)) return {};
+    const ctx = JSON.parse(fs.readFileSync(filepath, "utf8")) as Record<string, unknown>;
+    const links: Record<string, string> = {};
+
+    // Pull from existing checkout.primary_url field
+    const checkout = ctx.checkout as Record<string, unknown> | undefined;
+    if (typeof checkout?.primary_url === "string" && checkout.primary_url.trim()) {
+      links.checkout = checkout.primary_url.trim();
+    }
+
+    // Pull from named_links map (values override checkout above if key matches)
+    const named = ctx.named_links as Record<string, unknown> | undefined;
+    if (named && typeof named === "object") {
+      for (const [k, v] of Object.entries(named)) {
+        if (k.startsWith("_")) continue; // skip _note etc.
+        if (typeof v === "string" && v.trim()) {
+          links[k] = v.trim();
+        }
+      }
+    }
+
+    return links;
+  } catch {
+    return {};
+  }
+}
+
 // ─── Empty / error states ────────────────────────────────────────────────────
 
 function EmptyState() {
@@ -102,6 +137,7 @@ export default async function EditPage({
   searchParams: Promise<{ ts?: string; file?: string }>;
 }) {
   const { ts, file } = await searchParams;
+  const namedLinks = getNamedLinks();
 
   // ?ts= → load a specific build's full set of variants via site manifest
   if (ts) {
@@ -115,7 +151,13 @@ export default async function EditPage({
     }
     const variants = variantsFromManifest(manifest);
     if (variants.length === 0) return <EmptyState />;
-    return <EditClient variants={variants} preset={manifest.preset} />;
+    return (
+      <EditClient
+        variants={variants}
+        preset={manifest.preset}
+        namedLinks={namedLinks}
+      />
+    );
   }
 
   // ?file= → single-file edit (backward-compatible)
@@ -127,6 +169,7 @@ export default async function EditPage({
     return (
       <EditClient
         variants={[{ label: file, filename: file, output }]}
+        namedLinks={namedLinks}
       />
     );
   }
@@ -137,7 +180,13 @@ export default async function EditPage({
   if (manifest) {
     const variants = variantsFromManifest(manifest);
     if (variants.length > 0) {
-      return <EditClient variants={variants} preset={manifest.preset} />;
+      return (
+        <EditClient
+          variants={variants}
+          preset={manifest.preset}
+          namedLinks={namedLinks}
+        />
+      );
     }
   }
 
@@ -145,6 +194,9 @@ export default async function EditPage({
   if (!output) return <EmptyState />;
   const filename = getLatestFilename() ?? "";
   return (
-    <EditClient variants={[{ label: filename, filename, output }]} />
+    <EditClient
+      variants={[{ label: filename, filename, output }]}
+      namedLinks={namedLinks}
+    />
   );
 }
