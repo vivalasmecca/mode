@@ -56,7 +56,7 @@ export function getLatestOutput(): PageOutput | null {
 
     const files = fs
       .readdirSync(outputDir)
-      .filter((f) => f.endsWith(".json"))
+      .filter((f) => f.endsWith(".json") && f.startsWith("page-"))
       .map((f) => ({
         name: f,
         mtime: fs.statSync(path.join(outputDir, f)).mtime.getTime(),
