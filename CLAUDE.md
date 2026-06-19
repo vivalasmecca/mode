@@ -349,6 +349,47 @@ A higher-level concept above the visual mapping tool. The idea: a studio-like ex
 
 ---
 
+## Unresolved: expression intensity layer
+
+### The insight
+Funnel stage currently drives palette mode (light/neutral/dark) and behavioral tokens (copy density, evidence level, CTA rules). It does not yet drive brand expression intensity — how much visual personality, editorial risk, and layout variety the page carries.
+
+At awareness, expression should be high: asymmetric layouts, typographic anchors, full-bleed brand moments, breathing room, photography doing real work. The brand earns attention here.
+
+At conversion, expression should be minimal: get out of the way, clean and direct, no visual competition with the action. The product does the talking.
+
+This is the musicality principle — knowing when to be loud and when to be quiet. It's a dial, not a switch.
+
+### Where it fits in the architecture
+Expression intensity is a behavioral token alongside copy density and evidence level. Proposed values:
+
+```json
+"expression_intensity": {
+  "awareness": "high",
+  "consideration": "medium",
+  "decision": "low",
+  "conversion": "minimal"
+}
+```
+
+Components with brand-expressive variants — hero layouts, section spacing, typography scale, editorial patterns — read this token and dial accordingly.
+
+### What this reveals about the component manifest
+The current 11 components skew toward utility and conversion patterns. High-expression awareness components are largely absent:
+- Typographic anchor (large statement, no card, whitespace-led)
+- Asymmetric editorial layout (dominant/subordinate split)
+- Full-bleed brand moment (quote, guarantee, or claim at page width)
+- Density shift section (sparse following dense, or vice versa)
+
+These need to be added to the manifest when the five-page demo surfaces the gap visually.
+
+### When to build this
+After the five-page demo is complete. Do not introduce expression intensity into the token resolver or component manifest mid-build — finish the demo first, see where the gap shows up, then expand.
+
+The five-page demo will make the missing components obvious by showing what awareness-stage pages look like without high-expression patterns. That's the right moment to define what needs to be added.
+
+---
+
 ## Unresolved: visual mapping tool
 
 The hard architectural question is the handoff between discovery and build:
