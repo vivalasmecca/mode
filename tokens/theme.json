@@ -12,7 +12,7 @@
     },
     "neutral": {
       "_description": "Mild separation. Supporting context, informational sections.",
-      "bg": "slate.2",
+      "bg": "white",
       "text": "slate.12",
       "subtext": "slate.11",
       "muted": "slate.10",
@@ -21,7 +21,7 @@
     },
     "dark": {
       "_description": "High emphasis. Spotlights whatever the preset assigns it to.",
-      "bg": "slate.12",
+      "bg": "iris.12",
       "text": "white",
       "subtext": "slate.3",
       "muted": "slate.8",
