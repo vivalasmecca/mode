@@ -315,6 +315,7 @@ When dropping back in after time away, start here:
 - **Full Radix Colors palette** ✓ — `color-scale.json` ships with all 31 Radix Colors v3.0.0 light-mode sRGB scales (gray family + full chromatic spectrum, 12 steps each). `theme.json` updated to Radix dot-notation (`slate.12`, `violet.9`). Studio Design System view now shows the complete vocabulary.
 - **Overview cleanup** ✓ — Token Resolution table removed from Overview; replaced with a Design Tokens CTA card that links directly to Studio with a description of the two editing surfaces (Design System for vocabulary, Canvas token panel for semantic remapping).
 - **Clear routing history** ✓ — Run tab Routing Activity has a "Clear history" button that calls `DELETE /api/admin/events`, truncates `output/events.jsonl`, and empties the table immediately without a page reload.
+- **Hero required on every page** ✓ — `HeroPrimary.funnel_stages` now includes `"conversion"` so the Orientation beat always finds a candidate. IA planner prompt updated to require a slim Hero before the Decision beat on conversion pages. Component selector prefers `text-only` variant for conversion stage (page title + subhead, no media, no secondary CTA). Fixed a related null-guard bug in `HeroPrimary.tsx` where `cta_secondary !== undefined` passed for `null`, crashing on `.label` — changed to `!= null`.
 
 ---
 
@@ -362,6 +363,7 @@ The CMS integration waits until the content schema is stable. Every component sl
 - Full Radix Colors v3.0.0 palette ✓ (31 hues × 12 steps; theme.json updated to Radix notation)
 - Overview cleanup ✓ (Token Resolution table removed; Design Tokens CTA card added)
 - Clear routing history ✓ (Run tab button truncates events.jsonl without page reload)
+- Hero on every page ✓ (HeroPrimary extended to conversion stage; text-only variant for slim title; null guard fixed in HeroPrimary.tsx)
 
 ---
 
