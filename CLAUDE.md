@@ -259,15 +259,35 @@ When dropping back in after time away, start here:
 
 ## What's next (as of June 2026)
 
-- **Mover contrast build** — run the archetype-driven preset with Mover. Same product, same funnel stage, fundamentally different IA and copy register side-by-side with the Validator build. This is the demo moment.
-- **Expressive hero variants** — add editorial/expressive variant options to HeroPrimary (and possibly 1–2 other components) so awareness-stage pages carry more visual personality. See "expression intensity" notes below.
-- **Brand brief** — write `context/brand-brief.md` content (tone, pillars, claim territory). This is a level 2 quality improvement; the Brand Setup tab has a markdown editor.
-- **LemonSqueezy setup** — add `checkout.primary_url` to `context/product-context.json` once the product is configured; CTAs in generated pages will link to the real checkout automatically.
-- **Analytics attribution** — fire a page-load event with variant served + signals used so routing effectiveness can be evaluated. See "Runtime signal routing" below.
+The priority order has shifted. The demo needs human-in-the-loop tooling before it can be iterated into something tight enough to show. Even at 90% LLM quality, the remaining 10% requires tooling that doesn't exist yet. These three items unlock that iteration loop:
+
+### 1. theme.json — visual control layer (in progress)
+Extract `palette_modes` and `accent` out of `mode-tokens.json` into a separate `theme.json`. This creates the clean handoff point between what MODE owns (intent: which palette mode per component per context) and what the brand owns (expression: what light/neutral/dark actually look like). A site owner swaps `theme.json` without touching the intent layer. See "ICP and product model" below — this separation is architecturally required for the kit to be adoptable.
+
+### 2. Inline slot editor — copy control layer
+A structured editing panel in the admin showing each section's slots as editable fields. Human reviews LLM output, makes micro-edits to headlines, subheads, and copy, saves back to the output JSON. No external dependencies — the output files are already JSON with a known schema, and file-writing API routes already exist. This teaches the shape of the CMS integration before committing to one.
+
+### 3. CMS integration — persistent content layer
+Once the inline editor proves the editing workflow, connect to a headless CMS for multi-session persistence, versioning, and eventually multi-user editing. **Payload CMS** is the right fit: TypeScript-native, runs locally alongside Next.js, self-hosted, schema defined in code. Content types map directly to the slot schema already defined in `lib/types.ts`. **Sanity** is an alternative: managed (no local service), excellent editing UX, free tier — better if local service overhead is unwanted.
+
+The CMS integration waits until the content schema is stable. Every component slot addition currently requires no migration; a CMS would require one. Build the inline editor first, stabilize the schema, then migrate.
+
+---
+
+### Remaining level 1 items
+- **Mover contrast build** — run archetype-driven preset with Mover. Same product, same funnel stage, different IA and copy register. This is the demo moment and requires no code — just a build run.
+- **Analytics attribution** — fire a page-load event with variant served + signals used. Needed to evaluate routing in production.
+
+### Level 2 (output quality)
+- **Brand brief** — write `context/brand-brief.md` (tone, pillars, claim territory). Immediately improves copy register. Brand Setup tab has the editor.
+- **LemonSqueezy setup** — add `checkout.primary_url` to `context/product-context.json`; CTAs point to real checkout automatically.
 
 **Done:**
-- Four-page Validator funnel journey (awareness → consideration → decision → conversion) ✓
-- Runtime signal routing (UTM, cookies, UA detection → variant serving) ✓
+- Four-page Validator funnel journey ✓
+- Runtime signal routing (UTM, cookies, UA → variant serving) ✓
+- Page beats (7-beat narrative taxonomy, IA planning, section naming) ✓
+- Expressive hero variants (editorial layout for awareness stage) ✓
+- Component library tab in admin dashboard ✓
 
 ---
 

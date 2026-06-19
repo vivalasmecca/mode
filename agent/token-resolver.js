@@ -15,6 +15,7 @@
  */
 
 const tokenConfig = require("../tokens/mode-tokens.json");
+const themeConfig = require("../tokens/theme.json");
 
 /**
  * @param {object} brief - { archetype, funnel_stage, ... }
@@ -47,9 +48,8 @@ function resolveTokens(brief, presetOverride) {
     return map[paletteKey] ?? "light";
   }
 
-  // Accent: global brand CTA color, not per-preset.
-  // Returns the right variant based on the section's palette mode.
-  const accent = tokenConfig.accent ?? null;
+  // Accent: global brand CTA color, not per-preset. Lives in theme.json.
+  const accent = themeConfig.accent ?? null;
   function resolveAccent(paletteMode) {
     if (!accent) return null;
     return paletteMode === "dark" ? accent.on_dark : accent.on_light;

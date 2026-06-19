@@ -41,7 +41,9 @@ export default function PalettePage() {
     paletteMap: preset.palette_map,
   }));
 
-  const accent: AccentData = tokens.accent ?? {
+  const themePath = path.resolve(process.cwd(), "../tokens/theme.json");
+  const theme = JSON.parse(fs.readFileSync(themePath, "utf8"));
+  const accent: AccentData = theme.accent ?? {
     on_light: { bg: "bg-indigo-600", text: "text-white" },
     on_dark: { bg: "bg-white", text: "text-gray-900" },
   };

@@ -1,41 +1,6 @@
 {
-  "_note": "MODE deployment token config. Switch presets with: node agent/set-preset.js <preset-name>",
+  "_note": "MODE intent layer. Defines which palette mode (light/neutral/dark) each component gets in each context. What those modes look like visually lives in tokens/theme.json — that is the brand's responsibility. Switch presets with: node agent/set-preset.js <preset-name>",
   "active_preset": "archetype-driven",
-  "accent": {
-    "_note": "Brand primary CTA color. Global — not per-preset. Two variants: button on a light/neutral section vs. on a dark section.",
-    "on_light": { "bg": "bg-indigo-600", "text": "text-white" },
-    "on_dark":  { "bg": "bg-white",      "text": "text-gray-900" }
-  },
-  "palette_modes": {
-    "_note": "Shared across all presets. Only palette_map changes between presets.",
-    "light": {
-      "description": "Neutral canvas. Chrome, top-of-funnel, low-emphasis sections.",
-      "bg": "bg-white",
-      "text": "text-gray-900",
-      "subtext": "text-gray-600",
-      "muted": "text-gray-400",
-      "border": "border-gray-100",
-      "iconBg": "bg-gray-100"
-    },
-    "neutral": {
-      "description": "Mild separation. Supporting context, informational sections.",
-      "bg": "bg-gray-50",
-      "text": "text-gray-900",
-      "subtext": "text-gray-600",
-      "muted": "text-gray-500",
-      "border": "border-gray-200",
-      "iconBg": "bg-gray-100"
-    },
-    "dark": {
-      "description": "High emphasis. Spotlights whatever this preset assigns it to.",
-      "bg": "bg-gray-900",
-      "text": "text-white",
-      "subtext": "text-gray-300",
-      "muted": "text-gray-500",
-      "border": "border-gray-700",
-      "iconBg": "bg-gray-800"
-    }
-  },
   "behavioral_tokens": {
     "_note": "Archetype-driven across all presets. Controls copy density, evidence level, CTA rules.",
     "Validator": {

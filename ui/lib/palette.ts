@@ -1,11 +1,16 @@
 /**
  * Palette utility — returns Tailwind class sets for each palette mode.
  *
- * Three modes: light | neutral | dark
+ * These values MIRROR tokens/theme.json (the expression layer).
+ * When you change theme.json, update this file to match.
  *
- *   light   — white bg, default text. Neutral canvas, chrome, top-of-funnel.
- *   neutral — gray-50 bg, default text. Mild separation for informational sections.
- *   dark    — gray-900 bg, inverted text. High emphasis: trust anchors, conversion gates.
+ * Why two files? palette.ts is bundled into the browser (client components
+ * can't read the filesystem). theme.json is the canonical source the agent
+ * and token resolver read at server/build time. They must stay in sync.
+ *
+ * Long-term: replace static classes with CSS custom properties so theme.json
+ * becomes the single source of truth and browser components read variables
+ * instead of hardcoded Tailwind classes.
  *
  * Usage:
  *   const p = getPalette(palette);
@@ -26,6 +31,7 @@ export interface PaletteClasses {
   iconBg: string;   // icon container backgrounds
 }
 
+// Mirror of tokens/theme.json → palette_modes
 const PALETTE: Record<PaletteMode, PaletteClasses> = {
   light: {
     bg:      "bg-white",

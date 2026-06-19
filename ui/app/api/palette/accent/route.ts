@@ -13,17 +13,17 @@ export async function PUT(req: Request) {
       return Response.json({ error: "accent.on_light and accent.on_dark are required" }, { status: 400 });
     }
 
-    const tokensPath = path.join(DATA_ROOT, "tokens/mode-tokens.json");
-    const tokens = JSON.parse(fs.readFileSync(tokensPath, "utf8"));
+    const themePath = path.join(DATA_ROOT, "tokens/theme.json");
+    const theme = JSON.parse(fs.readFileSync(themePath, "utf8"));
 
     // Preserve the note, only update the values.
-    tokens.accent = {
-      _note: tokens.accent?._note,
+    theme.accent = {
+      _note: theme.accent?._note,
       on_light: accent.on_light,
       on_dark: accent.on_dark,
     };
 
-    fs.writeFileSync(tokensPath, JSON.stringify(tokens, null, 2));
+    fs.writeFileSync(themePath, JSON.stringify(theme, null, 2));
 
     return Response.json({ success: true });
   } catch (err) {
