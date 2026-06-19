@@ -52,7 +52,7 @@ export default function StudioPage() {
   return (
     <StudioClient
       variants={variants}
-      colorScale={colorScale}
+      initialColorScale={colorScale}
       initialPaletteModes={initialPaletteModes}
       initialAccent={initialAccent}
       buildTs={buildTs}

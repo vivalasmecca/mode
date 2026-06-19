@@ -27,7 +27,7 @@ export interface Variant {
 
 export interface StudioClientProps {
   variants: Variant[];
-  colorScale: ColorScale;
+  initialColorScale: ColorScale;
   initialPaletteModes: Record<string, Record<string, string>>;
   initialAccent: Record<string, Record<string, string>>;
   buildTs: string | null;
@@ -86,6 +86,30 @@ function resolveRef(ref: string, scale: ColorScale): string {
 
 function applyVar(varName: string, ref: string, scale: ColorScale) {
   document.documentElement.style.setProperty(varName, resolveRef(ref, scale));
+}
+
+/**
+ * Re-apply every CSS var after the color scale changes.
+ * 18 DOM writes max (3 modes × 6 slots + 2 accent variants × 2 slots).
+ */
+function reapplyAllVars(
+  modes: Record<string, Record<string, string>>,
+  accentTokens: Record<string, Record<string, string>>,
+  scale: ColorScale,
+) {
+  for (const [mode, tokens] of Object.entries(modes)) {
+    for (const slot of PALETTE_SLOTS) {
+      const ref = tokens[slot];
+      if (ref) applyVar(`--mode-${mode}-${SLOT_CSS[slot] ?? slot}`, ref, scale);
+    }
+  }
+  for (const [variant, tokens] of Object.entries(accentTokens)) {
+    const side = variant === "on_light" ? "light" : "dark";
+    for (const slot of ["bg", "text"] as const) {
+      const ref = tokens[slot];
+      if (ref) applyVar(`--mode-accent-${side}-${slot}`, ref, scale);
+    }
+  }
 }
 
 /** "HeroPrimary" → "Hero Primary" */
@@ -698,6 +722,141 @@ function ExpandedView({
   );
 }
 
+// ── Design System Editor ──────────────────────────────────────────────────────
+
+function ScaleHueCard({
+  hue,
+  value,
+  onChange,
+}: {
+  hue: string;
+  value: string | Record<string, string>;
+  onChange: (hue: string, step: string | null, hex: string) => void;
+}) {
+  if (typeof value === "string") {
+    // Top-level entry: white, black
+    return (
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div className="h-10" style={{ backgroundColor: value }} />
+        <div className="px-3 py-2.5 flex items-center gap-2.5">
+          <span className="text-[10px] font-mono font-semibold uppercase tracking-widest text-gray-500 w-10 shrink-0">
+            {hue}
+          </span>
+          <label className="flex items-center gap-2 flex-1 min-w-0 cursor-pointer">
+            <span
+              className="w-4 h-4 rounded border border-gray-200 shrink-0"
+              style={{ backgroundColor: value }}
+            />
+            <input
+              type="color"
+              value={value}
+              onChange={(e) => onChange(hue, null, e.target.value)}
+              className="sr-only"
+            />
+            <span className="text-xs font-mono text-gray-600 truncate">{value}</span>
+          </label>
+        </div>
+      </div>
+    );
+  }
+
+  // Hue group: gray, indigo, etc.
+  const steps = Object.entries(value);
+  return (
+    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      {/* Color ramp */}
+      <div className="flex h-10">
+        {steps.map(([step, hex]) => (
+          <div key={step} style={{ backgroundColor: hex, flex: 1 }} title={`${hue}.${step}`} />
+        ))}
+      </div>
+      {/* Steps */}
+      <div className="px-3 pt-2.5 pb-3 space-y-1.5">
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-2">{hue}</p>
+        {steps.map(([step, hex]) => (
+          <label key={step} className="flex items-center gap-2.5 cursor-pointer group">
+            <span className="text-[11px] font-mono text-gray-400 w-7 shrink-0 text-right">{step}</span>
+            <div className="relative shrink-0">
+              <div
+                className="w-5 h-5 rounded border border-gray-200 group-hover:border-gray-400 transition-colors"
+                style={{ backgroundColor: hex }}
+              />
+              <input
+                type="color"
+                value={hex}
+                onChange={(e) => onChange(hue, step, e.target.value)}
+                className="absolute inset-0 opacity-0 w-5 h-5 cursor-pointer"
+              />
+            </div>
+            <span className="text-xs font-mono text-gray-600 flex-1 min-w-0 truncate">{hex}</span>
+          </label>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function DesignSystemView({
+  colorScale,
+  onChange,
+  saveState,
+  dirty,
+  onSave,
+}: {
+  colorScale: ColorScale;
+  onChange: (hue: string, step: string | null, hex: string) => void;
+  saveState: "idle" | "saving" | "saved" | "error";
+  dirty: boolean;
+  onSave: () => void;
+}) {
+  const entries = Object.entries(colorScale).filter(([k]) => !k.startsWith("_")) as [
+    string,
+    string | Record<string, string>,
+  ][];
+
+  return (
+    <div className="flex-1 overflow-y-auto bg-gray-50">
+      <div className="max-w-5xl mx-auto px-10 py-8 space-y-6">
+        {/* Header */}
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h2 className="text-sm font-semibold text-gray-900">Color Scale</h2>
+            <p className="text-xs text-gray-400 mt-1">
+              The brand&rsquo;s color vocabulary.{" "}
+              <span className="font-mono">theme.json</span> references these via dot notation
+              (e.g. <span className="font-mono">gray.900</span>). Changes apply live across all
+              rendered variants. Click any swatch to edit.
+            </p>
+          </div>
+          <div className="flex items-center gap-3 shrink-0">
+            {saveState === "error" && (
+              <span className="text-xs text-red-600">Save failed</span>
+            )}
+            <button
+              onClick={onSave}
+              disabled={!dirty || saveState === "saving"}
+              className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors disabled:opacity-40 ${
+                saveState === "saved"
+                  ? "bg-green-600 text-white"
+                  : "bg-gray-900 text-white hover:bg-gray-700"
+              }`}
+            >
+              {saveState === "saving" ? "Saving…" : saveState === "saved" ? "Saved ✓" : "Save scale"}
+            </button>
+          </div>
+        </div>
+
+        {/* Cards grid */}
+        <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}>
+          {entries.map(([hue, value]) => (
+            <ScaleHueCard key={hue} hue={hue} value={value} onChange={onChange} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── NoVariants ────────────────────────────────────────────────────────────────
 
 function NoVariants({ buildTs }: { buildTs: string | null }) {
@@ -725,7 +884,7 @@ function NoVariants({ buildTs }: { buildTs: string | null }) {
 
 export function StudioClient({
   variants,
-  colorScale,
+  initialColorScale,
   initialPaletteModes,
   initialAccent,
   buildTs,
@@ -733,12 +892,17 @@ export function StudioClient({
   // activeVariants starts from server data; updated in-memory after saves so
   // the display stays consistent without a page reload.
   const [activeVariants, setActiveVariants] = useState<Variant[]>(variants);
-  const [view, setView] = useState<"birds-eye" | "expanded">("birds-eye");
+  const [view, setView] = useState<"birds-eye" | "expanded" | "design-system">("birds-eye");
   const [activeIdx, setActiveIdx] = useState(0);
 
   // Token state
   const [paletteModes, setPaletteModes] = useState(initialPaletteModes);
   const [accent, setAccent] = useState(initialAccent);
+
+  // Color scale state — mutable so design system edits flow live into CSS vars
+  const [colorScale, setColorScale] = useState<ColorScale>(initialColorScale);
+  const [scaleDirty, setScaleDirty] = useState(false);
+  const [scaleSaveState, setScaleSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
 
   // Component override state: filename → sectionIndex → { component }
   const [overrides, setOverrides] = useState<AllOverrides>({});
@@ -843,45 +1007,111 @@ export function StudioClient({
     setView("expanded");
   }
 
+  function handleScaleChange(hue: string, step: string | null, hex: string) {
+    const next: ColorScale =
+      step === null
+        ? { ...colorScale, [hue]: hex }
+        : {
+            ...colorScale,
+            [hue]: {
+              ...((colorScale[hue] as Record<string, string>) ?? {}),
+              [step]: hex,
+            },
+          };
+    setColorScale(next);
+    setScaleDirty(true);
+    reapplyAllVars(paletteModes, accent, next);
+  }
+
+  async function handleScaleSave() {
+    setScaleSaveState("saving");
+    try {
+      const toSave = Object.fromEntries(
+        Object.entries(colorScale).filter(([k]) => !k.startsWith("_"))
+      );
+      const res = await fetch("/api/tokens/color-scale", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(toSave),
+      });
+      if (!res.ok) throw new Error("Scale save failed");
+      setScaleSaveState("saved");
+      setScaleDirty(false);
+      setTimeout(() => setScaleSaveState("idle"), 2500);
+    } catch {
+      setScaleSaveState("error");
+    }
+  }
+
   // ── Render ──
 
   return (
     <div className="fixed inset-0 z-50 bg-gray-100 flex flex-col">
       {/* Studio header */}
-      <div className="shrink-0 bg-white border-b border-gray-200 px-5 py-3 flex items-center gap-4">
-        <div className="flex items-center gap-2">
-          {view === "expanded" ? (
-            <button
-              onClick={() => setView("birds-eye")}
-              className="text-sm text-gray-500 hover:text-gray-800 transition-colors"
-            >
-              ← Birds-eye
-            </button>
-          ) : (
-            <span className="text-sm font-semibold text-gray-900">Studio</span>
-          )}
-          {view === "expanded" && activeVariants[activeIdx] && (
-            <span className="text-xs text-gray-400">
-              / {activeVariants[activeIdx].label}
-            </span>
-          )}
+      <div className="shrink-0 bg-white border-b border-gray-200 px-5 py-3 flex items-center gap-3">
+        {/* Back arrow — only in expanded canvas */}
+        {view === "expanded" && (
+          <button
+            onClick={() => setView("birds-eye")}
+            className="text-gray-400 hover:text-gray-700 transition-colors text-sm shrink-0"
+            aria-label="Back to birds-eye"
+          >
+            ←
+          </button>
+        )}
+
+        {/* Canvas / Design System toggle */}
+        <div className="flex items-center rounded-md border border-gray-200 overflow-hidden text-[11px] font-semibold shrink-0">
+          <button
+            onClick={() => { if (view === "design-system") setView("birds-eye"); }}
+            className={`px-3 py-1.5 transition-colors ${
+              view !== "design-system"
+                ? "bg-gray-900 text-white"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            Canvas
+          </button>
+          <button
+            onClick={() => setView("design-system")}
+            className={`px-3 py-1.5 transition-colors border-l border-gray-200 ${
+              view === "design-system"
+                ? "bg-gray-900 text-white"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            Design System
+          </button>
         </div>
+
+        {/* Variant label in expanded mode */}
+        {view === "expanded" && activeVariants[activeIdx] && (
+          <span className="text-xs text-gray-400 truncate">{activeVariants[activeIdx].label}</span>
+        )}
 
         <div className="flex-1" />
 
-        {dirty && (
-          <span className="text-xs text-amber-600 font-medium">Unsaved changes</span>
+        {(dirty || scaleDirty) && (
+          <span className="text-xs text-amber-600 font-medium shrink-0">Unsaved changes</span>
         )}
         <a
           href="/admin"
-          className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+          className="text-xs text-gray-400 hover:text-gray-600 transition-colors shrink-0"
         >
           ← Dashboard
         </a>
       </div>
 
       {/* Content */}
-      {view === "birds-eye" ? (
+      {view === "design-system" ? (
+        <DesignSystemView
+          colorScale={colorScale}
+          onChange={handleScaleChange}
+          saveState={scaleSaveState}
+          dirty={scaleDirty}
+          onSave={handleScaleSave}
+        />
+      ) : view === "birds-eye" ? (
         <BirdsEyeView
           variants={activeVariants}
           activeIdx={activeIdx}
