@@ -261,8 +261,10 @@ When dropping back in after time away, start here:
 
 The priority order has shifted. The demo needs human-in-the-loop tooling before it can be iterated into something tight enough to show. Even at 90% LLM quality, the remaining 10% requires tooling that doesn't exist yet. These three items unlock that iteration loop:
 
-### 1. theme.json — visual control layer (in progress)
-Extract `palette_modes` and `accent` out of `mode-tokens.json` into a separate `theme.json`. This creates the clean handoff point between what MODE owns (intent: which palette mode per component per context) and what the brand owns (expression: what light/neutral/dark actually look like). A site owner swaps `theme.json` without touching the intent layer. See "ICP and product model" below — this separation is architecturally required for the kit to be adoptable.
+### 1. theme.json — visual control layer ✓ done (partial)
+`palette_modes` and `accent` now live in `tokens/theme.json`. The agent reads from it. The Palette tab writes to it. The intent layer (`mode-tokens.json`) no longer contains any visual values.
+
+**Remaining: CSS variables layer.** `ui/lib/palette.ts` is still hardcoded — client-bundled components can't read the filesystem, and Turbopack blocks imports outside `ui/`. The fix is to replace static Tailwind class strings with CSS custom properties: `theme.json` defines variable values, a server component sets them on `<html>`, and components use `var(--palette-light-bg)` instead of `bg-white`. This makes `theme.json` the single true source end-to-end with no manual sync. Until then, `palette.ts` must be updated alongside `theme.json` whenever palette values change.
 
 ### 2. Inline slot editor — copy control layer
 A structured editing panel in the admin showing each section's slots as editable fields. Human reviews LLM output, makes micro-edits to headlines, subheads, and copy, saves back to the output JSON. No external dependencies — the output files are already JSON with a known schema, and file-writing API routes already exist. This teaches the shape of the CMS integration before committing to one.
@@ -583,6 +585,50 @@ Same flat-file pattern as `tokens/mode-tokens.json` — no database.
 2. Add `brand-brief.md` injection alongside it
 3. Build the ingestion agent (URL → structured extraction)
 4. Build Brand Setup tab in the dashboard
+
+---
+
+## What MODE is: semantic layer, not site builder
+
+This is a hard line worth naming explicitly because the codebase currently contains both a semantic engine and a demo rendering layer, and conflating them creates confusion about what the product actually is.
+
+**Site builders** (Webflow, Framer, Squarespace) own the components, the rendering, and the hosting. The buyer uses the builder's visual system. Switching away means starting over.
+
+**MODE is a semantic orchestration layer.** It owns the intent — which component role gets used where, with what content and semantic weight, at what funnel stage. The buyer owns all the visual infrastructure. MODE tells it what to do; the buyer's system does it.
+
+### The demo UI is scaffolding, not the product
+
+The Next.js components in `ui/components/modules/` (HeroPrimary, FeatureGrid, etc.) exist to prove the semantic logic is working. They make the agent output visible. They are not the deliverable.
+
+The deliverable is:
+1. **The agent pipeline** — IA planner, component selector, token resolver, content generator
+2. **The intent configuration it produces** — the JSON output files (`output/page-{ts}-{variant}.json`)
+3. **The routing layer** — signal detection + variant serving
+4. **The integration contract** — the manifest, the output schema, theme.json, the component registry interface
+
+A buyer brings their own `<HeroBanner>`, `<FeatureSection>`, `<PricingTable>`. MODE tells each one: this role, this variant, this content, this palette weight. The buyer's components render it.
+
+### The integration contract
+
+Four artifacts define how a buyer's system plugs into MODE:
+
+| Artifact | What it defines | Who owns it |
+|----------|----------------|-------------|
+| `manifest/components.json` | Abstract component roles and their semantic properties | MODE |
+| `tokens/mode-tokens.json` | Which palette mode each role gets in each context | MODE (buyer can customize) |
+| `tokens/theme.json` | What light/neutral/dark look like visually | Buyer |
+| Component registry (`ui/components/modules/index.ts`) | Maps role names to concrete implementations | Buyer (replaces MODE's demo components) |
+
+The output JSON is the runtime handoff: for each section, it specifies the role name, variant, content slots, and palette mode. The buyer's registry resolves the role name to their component, which reads the content and applies the palette. MODE's demo components are reference implementations of this contract.
+
+### Why this matters for the codebase
+
+Every architectural decision should be evaluated against this separation:
+- Intent layer changes (manifest, mode-tokens.json, agent pipeline) — MODE's responsibility
+- Expression layer changes (theme.json, palette.ts, component implementations) — buyer's responsibility at adoption time
+- The demo UI blurs this by owning both — that's acceptable for demonstration but should never be mistaken for the product architecture
+
+The inline slot editor, CMS integration, and CSS variables work all sit in the "demo tooling" category — they make the demo iterable. They are not part of the semantic layer itself.
 
 ---
 
