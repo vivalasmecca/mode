@@ -120,7 +120,7 @@ All admin routes are local-only. On Vercel they return 403 unless `ADMIN_KEY` is
 - **Edit** — slot editor: left panel lists all sections; right panel shows editable fields for every slot in the selected section. Supports string, CTA (label + href), array, and read-only fields. **Links panel** across the top lets you set named link tokens (e.g. `checkout`) that populate HrefField shortcuts in the slot editor and write to `context/product-context.json`.
 - **Brand** — extract product context from URLs, edit brand brief; both feed every build
 - **Palette** — editable palette map grid + brand accent configuration (see below)
-- **Studio** — full-screen canvas at `/admin/studio`. Two views: **birds-eye** (all variants scaled side-by-side at ~19% scale via CSS transform; click a card to enter expanded) and **expanded** (scrollable 1:1 page preview + 272px token panel on the right). Token panel shows light/neutral/dark palette modes (6 slots each) plus accent; clicking a slot opens an inline color picker constrained to `color-scale.json` vocabulary — no open hex entry. Token changes apply live via `document.documentElement.style.setProperty()`, updating all rendered variants simultaneously. **Component swapper**: hover any section in expanded view to see the IA's `candidate_components` for that slot as chips in a dark overlay bar — candidates are semantically constrained (same classification, same funnel context). Click to swap; the override is ephemeral until saved. Save writes token changes to `theme.json` via `PUT /api/tokens/theme` and component overrides to each output file via `PUT /api/output/save`.
+- **Studio** — full-screen canvas at `/admin/studio`. Header toggle switches between two modes: **Canvas** and **Design System**. Canvas has two views: **birds-eye** (all variants scaled side-by-side at ~19% scale via CSS transform; click a card to enter expanded) and **expanded** (scrollable 1:1 page preview + 272px token panel on the right). Token panel shows light/neutral/dark palette modes (6 slots each) plus accent; clicking a slot opens an inline color picker constrained to `color-scale.json` vocabulary — no open hex entry. Token changes apply live via `document.documentElement.style.setProperty()`, updating all rendered variants simultaneously. **Component swapper**: hover any section in expanded view to see the IA's `candidate_components` for that slot as chips in a dark overlay bar — candidates are semantically constrained (same classification, same funnel context). Click to swap; the override is ephemeral until saved. Save writes token changes to `theme.json` via `PUT /api/tokens/theme` and component overrides to each output file via `PUT /api/output/save`. **Design System mode**: replaces the canvas with a full-width editor for `color-scale.json` — the hex vocabulary. Each hue group (gray, indigo, etc.) renders as a card with a full-width color ramp and a step-by-step row list; clicking any swatch opens a native color picker. Changes apply live across all rendered variants via `reapplyAllVars()` (re-resolves all 18+ CSS vars through the updated scale). Save writes to `color-scale.json` via `PUT /api/tokens/color-scale`. Scale dirty state is tracked independently from theme token dirty state.
 - **Run** — Deploy panel: lists active build timestamp and variant labels, shows last deploy time, and provides a "Deploy" button that commits `output/` + `config/` and pushes to trigger a Vercel build (content-lane deploy, separate from code-lane git push).
 
 ### Build tab flow
@@ -147,7 +147,7 @@ This ensures Node.js resolves `mode-agent/*` from `ui/node_modules/` regardless 
 
 **Token resolver caching:** `token-resolver.js` caches `mode-tokens.json` at module load time (Node.js module cache). Editing palette maps or accent tokens via the Palette tab writes to the file immediately, but a dev server restart is needed for those changes to take effect in new builds. The UI notes this after saving.
 
-**Palette tab:** Two sections — Brand Accent (global, not per-preset) and Palette Map (per-preset grid). Accent has `on_light` and `on_dark` variants for branded CTA buttons. Palette map cells cycle light → neutral → dark on click. Both have independent save states; saves write directly to `mode-tokens.json`.
+**Palette tab:** Two sections — Brand Accent (global, not per-preset) and Palette Map (per-preset grid). Accent has `on_light` and `on_dark` variants for branded CTA buttons. Palette map cells cycle light → neutral → dark on click. Both have independent save states; saves write directly to `mode-tokens.json`. The accent preview and palette map cell backgrounds use resolved hex values (read via `color-scale.json` in the server component), not Tailwind class interpolation — so changes made in the Studio are reflected accurately on next page load.
 
 **CSS variables layer — two-layer structure:**
 
@@ -168,6 +168,8 @@ The integration contract for a buyer: bring `color-scale.json` (your vocabulary)
 **Brand context:** `context/product-context.json` and `context/brand-brief.md` are read by `content-generator.js` on every build — no restart required. If `product_name` is empty, the files are ignored and the generator falls back to hallucinating product truth. If `checkout.primary_url` is set, CTA `href` values in generated pages point to the real checkout URL instead of `#`.
 
 **Studio canvas:** `admin/studio` uses `position: fixed; inset: 0; z-index: 50` to visually escape the admin layout without a separate layout file. Birds-eye cards use `overflow: hidden` outer containers (280×490px) with a 1440px inner div scaled via `transform: scale(0.194); transform-origin: top left; pointer-events: none` — shows the top portion of each page variant at a glance. Live token updates call `document.documentElement.style.setProperty()` on the exact CSS var names that `palette-vars.ts` sets server-side (`--mode-{mode}-{slot}`, `--mode-accent-{side}-{slot}`); all rendered instances update instantly. After saving component overrides, the in-memory `activeVariants` state is patched with the new component names (via `applyOverridesToVariants`) so the display stays consistent without a page reload.
+
+**Studio Design System mode:** The `colorScale` prop is lifted to component state (`initialColorScale` → `useState`) so edits in the Design System view flow into subsequent token panel operations without a reload. `reapplyAllVars(modes, accent, scale)` iterates all palette mode slots and accent variants and re-applies every CSS var when the scale changes — O(18) DOM writes, negligible. Scale dirty state and token dirty state are independent; the header "Unsaved changes" indicator fires on `dirty || scaleDirty`. `PUT /api/tokens/color-scale` preserves `_note` and `_source` metadata when writing.
 
 **Component swapping constraint:** The Studio's hover overlay draws candidates from `output.ia.sections[].candidate_components` — the set the IA evaluated as semantically appropriate for that section's beat and funnel context. Only candidates that exist in `MODULE_REGISTRY` are shown. This prevents swapping a hero for a social card and prevents inserting editorial variants where the semantic mapping doesn't support them. The constraint is structural, not enforced by runtime rules.
 
@@ -233,7 +235,7 @@ mode/
     │   │   │   └── RunClient.tsx    ← "use client" — Deploy button + deploy status panel
     │   │   ├── studio/
     │   │   │   ├── page.tsx         ← server: reads active build manifest + variant outputs + theme/scale JSON
-    │   │   │   └── StudioClient.tsx ← "use client" — fixed full-screen canvas; birds-eye + expanded views; token panel + component swapper
+    │   │   │   └── StudioClient.tsx ← "use client" — fixed full-screen canvas; Canvas mode (birds-eye + expanded + token panel + component swapper) and Design System mode (color-scale.json live editor)
     │   │   ├── preview/page.tsx     ← renders output JSON; supports ?file= param
     │   │   └── site/page.tsx        ← site view: fixed dark nav + PreviewClient; reads site manifest
     │   └── api/
@@ -242,7 +244,8 @@ mode/
     │       │   ├── route.ts         ← GET: list output files
     │       │   └── save/route.ts    ← PUT: write slots, component, and/or variant to output file (slot editor + Studio)
     │       ├── tokens/
-    │       │   └── theme/route.ts   ← PUT: merge palette_modes + accent into theme.json (Studio token panel save)
+    │       │   ├── theme/route.ts       ← PUT: merge palette_modes + accent into theme.json (Studio token panel save)
+    │       │   └── color-scale/route.ts ← PUT: merge hue entries into color-scale.json (Studio Design System save)
     │       ├── admin/
     │       │   └── deploy/route.ts  ← POST: commit output/ + config/, push to trigger Vercel deploy
     │       ├── palette/
@@ -306,7 +309,8 @@ When dropping back in after time away, start here:
 - **Wordmark** ✓ — `ui/public/wordmark.svg`; rendered as `<img>` directly in NavigationHeader (h-7) and FooterMinimal (h-6). No slot dependency.
 - **Build tab foundational warning** ✓ — red "Foundational" chip at top of Build tab reminds that a build overwrites all slot edits.
 - **Run / Deploy panel** ✓ — shows active build timestamp + variant labels, last deploy time, and a Deploy button that commits `output/` + `config/` and pushes (content-lane deploy separate from code git push).
-- **Studio** ✓ — `/admin/studio`. Birds-eye canvas + expanded view. Live token remapping constrained to `color-scale.json` vocabulary via inline swatch picker. CSS var updates apply across all rendered variants instantly. Component swapper on section hover: draws from IA `candidate_components`, semantically constrained by classification and context.
+- **Palette tab hex fix** ✓ — Accent preview and palette map cell backgrounds now resolve `color-scale.json` references to hex server-side (`ResolvedColors` prop), so Studio token changes are accurately reflected without Tailwind class interpolation.
+- **Studio** ✓ — `/admin/studio`. Canvas mode: birds-eye + expanded view, live token remapping, component swapper. Design System mode: full-width `color-scale.json` editor — hue group cards with color ramp + native color picker per step; changes apply live across all rendered variants via `reapplyAllVars()`; saves via `PUT /api/tokens/color-scale`.
 
 ---
 
@@ -317,8 +321,8 @@ The Studio is the primary editing surface. The next lift is making the component
 ### 1. Component editor (future — the Figma replacement vision)
 The Studio currently lets you swap between IA-vetted candidates for each section. The next layer is letting users duplicate, edit, or create components entirely within the Studio — defining which visual zones of a component (page bleed bg, container bg, keylines, SVG fills, text) are bound to which semantic token. This is the anatomy binding layer: zone-level CSS custom properties per component, making the connection between semantic tokens and visual expression configurable rather than hardcoded in JSX. This is the "kill Figma" direction — a code-native component design surface that understands semantic intent, not just visual properties.
 
-### 2. Swap `color-scale.json` for real brand palette
-The defaults (Tailwind gray + indigo) are functional but generic. Replace with Radix Colors or a brand-specific scale, then retune `theme.json` assignments to express real brand tone. The Studio's constrained picker makes this a visual operation — no file editing required.
+### 2. Swap `color-scale.json` for a real brand palette
+The defaults (Tailwind gray + indigo) are functional but generic. The Studio's Design System mode now makes this a fully visual operation — open Design System, click any swatch, pick your brand hex, save. Then retune `theme.json` assignments in the token panel. No file editing required.
 
 ### 3. CMS integration — persistent content layer
 The inline slot editor proves the editing workflow. When ready to add multi-session persistence, versioning, and multi-user editing, connect to a headless CMS. **Payload CMS** is the right fit: TypeScript-native, runs locally alongside Next.js, self-hosted, schema defined in code. Content types map directly to the slot schema already defined in `lib/types.ts`. **Sanity** is an alternative: managed, excellent editing UX, free tier — better if local service overhead is unwanted.
@@ -349,7 +353,8 @@ The CMS integration waits until the content schema is stable. Every component sl
 - Wordmark ✓
 - Build tab foundational warning ✓
 - Run / Deploy panel ✓
-- Studio ✓ (birds-eye canvas + expanded view + live token remapping + component swapper)
+- Palette tab hex fix ✓ (resolved colors via color-scale.json server-side; accurate after Studio edits)
+- Studio ✓ (birds-eye canvas + expanded view + live token remapping + component swapper + Design System mode)
 
 ---
 
