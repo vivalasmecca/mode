@@ -1,0 +1,135 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at": "2026-06-17T06:03:05.871Z",
+  "variant": "awareness",
+  "preset": "funnel-driven",
+  "preset_description": "Dark = decision signal. Emphasis accumulates toward conversion — trust anchors and commitment moments are dark, top-of-funnel is light.",
+  "palette_driver": "funnel_stage",
+  "brief": {
+    "audience": "Saas trial users",
+    "goal": "convert to paid",
+    "context_mode": "organic",
+    "archetype": "Validator",
+    "funnel_stage": "awareness"
+  },
+  "behavioral_tokens": {
+    "require_trust_signal": true,
+    "allow_secondary_cta": true,
+    "subhead_policy": "always",
+    "copy_density": "medium",
+    "evidence_density": "high"
+  },
+  "accent_tokens": {
+    "_note": "Brand primary CTA color. Global — not per-preset. Two variants: button on a light/neutral section vs. on a dark section.",
+    "on_light": {
+      "bg": "bg-indigo-600",
+      "text": "text-white"
+    },
+    "on_dark": {
+      "bg": "bg-white",
+      "text": "text-gray-900"
+    }
+  },
+  "ia": {
+    "beats": [
+      {
+        "name": "Orientation",
+        "rationale": "Orientation — Validator archetype at awareness stage"
+      },
+      {
+        "name": "Value",
+        "rationale": "Value — Validator archetype at awareness stage"
+      },
+      {
+        "name": "Credibility",
+        "rationale": "Credibility — Validator archetype at awareness stage"
+      },
+      {
+        "name": "Conversion",
+        "rationale": "Conversion — Validator archetype at awareness stage"
+      },
+      {
+        "name": "Recovery",
+        "rationale": "Recovery — Validator archetype at awareness stage"
+      }
+    ],
+    "sections": [
+      {
+        "name": "Orientation",
+        "beat": "Orientation",
+        "rationale": "Orientation — Validator archetype at awareness stage",
+        "candidate_components": [
+          "HeroPrimary",
+          "HeroStatement",
+          "NavigationHeader"
+        ]
+      },
+      {
+        "name": "Credibility",
+        "beat": "Credibility",
+        "rationale": "Credibility — Validator archetype at awareness stage",
+        "candidate_components": [
+          "SocialProofBar"
+        ]
+      },
+      {
+        "name": "Recovery",
+        "beat": "Recovery",
+        "rationale": "Recovery — Validator archetype at awareness stage",
+        "candidate_components": [
+          "FooterMinimal"
+        ]
+      }
+    ]
+  },
+  "page": [
+    {
+      "section": "Orientation",
+      "beat": "Orientation",
+      "component": "HeroStatement",
+      "variant": "centered",
+      "reasoning": null,
+      "slots": {
+        "eyebrow": null,
+        "headline": "[headline]",
+        "subhead": "[subhead]",
+        "body": null,
+        "cta_primary": "[cta_primary]",
+        "cta_secondary": null
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Credibility",
+      "beat": "Credibility",
+      "component": "SocialProofBar",
+      "variant": "logos-only",
+      "reasoning": null,
+      "slots": {
+        "headline": null,
+        "logos": [],
+        "quote": null,
+        "attribution": null,
+        "attribution_logo": null
+      },
+      "palette": "neutral"
+    },
+    {
+      "section": "Recovery",
+      "beat": "Recovery",
+      "component": "FooterMinimal",
+      "variant": "standard",
+      "reasoning": null,
+      "slots": {
+        "logo": "[logo]",
+        "nav_columns": [],
+        "legal_text": "[legal_text]",
+        "social_links": [],
+        "cta": null
+      },
+      "palette": "light"
+    }
+  ],
+  "preview_url": "/admin/preview?file=page-2026-06-17T06-03-05-871Z-awareness.json",
+  "_regen_from": "page-2026-06-17T06-02-06-201Z-awareness.json"
+}

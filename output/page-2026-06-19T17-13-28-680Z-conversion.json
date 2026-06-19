@@ -1,0 +1,185 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at": "2026-06-19T17:13:28.680Z",
+  "variant": "conversion",
+  "preset": "funnel-driven",
+  "preset_description": "Dark = decision signal. Emphasis accumulates toward conversion — trust anchors and commitment moments are dark, top-of-funnel is light.",
+  "palette_driver": "funnel_stage",
+  "brief": {
+    "audience": "SaaS companies needing a modern, ai-ready design system",
+    "goal": "Convert to paid",
+    "context_mode": "organic",
+    "content_notes": "",
+    "archetype": "Validator",
+    "funnel_stage": "conversion"
+  },
+  "behavioral_tokens": {
+    "require_trust_signal": true,
+    "allow_secondary_cta": true,
+    "subhead_policy": "always",
+    "copy_density": "medium",
+    "evidence_density": "high"
+  },
+  "accent_tokens": {
+    "_note": "Brand primary CTA color. Global — not per-preset. Two variants: button on a light/neutral section vs. on a dark section.",
+    "on_light": {
+      "bg": "bg-indigo-600",
+      "text": "text-white"
+    },
+    "on_dark": {
+      "bg": "bg-white",
+      "text": "text-gray-900"
+    }
+  },
+  "ia": {
+    "beats": [
+      {
+        "name": "Orientation",
+        "rationale": "Establishes immediate context: MODE is the AI-ready design system built for modern SaaS companies. At conversion stage, this must be sharp and assumptive—the visitor already knows what they need, so orientation confirms they're in the right place."
+      },
+      {
+        "name": "Credibility",
+        "rationale": "Validator archetype demands proof before committing. Inserting trust signals—customer logos, endorsements, adoption stats—early satisfies their need to verify legitimacy before even considering pricing."
+      },
+      {
+        "name": "Evidence",
+        "rationale": "Validators require hard proof. Concrete metrics, case study data, and measurable outcomes (e.g., design velocity gains, reduced engineering handoff time) give the rational justification they need to move toward a purchase decision."
+      },
+      {
+        "name": "Decision",
+        "rationale": "With credibility and evidence satisfied, the Validator is ready to evaluate options. Pricing tiers and plan comparison provide the structured choice framework they need to self-select the right commitment level."
+      },
+      {
+        "name": "Conversion",
+        "rationale": "Immediately follows Decision per rules. A clear, decisive CTA captures the intent built through proof and pricing. For Validators at conversion stage, this should be direct and friction-free—they've already rationalized the choice."
+      },
+      {
+        "name": "Recovery",
+        "rationale": "Final beat provides secondary paths for any remaining hesitation—contact sales, explore docs, or revisit evidence. Ensures no Validator leaves without an alternative route back into the funnel."
+      }
+    ],
+    "sections": [
+      {
+        "name": "Navigation",
+        "beat": "Orientation",
+        "rationale": "Global navigation — wayfinding and persistent CTA for the session.",
+        "candidate_components": [
+          "NavigationHeader"
+        ]
+      },
+      {
+        "name": "Pricing",
+        "beat": "Decision",
+        "rationale": "With credibility and evidence satisfied, the Validator is ready to evaluate options. Pricing tiers and plan comparison provide the structured choice framework they need to self-select the right commitment level.",
+        "candidate_components": [
+          "PricingCard"
+        ]
+      },
+      {
+        "name": "CTA",
+        "beat": "Conversion",
+        "rationale": "Immediately follows Decision per rules. A clear, decisive CTA captures the intent built through proof and pricing. For Validators at conversion stage, this should be direct and friction-free—they've already rationalized the choice.",
+        "candidate_components": [
+          "CTABanner"
+        ]
+      },
+      {
+        "name": "Footer",
+        "beat": "Recovery",
+        "rationale": "Page close — brand mark, minimal navigation, and legal.",
+        "candidate_components": [
+          "FooterMinimal"
+        ]
+      }
+    ]
+  },
+  "page": [
+    {
+      "section": "Navigation",
+      "beat": "Orientation",
+      "component": "NavigationHeader",
+      "variant": "minimal",
+      "reasoning": "Conversion funnel stage demands focus: 'minimal variant for conversion-focused pages — strip nav_links, keep logo and single CTA only.' This removes friction and directs attention to the primary conversion action.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_links": [],
+        "cta_primary": {
+          "label": "Get MODE",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "View docs",
+          "href": "#"
+        }
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Pricing",
+      "beat": "Decision",
+      "component": "PricingCard",
+      "variant": "highlighted",
+      "reasoning": "Validator archetype requires social proof and detailed justification: 'Validator variant includes description and longer feature list' paired with 'highlighted variant for recommended plan' to guide the prospect toward the optimal choice with full context.",
+      "slots": {
+        "plan_name": "MODE Kit",
+        "badge": "One-time purchase",
+        "price": "$1,199",
+        "billing_period": "pay once, own forever",
+        "description": "The full intelligence layer — resolution engine, component manifest, IA planner, and multi-variant generation. No subscription. No lock-in. Yours to extend.",
+        "features": [
+          "Semantic resolution engine — archetype, funnel stage, intent state, context mode",
+          "Component manifest — 11 components, fully specified with slot schemas",
+          "IA planner + multi-variant generation powered by Claude Opus",
+          "Three palette presets — funnel-driven, archetype-driven, feature-emphasis",
+          "Token dashboard with editable palette map",
+          "Lifetime access — no subscription, no runtime dependency"
+        ],
+        "cta": {
+          "label": "Get MODE",
+          "href": "#"
+        }
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "CTA",
+      "beat": "Conversion",
+      "component": "CTABanner",
+      "variant": "centered",
+      "reasoning": "Validator archetype needs reassurance for conversion decision: 'Validator variant: include subhead and trust_signal (e.g., 'No credit card required').' Centered layout with trust signals reduces perceived friction at the conversion moment.",
+      "slots": {
+        "headline": "The intelligence layer your design system is missing.",
+        "subhead": "Running in under an hour. Configured once. No subscription, no lock-in — just a design system that knows why it's rendering.",
+        "cta_primary": {
+          "label": "Get MODE for $1,199",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "Join the Studio waitlist",
+          "href": "#"
+        },
+        "trust_signal": "One-time payment. Lifetime access. No credit card required to explore docs."
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Footer",
+      "beat": "Recovery",
+      "component": "FooterMinimal",
+      "variant": "with-cta",
+      "reasoning": "Conversion funnel stage on pricing page requires recovery mechanism: 'with-cta variant recaptures departing users on key conversion pages — use on pricing and signup flows.' This captures users about to leave without converting.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_columns": [],
+        "legal_text": "© 2025 MODE. All rights reserved.",
+        "social_links": [],
+        "cta": {
+          "label": "Get MODE",
+          "href": "#"
+        }
+      },
+      "palette": "light"
+    }
+  ],
+  "preview_url": "/admin/preview?file=page-2026-06-19T17-13-28-680Z-conversion.json"
+}

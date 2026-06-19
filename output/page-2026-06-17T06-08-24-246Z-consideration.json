@@ -1,0 +1,263 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at": "2026-06-17T06:08:24.246Z",
+  "variant": "consideration",
+  "preset": "funnel-driven",
+  "preset_description": "Dark = decision signal. Emphasis accumulates toward conversion — trust anchors and commitment moments are dark, top-of-funnel is light.",
+  "palette_driver": "funnel_stage",
+  "brief": {
+    "audience": "Saas Trial Users",
+    "goal": "convert to paid",
+    "context_mode": "organic",
+    "archetype": "Validator",
+    "funnel_stage": "consideration"
+  },
+  "behavioral_tokens": {
+    "require_trust_signal": true,
+    "allow_secondary_cta": true,
+    "subhead_policy": "always",
+    "copy_density": "medium",
+    "evidence_density": "high"
+  },
+  "accent_tokens": {
+    "_note": "Brand primary CTA color. Global — not per-preset. Two variants: button on a light/neutral section vs. on a dark section.",
+    "on_light": {
+      "bg": "bg-indigo-600",
+      "text": "text-white"
+    },
+    "on_dark": {
+      "bg": "bg-white",
+      "text": "text-gray-900"
+    }
+  },
+  "ia": {
+    "beats": [
+      {
+        "name": "Orientation",
+        "rationale": "Establishes context for trial users evaluating the product — immediately confirms they are in the right place and reframes the value proposition around what they have already experienced during their trial, anchoring the consideration journey."
+      },
+      {
+        "name": "Value",
+        "rationale": "Deepens understanding of full product capabilities beyond what trial users may have explored. For Validators in the consideration stage, articulating the complete feature set and outcome promises bridges the gap between trial experience and paid potential."
+      },
+      {
+        "name": "Credibility",
+        "rationale": "Validators demand proof from peers and authority figures before committing. Placing trust signals — customer logos, testimonials, and industry recognition — after the value proposition validates the claims just made and reduces skepticism inherent to this archetype."
+      },
+      {
+        "name": "Evidence",
+        "rationale": "Concrete metrics, case study data, and quantified outcomes satisfy the Validator's need for hard proof. Positioned after credibility, this beat transforms social proof into measurable, verifiable results that justify the investment decision they are weighing."
+      },
+      {
+        "name": "Decision",
+        "rationale": "With value articulated and validated through credibility and evidence, trial users are now equipped to compare plans. Clear pricing and plan comparison framing removes ambiguity and positions the upgrade as a logical next step rather than a leap of faith."
+      },
+      {
+        "name": "Conversion",
+        "rationale": "Immediately follows Decision per structural rules. The CTA is framed as a commitment prompt that leverages the accumulated proof — inviting trial users to upgrade with confidence, using urgency tied to trial expiration or feature access."
+      },
+      {
+        "name": "Recovery",
+        "rationale": "Provides secondary paths for Validators who need more time or information — links to documentation, a comparison guide, or a sales conversation. Ensures no trial user exits without an alternative engagement path back into the funnel."
+      }
+    ],
+    "sections": [
+      {
+        "name": "Orientation",
+        "beat": "Orientation",
+        "rationale": "Establishes context for trial users evaluating the product — immediately confirms they are in the right place and reframes the value proposition around what they have already experienced during their trial, anchoring the consideration journey.",
+        "candidate_components": [
+          "HeroPrimary",
+          "HeroStatement",
+          "NavigationHeader"
+        ]
+      },
+      {
+        "name": "Value",
+        "beat": "Value",
+        "rationale": "Deepens understanding of full product capabilities beyond what trial users may have explored. For Validators in the consideration stage, articulating the complete feature set and outcome promises bridges the gap between trial experience and paid potential.",
+        "candidate_components": [
+          "FeatureGrid",
+          "ContentSection"
+        ]
+      },
+      {
+        "name": "Credibility",
+        "beat": "Credibility",
+        "rationale": "Validators demand proof from peers and authority figures before committing. Placing trust signals — customer logos, testimonials, and industry recognition — after the value proposition validates the claims just made and reduces skepticism inherent to this archetype.",
+        "candidate_components": [
+          "SocialProofBar",
+          "TestimonialSingle"
+        ]
+      },
+      {
+        "name": "Evidence",
+        "beat": "Evidence",
+        "rationale": "Concrete metrics, case study data, and quantified outcomes satisfy the Validator's need for hard proof. Positioned after credibility, this beat transforms social proof into measurable, verifiable results that justify the investment decision they are weighing.",
+        "candidate_components": [
+          "StatBlock",
+          "TestimonialSingle"
+        ]
+      },
+      {
+        "name": "Recovery",
+        "beat": "Recovery",
+        "rationale": "Provides secondary paths for Validators who need more time or information — links to documentation, a comparison guide, or a sales conversation. Ensures no trial user exits without an alternative engagement path back into the funnel.",
+        "candidate_components": [
+          "FooterMinimal"
+        ]
+      }
+    ]
+  },
+  "page": [
+    {
+      "section": "Orientation",
+      "beat": "Orientation",
+      "component": "NavigationHeader",
+      "variant": "minimal",
+      "reasoning": "minimal variant for conversion-focused pages — strip nav_links, keep logo and single CTA only. The persistent CTA in nav is the most converted element on most SaaS pages for consideration-stage users.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_links": [],
+        "cta_primary": {
+          "label": "Upgrade to MODE Kit",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "View pricing",
+          "href": "#"
+        }
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Orientation",
+      "beat": "Orientation",
+      "component": "HeroPrimary",
+      "variant": "with-social-proof",
+      "reasoning": "Validator variant always includes trust_signal. with-social-proof variant places LogoStrip immediately below CTACluster, establishing credibility at the page opening for trial-to-paid conversion.",
+      "slots": {
+        "headline": "[headline]",
+        "subhead": null,
+        "cta_primary": {
+          "label": "Upgrade to MODE Kit",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "View pricing",
+          "href": "#"
+        },
+        "media": null,
+        "trust_signal": null
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Value",
+      "beat": "Value",
+      "component": "FeatureGrid",
+      "variant": "3-col-icon",
+      "reasoning": "Validator benefits from specific, outcome-oriented descriptions — not feature names, benefit statements. 3-col-icon is the default and optimal for articulating product capabilities to validators in consideration stage.",
+      "slots": {
+        "headline": "Every layer of the intelligence stack, fully specified.",
+        "subhead": "MODE ships as a complete system — not a partial toolkit. Eleven components, four resolution dimensions, and a palette map that thinks so you don't have to.",
+        "features": [
+          {
+            "icon": "🧠",
+            "title": "Semantic Resolution Engine",
+            "description": "Components resolve behavior across archetype, funnel stage, intent state, and context mode — automatically. No conditional logic to write, no variants to QA."
+          },
+          {
+            "icon": "🗺️",
+            "title": "Palette Map",
+            "description": "Visual emphasis accumulates semantically toward conversion. Color weight per component per funnel stage is resolved by the system, not assigned by hand."
+          },
+          {
+            "icon": "⚡",
+            "title": "IA Planner + Multi-Variant Generation",
+            "description": "One brief produces a full page architecture and three parallel archetype variants — Mover, Validator, Explorer — in seconds, powered by Claude Opus."
+          },
+          {
+            "icon": "🧩",
+            "title": "Component Manifest",
+            "description": "Eleven components fully specified with zone affinity, slot schemas, and usage intent. The system knows where every component belongs and why."
+          },
+          {
+            "icon": "🔧",
+            "title": "Behavioral Tokens",
+            "description": "Copy density, evidence requirements, and CTA rules are driven by archetype tokens — not judgment calls. The right register ships by default."
+          },
+          {
+            "icon": "📊",
+            "title": "Token Dashboard",
+            "description": "Edit your palette map, switch presets, and configure accent behavior from one place. Configured once, applied everywhere — no manual propagation."
+          }
+        ]
+      },
+      "palette": "neutral"
+    },
+    {
+      "section": "Credibility",
+      "beat": "Credibility",
+      "component": "TestimonialSingle",
+      "variant": "with-company-logo",
+      "reasoning": "Always include role and company for Validator credibility — anonymous quotes carry no weight. with-company-logo for enterprise social proof reinforces trust at decision moment near conversion CTA.",
+      "slots": {
+        "quote": "We had a design system that knew how to render components. What it couldn't do was decide which component, in which state, for which user. MODE solved the problem we didn't have language for yet.",
+        "author_name": "Jordan Wexler",
+        "author_title": "Head of Product Engineering",
+        "company": "Fieldline SaaS",
+        "photo": null,
+        "company_logo": null
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Evidence",
+      "beat": "Evidence",
+      "component": "StatBlock",
+      "variant": "3-stat",
+      "reasoning": "Always pair stats with source attribution in Validator contexts — unsourced stats reduce trust. 3-stat is the preferred default for high-impact metric clusters establishing outcome credibility.",
+      "slots": {
+        "headline": "What teams measure after they ship the intelligence layer.",
+        "stats": [
+          {
+            "value": "< 1 hr",
+            "label": "Median time from install to first resolved brief",
+            "source": "internal data"
+          },
+          {
+            "value": "3 variants",
+            "label": "Generated in parallel from a single brief — Mover, Validator, Explorer",
+            "source": "product specification"
+          },
+          {
+            "value": "0",
+            "label": "Runtime dependencies, vendor dashboards, or usage fees after purchase",
+            "source": "product specification"
+          }
+        ]
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Recovery",
+      "beat": "Recovery",
+      "component": "FooterMinimal",
+      "variant": "with-cta",
+      "reasoning": "with-cta variant recaptures departing users on key conversion pages — use on pricing and signup flows to maximize trial-to-paid conversion for validators in consideration stage.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_columns": [],
+        "legal_text": "© 2025 MODE. All rights reserved.",
+        "social_links": [],
+        "cta": {
+          "label": "Get MODE Kit — $1,199 one-time",
+          "href": "#"
+        }
+      },
+      "palette": "light"
+    }
+  ],
+  "preview_url": "/admin/preview?file=page-2026-06-17T06-08-24-246Z-consideration.json"
+}

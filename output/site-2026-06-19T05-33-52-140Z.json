@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0.0",
+  "built_at": "2026-06-19T05:33:52.140Z",
+  "ts": "2026-06-19T05-33-52-140Z",
+  "preset": "archetype-driven",
+  "palette_driver": "archetype",
+  "brief": {
+    "audience": "SaaS trial users",
+    "goal": "buy the product",
+    "context_mode": "organic",
+    "content_notes": "",
+    "funnel_stage": "decision",
+    "archetype": "Mover"
+  },
+  "pages": [
+    {
+      "label": "mover",
+      "filename": "page-2026-06-19T05-33-52-140Z-mover.json",
+      "previewUrl": "/admin/preview?file=page-2026-06-19T05-33-52-140Z-mover.json",
+      "siteUrl": "/admin/site?ts=2026-06-19T05-33-52-140Z&page=mover"
+    },
+    {
+      "label": "validator",
+      "filename": "page-2026-06-19T05-33-52-140Z-validator.json",
+      "previewUrl": "/admin/preview?file=page-2026-06-19T05-33-52-140Z-validator.json",
+      "siteUrl": "/admin/site?ts=2026-06-19T05-33-52-140Z&page=validator"
+    },
+    {
+      "label": "explorer",
+      "filename": "page-2026-06-19T05-33-52-140Z-explorer.json",
+      "previewUrl": "/admin/preview?file=page-2026-06-19T05-33-52-140Z-explorer.json",
+      "siteUrl": "/admin/site?ts=2026-06-19T05-33-52-140Z&page=explorer"
+    }
+  ]
+}
