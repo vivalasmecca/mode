@@ -105,7 +105,7 @@
         "logo": "[logo]",
         "nav_links": [],
         "cta_primary": {
-          "label": "Get MODE",
+          "label": "Get Mode",
           "href": "#"
         },
         "cta_secondary": {
@@ -122,7 +122,7 @@
       "variant": "editorial",
       "reasoning": "editorial variant is explicitly preferred for awareness stage: 'editorial variant is the high-expression awareness layout' with dominant headline and generous breathing room appropriate for the attention-earning moment",
       "slots": {
-        "eyebrow": "Intent-aware design system for SaaS",
+        "eyebrow": "Code-first intent-aware design",
         "headline": "Your design system knows how to render. MODE teaches it why.",
         "subhead": "MODE is the semantic intelligence layer above your component library — resolving behavior, visual emphasis, and copy register to the right experience for every user, funnel stage, and context. No manual variants. No QA overhead.",
         "cta_primary": {
@@ -162,7 +162,7 @@
       "slots": {
         "logo": "[logo]",
         "nav_columns": [],
-        "legal_text": "© 2025 MODE. All rights reserved.",
+        "legal_text": "© 2026 MODE. All rights reserved.",
         "social_links": [],
         "cta": {
           "label": "Get MODE",

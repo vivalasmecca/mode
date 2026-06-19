@@ -142,7 +142,7 @@
         "logo": "[logo]",
         "nav_links": [],
         "cta_primary": {
-          "label": "Get MODE",
+          "label": "Get Mode",
           "href": "#"
         },
         "cta_secondary": null
@@ -156,7 +156,7 @@
       "variant": "with-social-proof",
       "reasoning": "Validator archetype requires trust signals at the opening moment. Notes specify 'Validator variant always includes trust_signal' and 'with-social-proof variant places LogoStrip immediately below CTACluster,' establishing credibility before the main value proposition.",
       "slots": {
-        "eyebrow": "Intent-aware design system for SaaS",
+        "eyebrow": "Code-first intent-aware design",
         "headline": "Your design system knows how to render. MODE teaches it why.",
         "subhead": "Semantic resolution across archetype, funnel stage, and context — without manual variants, QA overhead, or Figma handoff cycles.",
         "cta_primary": {
@@ -317,7 +317,7 @@
       "slots": {
         "logo": "[logo]",
         "nav_columns": [],
-        "legal_text": "© 2025 MODE. All rights reserved.",
+        "legal_text": "© 2026 MODE. All rights reserved.",
         "social_links": [],
         "cta": {
           "label": "Get MODE",
