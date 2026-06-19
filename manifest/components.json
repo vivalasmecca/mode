@@ -7,7 +7,7 @@
       "tier": "module",
       "beats": ["Orientation"],
       "archetypes": ["Mover", "Validator"],
-      "funnel_stages": ["awareness", "consideration", "decision"],
+      "funnel_stages": ["awareness", "consideration", "decision", "conversion"],
       "variants": ["editorial", "with-media", "text-only", "with-social-proof"],
       "slots": {
         "eyebrow": "string | null",
@@ -19,7 +19,7 @@
         "trust_signal": "string | null"
       },
       "micro_blocks": ["HeadlineSubheadLockup", "CTACluster", "MediaFrame", "TrustSignal"],
-      "notes": "editorial variant is the high-expression awareness layout: centered, full-width, dominant headline (large type scale, generous breathing room), eyebrow context label above headline — no media. Prefer editorial for awareness stage. Validator variant always includes trust_signal. Mover variant suppresses subhead and cta_secondary — one message, one action. with-social-proof variant places LogoStrip immediately below CTACluster."
+      "notes": "Every page requires a Hero — including conversion. editorial variant is the high-expression awareness layout: centered, full-width, dominant headline, eyebrow context label — no media. For conversion stage use text-only: slim title and subhead only, no media, no secondary CTA — orients the visitor without competing with the decision moment below. Validator variant always includes trust_signal. Mover variant suppresses subhead and cta_secondary — one message, one action. with-social-proof variant places LogoStrip immediately below CTACluster."
     },
     {
       "name": "HeroStatement",

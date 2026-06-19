@@ -107,6 +107,7 @@ ${JSON.stringify(sectionsPayload, null, 2)}
 
 SELECTION RULES:
 - For awareness funnel stage: prefer "editorial" variant on hero components — it is the high-expression layout appropriate for the attention-earning moment
+- For conversion funnel stage hero components: prefer "text-only" variant — slim page title and subhead only, no media, no secondary CTA, so it orients without competing with the decision moment below
 - For Validator archetype: prefer variants containing "social-proof", "with-photo", or "with-source"
 - For Mover archetype: prefer variants containing "minimal" or "text-only"
 - Your reasoning MUST cite a specific phrase from that component's notes field
@@ -158,6 +159,11 @@ function pickVariant(component, brief) {
   // Awareness stage: prefer editorial on hero components
   if (brief.funnel_stage === "awareness" && component.variants.includes("editorial")) {
     return "editorial";
+  }
+
+  // Conversion stage: prefer text-only on hero components — slim title, no competing elements
+  if (brief.funnel_stage === "conversion" && component.variants.includes("text-only")) {
+    return "text-only";
   }
 
   if (brief.archetype === "Validator") {

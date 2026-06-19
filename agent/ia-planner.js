@@ -95,7 +95,7 @@ RULES:
    - awareness: light — no Decision beat, soft Conversion
    - consideration: full depth — include Value, Evidence, and Credibility before Conversion
    - decision: Evidence and Decision required before Conversion
-   - conversion: stripped — Orientation → Decision → Conversion → Recovery only
+   - conversion: stripped — Hero (slim) → Decision → Conversion → Recovery only. Hero is required on every page including conversion — it gives the visitor a page title and context before the decision moment. No Credibility, Value, or Evidence beats.
 4. Archetype guidance: ${archetypeGuidance[brief.archetype] ?? "balance depth and action"}
 
 Return ONLY valid JSON — no markdown, no explanation:
