@@ -5,10 +5,11 @@ import { usePathname } from "next/navigation";
 
 const TABS = [
   { label: "Overview", href: "/admin" },
-  { label: "Concepts", href: "/admin/concepts" },
+  { label: "Components", href: "/admin/components" },
   { label: "Build", href: "/admin/build" },
   { label: "Brand", href: "/admin/brand" },
   { label: "Palette", href: "/admin/palette" },
+  { label: "Concepts", href: "/admin/concepts" },
   { label: "Run", href: "/admin/run" },
 ];
 
