@@ -259,11 +259,15 @@ When dropping back in after time away, start here:
 
 ## What's next (as of June 2026)
 
+- **Mover contrast build** — run the archetype-driven preset with Mover. Same product, same funnel stage, fundamentally different IA and copy register side-by-side with the Validator build. This is the demo moment.
+- **Expressive hero variants** — add editorial/expressive variant options to HeroPrimary (and possibly 1–2 other components) so awareness-stage pages carry more visual personality. See "expression intensity" notes below.
+- **Brand brief** — write `context/brand-brief.md` content (tone, pillars, claim territory). This is a level 2 quality improvement; the Brand Setup tab has a markdown editor.
 - **LemonSqueezy setup** — add `checkout.primary_url` to `context/product-context.json` once the product is configured; CTAs in generated pages will link to the real checkout automatically.
-- **Brand brief** — write `context/brand-brief.md` content (tone, pillars, claim territory); the Brand Setup tab has a markdown editor. This immediately improves copy register in builds.
-- **Run the four-page Validator journey** — the site view and product context are both ready; now run four builds (awareness → consideration → decision → conversion) with the MODE product brief. The pages will be navigable via the site nav and copy will be grounded. This is the demo.
-- **Mover contrast build** — run the same four funnel stages with Mover archetype. This is the demo moment.
-- **Runtime signal routing** — serving the right variant based on visitor signals. See "Unresolved: runtime signal routing" below.
+- **Analytics attribution** — fire a page-load event with variant served + signals used so routing effectiveness can be evaluated. See "Runtime signal routing" below.
+
+**Done:**
+- Four-page Validator funnel journey (awareness → consideration → decision → conversion) ✓
+- Runtime signal routing (UTM, cookies, UA detection → variant serving) ✓
 
 ---
 
@@ -445,50 +449,32 @@ Resolved as unnecessary — single-dimension presets are sufficient. See Step 1 
 
 ---
 
-## Unresolved: runtime signal routing
+## Runtime signal routing ✓ built
 
-The system generates N variant files at build time. Routing means: when a real visitor lands, something reads their signals and serves the right variant — without them knowing there are variants, without them choosing.
+The full routing pipeline is complete and running on Vercel.
 
-**Signals available at request time**
+**What's built**
 
-Easy (readable from the request itself):
-- UTM params / referral source → maps naturally to `context_mode` (campaign, retargeting, organic)
-- Query param override → useful for testing (`?variant=decision`)
-- User agent / device → weak archetype proxy (mobile skews Mover)
-- Cookie from a previous session → funnel stage advancement (return visitor = further along)
+`proxy.ts` (Next.js middleware) runs on every request to `/` and detects signals in priority order:
 
-Hard (need external data):
-- Actual archetype — who this person is behaviorally. Without a CDP or CRM, you're inferring from weak proxies.
-- Funnel stage for a returning logged-in user — needs session history, which means integrating with whatever the product uses for user state.
+- Query param overrides (`?funnel_stage=decision`, `?archetype=Mover`) — for testing
+- UTM params: `utm_medium=retargeting/cpc/paid` → decision; `utm_medium=email/newsletter` → consideration; `utm_campaign` matching checkout/buy/cart → conversion
+- UTM content: `utm_content=Mover|Validator|Explorer` → archetype
+- Sticky cookies: funnel stage advances on each visit (awareness → consideration → decision → conversion); archetype is stored on first detection and preserved
+- Mobile UA → Mover fallback
+- Defaults: awareness, Validator
 
-**Where routing logic lives**
+Detected signals are set as request headers (`x-mode-funnel-stage`, `x-mode-archetype`) for the page to read.
 
-The cleanest option for the current architecture is **edge middleware** (Vercel Edge Middleware runs before the page loads, reads signals, rewrites to `/admin/preview?file=page-{ts}-{variant}.json`). No client-side flash, no server round-trip, works with the static JSON output files as-is. The routing logic itself is a lookup table: detected signals → variant label → filename.
+`config/routing.json` holds the active build's `ts` timestamp. Written by the Activate button in the Build UI.
 
-**What's genuinely tricky**
+`app/page.tsx` reads both headers, loads the site manifest for the active build, picks the matching variant page (using `palette_driver` to decide whether funnel stage or archetype is the routing dimension), and renders it via `PreviewClient`. Falls back to `<NoActiveBuild />` if no active build is set.
 
-1. **Archetype assignment without identity** — inferring Mover/Validator/Explorer from anonymous signals is lossy. You're making a population-level guess, not a person-level one. Fine for the system, but the accuracy ceiling is low without real identity data.
-2. **Variant file currency** — the routing layer needs to know which build's files to serve (latest? pinned? per-campaign?). The timestamp in the filename means you need a pointer to the current active build.
-3. **Intra-session funnel advancement** — a visitor lands in awareness but browses for 10 minutes. Do they get a different variant mid-session? Probably not for now, but architecturally that's the real-time routing end state.
-4. **Analytics attribution** — if you're serving different variants, analytics needs to record which one was served. Otherwise you can't evaluate whether routing is working. This means firing an event (variant label, signals used, preset) on every page load.
+**What remains as enhancements (not blockers)**
 
-**Interoperability — enhancements, not requirements**
-
-Minimum viable routing has zero external dependencies: edge middleware + UTM/cookie signals + query param override for testing. That's shippable.
-
-Enhancement layers where existing systems plug in:
-- **CDP** (Segment, mParticle) → feeds real behavioral archetype signals
-- **CRM** (HubSpot, Salesforce) → logged-in user identity → known archetype
-- **A/B testing platforms** (Optimizely, Split) → statistical rigor on variant performance. Note: paradigm mismatch — these tools swap a headline; MODE swaps the entire IA, copy register, and palette. Usable as a routing decision layer only.
-- **Analytics** (GA4, Amplitude) → variant label as a dimension on all events
-
-**Breakdown**
-
-1. Define signal → variant mapping rules (product/strategy decision — do this first)
-2. Build edge middleware with UTM/cookie signal detection and variant file lookup
-3. Add a "current build" pointer so routing always finds the right files
-4. Instrument analytics (variant served as a page-level dimension)
-5. (Enhancement) CDP/CRM integration for identity-based archetype assignment
+- Analytics attribution — firing an event on each page load with the variant served, signals used, and preset. Needed to evaluate whether routing is working in practice.
+- CDP/CRM integration — for identity-based archetype assignment when anonymous signal inference isn't sufficient.
+- Intra-session funnel advancement — currently a visitor gets one variant per session. Real-time advancement within a session is a future-state concept.
 
 ---
 
