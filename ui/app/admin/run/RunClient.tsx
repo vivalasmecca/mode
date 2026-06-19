@@ -43,6 +43,18 @@ function formatTime(iso: string): string {
 export function RunClient({ activeBuildTs, variantLabels, recentEvents }: RunClientProps) {
   const [deployState, setDeployState] = useState<"idle" | "loading" | "done" | "error">("idle");
   const [message, setMessage] = useState("");
+  const [events, setEvents] = useState<RoutingEvent[]>(recentEvents);
+  const [clearState, setClearState] = useState<"idle" | "loading">("idle");
+
+  async function handleClearEvents() {
+    setClearState("loading");
+    try {
+      await fetch("/api/admin/events", { method: "DELETE" });
+      setEvents([]);
+    } finally {
+      setClearState("idle");
+    }
+  }
 
   async function handleDeploy() {
     setDeployState("loading");
@@ -151,12 +163,23 @@ export function RunClient({ activeBuildTs, variantLabels, recentEvents }: RunCli
           <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-500">
             Routing activity
           </h2>
-          {recentEvents.length > 0 && (
-            <span className="text-xs text-gray-400">{recentEvents.length} recent</span>
-          )}
+          <div className="flex items-center gap-3">
+            {events.length > 0 && (
+              <span className="text-xs text-gray-400">{events.length} recent</span>
+            )}
+            {events.length > 0 && (
+              <button
+                onClick={handleClearEvents}
+                disabled={clearState === "loading"}
+                className="text-xs text-gray-400 hover:text-red-600 transition-colors disabled:opacity-40"
+              >
+                {clearState === "loading" ? "Clearing…" : "Clear history"}
+              </button>
+            )}
+          </div>
         </div>
 
-        {recentEvents.length === 0 ? (
+        {events.length === 0 ? (
           <div className="px-5 py-6 text-center">
             <p className="text-sm text-gray-400">No events yet.</p>
             <p className="text-xs text-gray-400 mt-1">
@@ -175,7 +198,7 @@ export function RunClient({ activeBuildTs, variantLabels, recentEvents }: RunCli
                 </tr>
               </thead>
               <tbody>
-                {recentEvents.map((e, i) => (
+                {events.map((e, i) => (
                   <tr key={i} className="border-b border-gray-50 hover:bg-gray-50">
                     <td className="px-4 py-2.5 text-gray-400 whitespace-nowrap font-mono">
                       {formatTime(e.ts)}

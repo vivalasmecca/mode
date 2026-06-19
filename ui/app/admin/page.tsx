@@ -1,21 +1,6 @@
 import { getLatestOutput } from "@/lib/get-output";
 import type { BehavioralTokens } from "@/lib/types";
 
-const PALETTE_COLORS: Record<string, { dot: string; label: string }> = {
-  light: { dot: "bg-white border border-gray-300", label: "light" },
-  neutral: { dot: "bg-gray-200", label: "neutral" },
-  dark: { dot: "bg-gray-900", label: "dark" },
-};
-
-function PaletteDot({ mode }: { mode?: string }) {
-  const cfg = PALETTE_COLORS[mode ?? "light"];
-  return (
-    <span className="inline-flex items-center gap-1.5">
-      <span className={`inline-block w-3 h-3 rounded-full ${cfg.dot}`} />
-      <span className="text-gray-700">{cfg.label}</span>
-    </span>
-  );
-}
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -79,7 +64,7 @@ export default function DashboardPage() {
     );
   }
 
-  const { brief, preset, preset_description, palette_driver, behavioral_tokens, page, ia } = output;
+  const { brief, preset, preset_description, palette_driver, behavioral_tokens, ia } = output;
   const bt = behavioral_tokens as BehavioralTokens | undefined;
 
   return (
@@ -108,6 +93,28 @@ export default function DashboardPage() {
           </Section>
         </div>
 
+        {/* Design token CTA */}
+        <Section title="Design Tokens">
+          <div className="flex items-start justify-between gap-6">
+            <div className="space-y-1.5 max-w-lg">
+              <p className="text-sm text-gray-700">
+                Map your brand's color vocabulary to MODE's semantic palette — no code required.
+              </p>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                In <span className="font-medium text-gray-700">Studio → Design System</span>, edit your full color scale (every hue and step). In <span className="font-medium text-gray-700">Studio → Canvas</span>, open the token panel to remap which scale values serve each semantic role — background, text, border, accent — across light, neutral, and dark modes. Changes take effect on the next page request with no rebuild.
+              </p>
+            </div>
+            <div className="flex flex-col gap-2 shrink-0">
+              <a
+                href="/admin/studio"
+                className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded bg-gray-900 text-white text-xs font-medium hover:bg-gray-700 transition-colors"
+              >
+                Open Studio →
+              </a>
+            </div>
+          </div>
+        </Section>
+
         {/* Behavioral tokens */}
         {bt && (
           <Section title={`Behavioral Tokens — ${brief.archetype}`}>
@@ -120,42 +127,6 @@ export default function DashboardPage() {
             </div>
           </Section>
         )}
-
-        {/* Token resolution table */}
-        <Section title="Token Resolution">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left text-xs text-gray-400 uppercase tracking-wide border-b border-gray-100">
-                <th className="pb-2 pr-4 font-medium">Beat</th>
-                <th className="pb-2 pr-4 font-medium">Section</th>
-                <th className="pb-2 pr-4 font-medium">Component</th>
-                <th className="pb-2 pr-4 font-medium">Variant</th>
-                <th className="pb-2 font-medium">Palette</th>
-              </tr>
-            </thead>
-            <tbody>
-              {page.map((s, i) => (
-                <tr key={i} className="border-b border-gray-50 last:border-0">
-                  <td className="py-2 pr-4">
-                    {s.beat ? (
-                      <span className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-gray-600">
-                        {s.beat}
-                      </span>
-                    ) : (
-                      <span className="text-gray-300">—</span>
-                    )}
-                  </td>
-                  <td className="py-2 pr-4 text-gray-700">{s.section}</td>
-                  <td className="py-2 pr-4 font-mono text-xs text-gray-600">{s.component}</td>
-                  <td className="py-2 pr-4 font-mono text-xs text-gray-500">{s.variant ?? "—"}</td>
-                  <td className="py-2">
-                    <PaletteDot mode={s.palette} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </Section>
 
         {/* IA rationale */}
         <Section title="Information Architecture">
