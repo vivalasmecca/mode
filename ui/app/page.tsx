@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import * as fs from "fs";
 import * as path from "path";
 import { getOutputByFile, getSiteManifest } from "@/lib/get-output";
+import { logRoutingEvent } from "@/lib/log-event";
 import { PreviewClient } from "@/components/preview/PreviewClient";
 
 export const dynamic = "force-dynamic";
@@ -46,8 +47,10 @@ export default async function Home() {
   if (!manifest) return <NoActiveBuild />;
 
   const h = await headers();
-  const funnelStage = h.get("x-mode-funnel-stage") ?? "awareness";
-  const archetype = h.get("x-mode-archetype") ?? "Validator";
+  const funnelStage     = h.get("x-mode-funnel-stage")     ?? "awareness";
+  const funnelSignal    = h.get("x-mode-funnel-signal")    ?? "default";
+  const archetype       = h.get("x-mode-archetype")        ?? "Validator";
+  const archetypeSignal = h.get("x-mode-archetype-signal") ?? "default";
 
   // Pick the routing dimension based on what drove this build's palette
   const variantLabel = manifest.palette_driver === "archetype" ? archetype : funnelStage;
@@ -57,6 +60,17 @@ export default async function Home() {
 
   const output = getOutputByFile(page.filename);
   if (!output) return <NoActiveBuild />;
+
+  logRoutingEvent({
+    ts:               new Date().toISOString(),
+    funnel_stage:     funnelStage,
+    funnel_signal:    funnelSignal,
+    archetype,
+    archetype_signal: archetypeSignal,
+    variant_label:    variantLabel,
+    palette_driver:   manifest.palette_driver ?? "funnel_stage",
+    build_ts:         routing.ts,
+  });
 
   return <PreviewClient output={output} />;
 }

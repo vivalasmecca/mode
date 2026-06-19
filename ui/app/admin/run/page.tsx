@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import { DATA_ROOT, getSiteManifest } from "@/lib/get-output";
+import { getRecentEvents, type RoutingEvent } from "@/lib/log-event";
 import { RunClient } from "./RunClient";
 
 export const dynamic = "force-dynamic";
@@ -72,13 +73,14 @@ export default async function RunPage() {
   const variantLabels: string[] = activeBuildTs
     ? (getSiteManifest(activeBuildTs)?.pages.map((p) => p.label) ?? [])
     : [];
+  const recentEvents: RoutingEvent[] = getRecentEvents(50);
 
   return (
     <main>
       <div className="max-w-3xl mx-auto px-6 py-8 space-y-8">
 
         {/* Deploy panel */}
-        <RunClient activeBuildTs={activeBuildTs} variantLabels={variantLabels} />
+        <RunClient activeBuildTs={activeBuildTs} variantLabels={variantLabels} recentEvents={recentEvents} />
 
         {/* Launch */}
         <Group title="Launch — start the system from scratch">
