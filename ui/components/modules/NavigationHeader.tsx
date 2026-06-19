@@ -6,7 +6,7 @@
  */
 
 import * as NavigationMenu from "@radix-ui/react-navigation-menu";
-import type { ComponentSlots, PaletteMode } from "@/lib/types";
+import type { ComponentSlots, CTAButtonSlot, PaletteMode } from "@/lib/types";
 import { PlaceholderSlot, isPlaceholderValue } from "@/components/blocks/PlaceholderSlot";
 import { CTAButton } from "@/components/blocks/CTAButton";
 
@@ -55,10 +55,20 @@ export function NavigationHeader({ slots, variant, palette: _palette }: Navigati
         {/* CTAs */}
         <div className="flex items-center gap-3">
           {!isMinimal && !isPlaceholderValue(slots.cta_secondary) && (
-            <CTAButton label="Log in" variant="ghost" size="sm" />
+            <CTAButton
+              label={(slots.cta_secondary as CTAButtonSlot).label}
+              href={(slots.cta_secondary as CTAButtonSlot).href}
+              variant={(slots.cta_secondary as CTAButtonSlot).variant ?? "ghost"}
+              size="sm"
+            />
           )}
           <PlaceholderSlot name="cta_primary" value={slots.cta_primary} inline>
-            <CTAButton label="Get Started" size="sm" />
+            <CTAButton
+              label={(slots.cta_primary as CTAButtonSlot).label}
+              href={(slots.cta_primary as CTAButtonSlot).href}
+              variant={(slots.cta_primary as CTAButtonSlot).variant ?? "primary"}
+              size="sm"
+            />
           </PlaceholderSlot>
         </div>
       </div>

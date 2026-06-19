@@ -8,7 +8,7 @@
  */
 
 import * as Separator from "@radix-ui/react-separator";
-import type { ComponentSlots, PaletteMode } from "@/lib/types";
+import type { ComponentSlots, CTAButtonSlot, PaletteMode } from "@/lib/types";
 import { getPalette } from "@/lib/palette";
 import { PlaceholderSlot } from "@/components/blocks/PlaceholderSlot";
 import { CTAButton } from "@/components/blocks/CTAButton";
@@ -98,8 +98,9 @@ export function PricingCard({ slots, variant, palette }: PricingCardProps) {
           <div className="mt-8">
             <PlaceholderSlot name="cta" value={slots.cta}>
               <CTAButton
-                label="Get started"
-                variant={isHighlighted ? "secondary" : "primary"}
+                label={(slots.cta as CTAButtonSlot).label}
+                href={(slots.cta as CTAButtonSlot).href}
+                variant={(slots.cta as CTAButtonSlot).variant ?? (isHighlighted ? "secondary" : "primary")}
                 size="md"
               />
             </PlaceholderSlot>

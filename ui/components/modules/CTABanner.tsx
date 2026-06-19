@@ -5,7 +5,7 @@
  * Always dark — palette_map assigns dark across all funnel stages.
  */
 
-import type { ComponentSlots, PaletteMode } from "@/lib/types";
+import type { ComponentSlots, CTAButtonSlot, PaletteMode } from "@/lib/types";
 import { getPalette } from "@/lib/palette";
 import { PlaceholderSlot } from "@/components/blocks/PlaceholderSlot";
 import { CTAButton } from "@/components/blocks/CTAButton";
@@ -45,11 +45,21 @@ export function CTABanner({ slots, variant, palette }: CTABannerProps) {
           {/* CTAs */}
           <div className="flex flex-wrap gap-3">
             <PlaceholderSlot name="cta_primary" value={slots.cta_primary} inline>
-              <CTAButton label="Start free trial" size="lg" variant="secondary" />
+              <CTAButton
+                label={(slots.cta_primary as CTAButtonSlot).label}
+                href={(slots.cta_primary as CTAButtonSlot).href}
+                variant={(slots.cta_primary as CTAButtonSlot).variant ?? "secondary"}
+                size="lg"
+              />
             </PlaceholderSlot>
             {slots.cta_secondary !== undefined && (
               <PlaceholderSlot name="cta_secondary" value={slots.cta_secondary} inline>
-                <CTAButton label="Talk to sales" size="lg" variant="ghost" />
+                <CTAButton
+                  label={(slots.cta_secondary as CTAButtonSlot).label}
+                  href={(slots.cta_secondary as CTAButtonSlot).href}
+                  variant={(slots.cta_secondary as CTAButtonSlot).variant ?? "ghost"}
+                  size="lg"
+                />
               </PlaceholderSlot>
             )}
           </div>

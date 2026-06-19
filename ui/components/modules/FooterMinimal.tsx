@@ -7,7 +7,7 @@
  */
 
 import * as Separator from "@radix-ui/react-separator";
-import type { ComponentSlots, NavColumn, PaletteMode } from "@/lib/types";
+import type { ComponentSlots, CTAButtonSlot, NavColumn, PaletteMode } from "@/lib/types";
 import { PlaceholderSlot } from "@/components/blocks/PlaceholderSlot";
 import { CTAButton } from "@/components/blocks/CTAButton";
 
@@ -30,7 +30,12 @@ export function FooterMinimal({ slots, variant, palette: _palette }: FooterMinim
           <div className="mb-10 rounded-xl bg-gray-50 px-8 py-6 flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between">
             <p className="font-semibold text-gray-900">Not ready yet? Save your progress.</p>
             <PlaceholderSlot name="cta" value={slots.cta} inline>
-              <CTAButton label="Save for later" variant="secondary" size="sm" />
+              <CTAButton
+                label={(slots.cta as CTAButtonSlot).label}
+                href={(slots.cta as CTAButtonSlot).href}
+                variant={(slots.cta as CTAButtonSlot).variant ?? "secondary"}
+                size="sm"
+              />
             </PlaceholderSlot>
           </div>
         )}

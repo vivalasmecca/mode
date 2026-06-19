@@ -4,7 +4,7 @@
  * text-only variant hides media slot.
  */
 
-import type { ComponentSlots, PaletteMode } from "@/lib/types";
+import type { ComponentSlots, CTAButtonSlot, PaletteMode } from "@/lib/types";
 import { getPalette } from "@/lib/palette";
 import { PlaceholderSlot } from "@/components/blocks/PlaceholderSlot";
 import { CTAButton } from "@/components/blocks/CTAButton";
@@ -53,11 +53,21 @@ export function HeroPrimary({ slots, variant, palette }: HeroPrimaryProps) {
             <div className="flex flex-col items-center gap-4">
               <div className="flex flex-wrap justify-center gap-3">
                 <PlaceholderSlot name="cta_primary" value={slots.cta_primary} inline>
-                  <CTAButton label="Start free trial" size="lg" />
+                  <CTAButton
+                    label={(slots.cta_primary as CTAButtonSlot).label}
+                    href={(slots.cta_primary as CTAButtonSlot).href}
+                    variant={(slots.cta_primary as CTAButtonSlot).variant ?? "primary"}
+                    size="lg"
+                  />
                 </PlaceholderSlot>
                 {slots.cta_secondary !== undefined && (
                   <PlaceholderSlot name="cta_secondary" value={slots.cta_secondary} inline>
-                    <CTAButton label="See how it works" variant="secondary" size="lg" />
+                    <CTAButton
+                      label={(slots.cta_secondary as CTAButtonSlot).label}
+                      href={(slots.cta_secondary as CTAButtonSlot).href}
+                      variant={(slots.cta_secondary as CTAButtonSlot).variant ?? "secondary"}
+                      size="lg"
+                    />
                   </PlaceholderSlot>
                 )}
               </div>
@@ -88,11 +98,21 @@ export function HeroPrimary({ slots, variant, palette }: HeroPrimaryProps) {
             <div className="flex flex-col gap-3">
               <div className="flex flex-wrap gap-3">
                 <PlaceholderSlot name="cta_primary" value={slots.cta_primary} inline>
-                  <CTAButton label="Start free trial" size="lg" />
+                  <CTAButton
+                    label={(slots.cta_primary as CTAButtonSlot).label}
+                    href={(slots.cta_primary as CTAButtonSlot).href}
+                    variant={(slots.cta_primary as CTAButtonSlot).variant ?? "primary"}
+                    size="lg"
+                  />
                 </PlaceholderSlot>
                 {slots.cta_secondary !== undefined && (
                   <PlaceholderSlot name="cta_secondary" value={slots.cta_secondary} inline>
-                    <CTAButton label="See how it works" variant="secondary" size="lg" />
+                    <CTAButton
+                      label={(slots.cta_secondary as CTAButtonSlot).label}
+                      href={(slots.cta_secondary as CTAButtonSlot).href}
+                      variant={(slots.cta_secondary as CTAButtonSlot).variant ?? "secondary"}
+                      size="lg"
+                    />
                   </PlaceholderSlot>
                 )}
               </div>
