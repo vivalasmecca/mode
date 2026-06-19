@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { getPaletteVars } from "@/lib/palette-vars";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -22,10 +23,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const paletteVars = getPaletteVars();
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      style={paletteVars as any}
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>{children}</body>
     </html>

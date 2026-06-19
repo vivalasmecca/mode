@@ -1,22 +1,18 @@
 /**
- * Palette utility — returns Tailwind class sets for each palette mode.
+ * Palette utility — returns Tailwind arbitrary-value classes that reference
+ * CSS custom properties set on <html> by the root layout (palette-vars.ts).
  *
- * These values MIRROR tokens/theme.json (the expression layer).
- * When you change theme.json, update this file to match.
+ * This file is now STATIC — it never needs to be updated when theme.json
+ * changes. Edit tokens/theme.json to change the visual expression of each
+ * palette mode. Changes take effect on the next request with no rebuild.
  *
- * Why two files? palette.ts is bundled into the browser (client components
- * can't read the filesystem). theme.json is the canonical source the agent
- * and token resolver read at server/build time. They must stay in sync.
+ * Variable names follow the pattern: --mode-{light|neutral|dark}-{property}
+ * Accent variables: --mode-accent-{light|dark}-{bg|text}
  *
- * Long-term: replace static classes with CSS custom properties so theme.json
- * becomes the single source of truth and browser components read variables
- * instead of hardcoded Tailwind classes.
- *
- * Usage:
+ * Usage (unchanged from before):
  *   const p = getPalette(palette);
  *   <section className={p.bg}>
  *     <h2 className={p.text}>...</h2>
- *     <p className={p.subtext}>...</p>
  *   </section>
  */
 
@@ -31,31 +27,31 @@ export interface PaletteClasses {
   iconBg: string;   // icon container backgrounds
 }
 
-// Mirror of tokens/theme.json → palette_modes
+// CSS variable references — values come from tokens/theme.json at request time
 const PALETTE: Record<PaletteMode, PaletteClasses> = {
   light: {
-    bg:      "bg-white",
-    text:    "text-gray-900",
-    subtext: "text-gray-600",
-    muted:   "text-gray-400",
-    border:  "border-gray-100",
-    iconBg:  "bg-gray-100",
+    bg:      "bg-[var(--mode-light-bg)]",
+    text:    "text-[var(--mode-light-text)]",
+    subtext: "text-[var(--mode-light-subtext)]",
+    muted:   "text-[var(--mode-light-muted)]",
+    border:  "border-[var(--mode-light-border)]",
+    iconBg:  "bg-[var(--mode-light-icon-bg)]",
   },
   neutral: {
-    bg:      "bg-gray-50",
-    text:    "text-gray-900",
-    subtext: "text-gray-600",
-    muted:   "text-gray-500",
-    border:  "border-gray-200",
-    iconBg:  "bg-gray-100",
+    bg:      "bg-[var(--mode-neutral-bg)]",
+    text:    "text-[var(--mode-neutral-text)]",
+    subtext: "text-[var(--mode-neutral-subtext)]",
+    muted:   "text-[var(--mode-neutral-muted)]",
+    border:  "border-[var(--mode-neutral-border)]",
+    iconBg:  "bg-[var(--mode-neutral-icon-bg)]",
   },
   dark: {
-    bg:      "bg-gray-900",
-    text:    "text-white",
-    subtext: "text-gray-300",
-    muted:   "text-gray-500",
-    border:  "border-gray-700",
-    iconBg:  "bg-gray-800",
+    bg:      "bg-[var(--mode-dark-bg)]",
+    text:    "text-[var(--mode-dark-text)]",
+    subtext: "text-[var(--mode-dark-subtext)]",
+    muted:   "text-[var(--mode-dark-muted)]",
+    border:  "border-[var(--mode-dark-border)]",
+    iconBg:  "bg-[var(--mode-dark-icon-bg)]",
   },
 };
 
