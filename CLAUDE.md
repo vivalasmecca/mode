@@ -148,7 +148,15 @@ This ensures Node.js resolves `mode-agent/*` from `ui/node_modules/` regardless 
 
 **Palette tab:** Two sections — Brand Accent (global, not per-preset) and Palette Map (per-preset grid). Accent has `on_light` and `on_dark` variants for branded CTA buttons. Palette map cells cycle light → neutral → dark on click. Both have independent save states; saves write directly to `mode-tokens.json`.
 
-**CSS variables layer:** `tokens/theme.json` holds palette color values as hex/CSS strings (not Tailwind classes). `ui/lib/palette-vars.ts` reads the file at request time and returns a `Record<string, string>` of CSS custom properties (e.g. `--mode-dark-bg: #111827`). These are applied to `<html style>` by `app/layout.tsx`. `ui/lib/palette.ts` is permanently static — it references CSS variables via Tailwind arbitrary-value syntax (`bg-[var(--mode-dark-bg)]`). Changing `theme.json` takes effect on the next request with no rebuild or code change.
+**CSS variables layer — two-layer structure:**
+
+`tokens/color-scale.json` — the color vocabulary. The brand's full color scale (e.g. gray 50–900, indigo 50–900). This is the file a buyer replaces with their own design system. Default ships with Tailwind gray + indigo as a zero-to-one starting point.
+
+`tokens/theme.json` — the semantic assignment. Maps MODE's palette tokens to entries in the color scale using dot notation: `"gray.900"`, `"indigo.600"`, `"white"`. This is the remapping surface — change `dark.border` from `"gray.700"` to `"indigo.300"` here to inject brand color into keylines without touching background or text.
+
+`ui/lib/palette-vars.ts` reads both files at request time. `resolve()` maps dot-notation references through the scale, with literal CSS passthrough as fallback. Returns a `Record<string, string>` of CSS custom properties applied to `<html style>` by `app/layout.tsx`. `ui/lib/palette.ts` is permanently static — Tailwind arbitrary-value syntax (`bg-[var(--mode-dark-bg)]`). Changes to either token file take effect on next request, no rebuild.
+
+The integration contract for a buyer: bring `color-scale.json` (your vocabulary), configure `theme.json` (your semantic assignment). MODE's components and intent layer are untouched.
 
 **Named links:** `context/product-context.json` → `named_links` holds a map of token names to URLs (e.g. `checkout → https://...`). The Edit tab's Links panel reads and writes these. In the slot editor, HrefField inputs show named link tokens as quick-select shortcuts alongside free-text URL entry. `PUT /api/brand/links` merges updates into the file.
 
@@ -179,7 +187,8 @@ mode/
 │   └── set-preset.js                ← CLI tool to switch active preset
 ├── tokens/
 │   ├── mode-tokens.json             ← palette maps + behavioral tokens per preset + global accent
-│   └── theme.json                   ← visual expression layer: hex/CSS color values for light/neutral/dark modes + accent. Changes take effect on next request (no rebuild).
+│   ├── color-scale.json             ← color vocabulary: brand's full color scale (replace with your design system's scale)
+│   └── theme.json                   ← semantic assignment: maps palette tokens to color-scale.json entries via dot notation ("gray.900", "indigo.600"). Changes take effect on next request (no rebuild).
 ├── context/
 │   ├── product-context.json         ← structured product facts (name, features, pricing, named_links)
 │   └── brand-brief.md               ← tone, messaging pillars, claim territory (markdown)
@@ -279,7 +288,7 @@ When dropping back in after time away, start here:
 - **Multi-page site view** — after generation, a `site-{ts}.json` manifest is written; `/admin/site?ts=&page=` renders any page from the build with a fixed dark nav bar linking all variants; BuildClient opens one site tab instead of N preview tabs
 - **Brand context agent** — `brand-context-builder.js` fetches URLs and uses Claude to extract `product-context.json` and draft `brand-brief.md`; both are injected into every build; CTAs use `checkout.primary_url` when set
 - **MODE product brief populated** — `context/product-context.json` has the real product one-liner, 10 features, two pricing tiers (MODE Kit $1199 one-time, MODE Studio TBD), and differentiators
-- **CSS variables layer** ✓ — `tokens/theme.json` stores palette colors as hex/CSS values. `palette-vars.ts` reads the file server-side and injects CSS custom properties on `<html style>`. `palette.ts` uses static Tailwind arbitrary-value classes (`bg-[var(--mode-dark-bg)]`). Changing `theme.json` takes effect on the next request — no rebuild, no code change.
+- **CSS variables layer** ✓ — Two-layer token structure: `color-scale.json` (vocabulary) + `theme.json` (semantic assignment via dot-notation references). `palette-vars.ts` resolves references at request time and injects CSS custom properties on `<html style>`. `palette.ts` is permanently static. No rebuild required for palette changes.
 - **Inline slot editor** ✓ — Edit tab at `/admin/edit`. Left panel: section list with component/variant/palette badges and unsaved indicators. Right panel: slot fields rendered by inferred type (string → textarea, CTA → label+href inputs, array → item cards with add/remove). Per-section Save button writes to disk via `PUT /api/output/save`.
 - **Links panel** ✓ — horizontal strip above the slot editor. Named link tokens (e.g. `checkout`) map to real URLs and appear as shortcuts in HrefField inputs. Saved via `PUT /api/brand/links` → `context/product-context.json`.
 - **Wordmark** ✓ — `ui/public/wordmark.svg`; rendered as `<img>` directly in NavigationHeader (h-7) and FooterMinimal (h-6). No slot dependency.
@@ -292,8 +301,10 @@ When dropping back in after time away, start here:
 
 The human-in-the-loop editing layer is now complete. The iteration loop is open. Priority shifts to output quality and the demo moment.
 
-### 1. Colors — theme.json tuning
-The CSS variables layer is wired. `theme.json` is now the single source of truth for palette visual expression. The conversation to have: what should `light`, `neutral`, and `dark` actually look like for MODE? The defaults are functional but generic. This is the place to set brand tone.
+### 1. Token remapping editor
+The two-layer structure is in place. The next surface is a UI for remapping `theme.json` assignments — not a color picker (open hex space) but a constrained selector: for each semantic token, choose from the entries in `color-scale.json`. The constraint is intentional. A buyer who wants `dark.border` to use their brand's `indigo.300` instead of `gray.700` makes that decision here. Vocabulary is fixed; assignment is flexible.
+
+Separately: what should MODE's default `light`, `neutral`, and `dark` actually look like? The defaults (Tailwind gray) are functional but generic. Swap `color-scale.json` for Radix Colors and re-tune `theme.json` assignments when ready to set real brand tone.
 
 ### 2. CMS integration — persistent content layer
 The inline slot editor proves the editing workflow. When ready to add multi-session persistence, versioning, and multi-user editing, connect to a headless CMS. **Payload CMS** is the right fit: TypeScript-native, runs locally alongside Next.js, self-hosted, schema defined in code. Content types map directly to the slot schema already defined in `lib/types.ts`. **Sanity** is an alternative: managed, excellent editing UX, free tier — better if local service overhead is unwanted.
@@ -649,7 +660,8 @@ Four artifacts define how a buyer's system plugs into MODE:
 |----------|----------------|-------------|
 | `manifest/components.json` | Abstract component roles and their semantic properties | MODE |
 | `tokens/mode-tokens.json` | Which palette mode each role gets in each context | MODE (buyer can customize) |
-| `tokens/theme.json` | What light/neutral/dark look like visually | Buyer |
+| `tokens/color-scale.json` | The brand's color vocabulary (full scale) | Buyer |
+| `tokens/theme.json` | Which scale entries serve which semantic tokens per mode | Buyer (via remapping tool) |
 | Component registry (`ui/components/modules/index.ts`) | Maps role names to concrete implementations | Buyer (replaces MODE's demo components) |
 
 The output JSON is the runtime handoff: for each section, it specifies the role name, variant, content slots, and palette mode. The buyer's registry resolves the role name to their component, which reads the content and applies the palette. MODE's demo components are reference implementations of this contract.
