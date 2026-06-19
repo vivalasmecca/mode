@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "components": [
     {
       "name": "HeroPrimary",
@@ -8,8 +8,9 @@
       "beats": ["Orientation"],
       "archetypes": ["Mover", "Validator"],
       "funnel_stages": ["awareness", "consideration", "decision"],
-      "variants": ["with-media", "text-only", "with-social-proof"],
+      "variants": ["editorial", "with-media", "text-only", "with-social-proof"],
       "slots": {
+        "eyebrow": "string | null",
         "headline": "string",
         "subhead": "string | null",
         "cta_primary": "CTAButton",
@@ -18,7 +19,7 @@
         "trust_signal": "string | null"
       },
       "micro_blocks": ["HeadlineSubheadLockup", "CTACluster", "MediaFrame", "TrustSignal"],
-      "notes": "Validator variant always includes trust_signal. Mover variant suppresses subhead and cta_secondary — one message, one action. with-social-proof variant places LogoStrip immediately below CTACluster."
+      "notes": "editorial variant is the high-expression awareness layout: centered, full-width, dominant headline (large type scale, generous breathing room), eyebrow context label above headline — no media. Prefer editorial for awareness stage. Validator variant always includes trust_signal. Mover variant suppresses subhead and cta_secondary — one message, one action. with-social-proof variant places LogoStrip immediately below CTACluster."
     },
     {
       "name": "HeroStatement",

@@ -106,6 +106,7 @@ SECTIONS AND CANDIDATES:
 ${JSON.stringify(sectionsPayload, null, 2)}
 
 SELECTION RULES:
+- For awareness funnel stage: prefer "editorial" variant on hero components — it is the high-expression layout appropriate for the attention-earning moment
 - For Validator archetype: prefer variants containing "social-proof", "with-photo", or "with-source"
 - For Mover archetype: prefer variants containing "minimal" or "text-only"
 - Your reasoning MUST cite a specific phrase from that component's notes field
@@ -153,6 +154,11 @@ function pickComponent(candidates, brief, componentMap) {
 function pickVariant(component, brief) {
   if (!component.variants || component.variants.length === 0) return null;
   if (component.variants.length === 1) return component.variants[0];
+
+  // Awareness stage: prefer editorial on hero components
+  if (brief.funnel_stage === "awareness" && component.variants.includes("editorial")) {
+    return "editorial";
+  }
 
   if (brief.archetype === "Validator") {
     const pref = component.variants.find(

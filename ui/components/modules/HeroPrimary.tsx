@@ -19,9 +19,55 @@ interface HeroPrimaryProps {
 
 export function HeroPrimary({ slots, variant, palette }: HeroPrimaryProps) {
   const p = getPalette(palette);
-  const showMedia = variant !== "text-only";
+  const isEditorial = variant === "editorial";
+  const showMedia = !isEditorial && variant !== "text-only";
   const showLogos = variant === "with-social-proof";
   const logos = Array.isArray(slots.logos) ? slots.logos : [];
+
+  // Editorial: full-width centered, dominant headline, eyebrow, generous breathing room
+  if (isEditorial) {
+    return (
+      <section className={`${p.bg} py-32 md:py-44`}>
+        <div className="mx-auto max-w-5xl px-6 text-center">
+          <div className="flex flex-col items-center gap-8">
+            {slots.eyebrow && (
+              <PlaceholderSlot name="eyebrow" value={slots.eyebrow} inline>
+                <p className={`text-xs font-semibold uppercase tracking-widest ${p.muted}`}>
+                  {slots.eyebrow as string}
+                </p>
+              </PlaceholderSlot>
+            )}
+
+            <PlaceholderSlot name="headline" value={slots.headline}>
+              <h1 className={`text-6xl font-bold tracking-tight leading-none md:text-7xl lg:text-8xl ${p.text}`}>
+                {slots.headline as string}
+              </h1>
+            </PlaceholderSlot>
+
+            <PlaceholderSlot name="subhead" value={slots.subhead}>
+              <p className={`max-w-2xl text-xl leading-relaxed ${p.subtext}`}>
+                {slots.subhead as string}
+              </p>
+            </PlaceholderSlot>
+
+            <div className="flex flex-col items-center gap-4">
+              <div className="flex flex-wrap justify-center gap-3">
+                <PlaceholderSlot name="cta_primary" value={slots.cta_primary} inline>
+                  <CTAButton label="Start free trial" size="lg" />
+                </PlaceholderSlot>
+                {slots.cta_secondary !== undefined && (
+                  <PlaceholderSlot name="cta_secondary" value={slots.cta_secondary} inline>
+                    <CTAButton label="See how it works" variant="secondary" size="lg" />
+                  </PlaceholderSlot>
+                )}
+              </div>
+              <TrustSignal value={slots.trust_signal as string | null} palette={palette} />
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className={`${p.bg} py-20 md:py-28`}>
