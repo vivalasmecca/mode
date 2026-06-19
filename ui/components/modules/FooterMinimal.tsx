@@ -42,9 +42,7 @@ export function FooterMinimal({ slots, variant, palette: _palette }: FooterMinim
 
         {/* Logo row */}
         <div className="flex items-center justify-between">
-          <PlaceholderSlot name="logo" value={slots.logo} inline>
-            <div className="font-bold text-gray-900">Logo</div>
-          </PlaceholderSlot>
+          <img src="/wordmark.svg" alt="Logo" className="h-6 w-auto" />
         </div>
 
         {/* Nav columns */}

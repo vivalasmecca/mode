@@ -1,4 +1,22 @@
-// Operator reference — how to launch and refresh the system.
+import * as fs from "fs";
+import * as path from "path";
+import { DATA_ROOT, getSiteManifest } from "@/lib/get-output";
+import { RunClient } from "./RunClient";
+
+export const dynamic = "force-dynamic";
+
+function getActiveBuildTs(): string | null {
+  try {
+    const filepath = path.join(DATA_ROOT, "config", "routing.json");
+    if (!fs.existsSync(filepath)) return null;
+    const data = JSON.parse(fs.readFileSync(filepath, "utf8")) as { ts?: string };
+    return typeof data.ts === "string" && data.ts ? data.ts : null;
+  } catch {
+    return null;
+  }
+}
+
+// ─── Reference doc sub-components ────────────────────────────────────────────
 
 function Cmd({ children }: { children: string }) {
   return (
@@ -47,10 +65,20 @@ function Note({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function RunPage() {
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
+export default async function RunPage() {
+  const activeBuildTs = getActiveBuildTs();
+  const variantLabels: string[] = activeBuildTs
+    ? (getSiteManifest(activeBuildTs)?.pages.map((p) => p.label) ?? [])
+    : [];
+
   return (
     <main>
       <div className="max-w-3xl mx-auto px-6 py-8 space-y-8">
+
+        {/* Deploy panel */}
+        <RunClient activeBuildTs={activeBuildTs} variantLabels={variantLabels} />
 
         {/* Launch */}
         <Group title="Launch — start the system from scratch">
