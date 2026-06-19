@@ -3,35 +3,41 @@
   "palette_modes": {
     "light": {
       "_description": "Neutral canvas. Chrome, top-of-funnel, low-emphasis sections.",
-      "bg":      "white",
-      "text":    "gray.900",
+      "bg": "white",
+      "text": "gray.900",
       "subtext": "gray.600",
-      "muted":   "gray.400",
-      "border":  "gray.100",
-      "iconBg":  "gray.100"
+      "muted": "gray.400",
+      "border": "gray.100",
+      "iconBg": "gray.100"
     },
     "neutral": {
       "_description": "Mild separation. Supporting context, informational sections.",
-      "bg":      "gray.50",
-      "text":    "gray.900",
+      "bg": "gray.50",
+      "text": "gray.900",
       "subtext": "gray.600",
-      "muted":   "gray.500",
-      "border":  "gray.200",
-      "iconBg":  "gray.100"
+      "muted": "gray.500",
+      "border": "gray.200",
+      "iconBg": "gray.100"
     },
     "dark": {
       "_description": "High emphasis. Spotlights whatever the preset assigns it to.",
-      "bg":      "gray.900",
-      "text":    "white",
+      "bg": "gray.900",
+      "text": "white",
       "subtext": "gray.300",
-      "muted":   "gray.500",
-      "border":  "gray.700",
-      "iconBg":  "gray.800"
+      "muted": "gray.500",
+      "border": "gray.700",
+      "iconBg": "gray.800"
     }
   },
   "accent": {
     "_note": "Brand primary CTA color. Global — not per-preset. Two variants: button on a light/neutral section vs. on a dark section.",
-    "on_light": { "bg": "indigo.600", "text": "white" },
-    "on_dark":  { "bg": "white",      "text": "gray.900" }
+    "on_light": {
+      "bg": "indigo.600",
+      "text": "white"
+    },
+    "on_dark": {
+      "bg": "white",
+      "text": "gray.900"
+    }
   }
 }

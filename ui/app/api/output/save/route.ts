@@ -7,10 +7,12 @@ export const dynamic = "force-dynamic";
 export async function PUT(request: Request) {
   try {
     const body = await request.json();
-    const { file, sectionIndex, slots } = body as {
+    const { file, sectionIndex, slots, component, variant } = body as {
       file: unknown;
       sectionIndex: unknown;
       slots: unknown;
+      component: unknown;
+      variant: unknown;
     };
 
     // Validate file
@@ -35,13 +37,24 @@ export async function PUT(request: Request) {
       return Response.json({ error: "Invalid sectionIndex" }, { status: 400 });
     }
 
-    // Validate slots
-    if (
-      !slots ||
-      typeof slots !== "object" ||
-      Array.isArray(slots)
-    ) {
+    // Must provide at least one of slots or component
+    if (slots === undefined && component === undefined) {
+      return Response.json({ error: "Must provide slots, component, or both" }, { status: 400 });
+    }
+
+    // Validate slots if provided
+    if (slots !== undefined && (!slots || typeof slots !== "object" || Array.isArray(slots))) {
       return Response.json({ error: "Invalid slots — must be an object" }, { status: 400 });
+    }
+
+    // Validate component if provided
+    if (component !== undefined && typeof component !== "string") {
+      return Response.json({ error: "Invalid component — must be a string" }, { status: 400 });
+    }
+
+    // variant may be string or null; skip validation if not provided
+    if (variant !== undefined && variant !== null && typeof variant !== "string") {
+      return Response.json({ error: "Invalid variant — must be a string or null" }, { status: 400 });
     }
 
     const outputDir = path.join(DATA_ROOT, "output");
@@ -65,9 +78,11 @@ export async function PUT(request: Request) {
       );
     }
 
-    // Merge updated slots into the section
+    // Apply updates to the section
     const section = output.page[sectionIndex] as Record<string, unknown>;
-    section.slots = slots;
+    if (slots !== undefined) section.slots = slots;
+    if (component !== undefined) section.component = component;
+    if (variant !== undefined) section.variant = variant;
 
     fs.writeFileSync(filepath, JSON.stringify(output, null, 2), "utf8");
 

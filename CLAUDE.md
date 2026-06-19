@@ -120,6 +120,7 @@ All admin routes are local-only. On Vercel they return 403 unless `ADMIN_KEY` is
 - **Edit** — slot editor: left panel lists all sections; right panel shows editable fields for every slot in the selected section. Supports string, CTA (label + href), array, and read-only fields. **Links panel** across the top lets you set named link tokens (e.g. `checkout`) that populate HrefField shortcuts in the slot editor and write to `context/product-context.json`.
 - **Brand** — extract product context from URLs, edit brand brief; both feed every build
 - **Palette** — editable palette map grid + brand accent configuration (see below)
+- **Studio** — full-screen canvas at `/admin/studio`. Two views: **birds-eye** (all variants scaled side-by-side at ~19% scale via CSS transform; click a card to enter expanded) and **expanded** (scrollable 1:1 page preview + 272px token panel on the right). Token panel shows light/neutral/dark palette modes (6 slots each) plus accent; clicking a slot opens an inline color picker constrained to `color-scale.json` vocabulary — no open hex entry. Token changes apply live via `document.documentElement.style.setProperty()`, updating all rendered variants simultaneously. **Component swapper**: hover any section in expanded view to see the IA's `candidate_components` for that slot as chips in a dark overlay bar — candidates are semantically constrained (same classification, same funnel context). Click to swap; the override is ephemeral until saved. Save writes token changes to `theme.json` via `PUT /api/tokens/theme` and component overrides to each output file via `PUT /api/output/save`.
 - **Run** — Deploy panel: lists active build timestamp and variant labels, shows last deploy time, and provides a "Deploy" button that commits `output/` + `config/` and pushes to trigger a Vercel build (content-lane deploy, separate from code-lane git push).
 
 ### Build tab flow
@@ -165,6 +166,12 @@ The integration contract for a buyer: bring `color-scale.json` (your vocabulary)
 **Site manifest:** After each multi-variant build, `/api/generate/page` writes `output/site-{ts}.json` recording all variant files, preset, and base brief. The `/admin/site` route reads this to power the linked nav bar — no database, just the same flat-file pattern as the page outputs.
 
 **Brand context:** `context/product-context.json` and `context/brand-brief.md` are read by `content-generator.js` on every build — no restart required. If `product_name` is empty, the files are ignored and the generator falls back to hallucinating product truth. If `checkout.primary_url` is set, CTA `href` values in generated pages point to the real checkout URL instead of `#`.
+
+**Studio canvas:** `admin/studio` uses `position: fixed; inset: 0; z-index: 50` to visually escape the admin layout without a separate layout file. Birds-eye cards use `overflow: hidden` outer containers (280×490px) with a 1440px inner div scaled via `transform: scale(0.194); transform-origin: top left; pointer-events: none` — shows the top portion of each page variant at a glance. Live token updates call `document.documentElement.style.setProperty()` on the exact CSS var names that `palette-vars.ts` sets server-side (`--mode-{mode}-{slot}`, `--mode-accent-{side}-{slot}`); all rendered instances update instantly. After saving component overrides, the in-memory `activeVariants` state is patched with the new component names (via `applyOverridesToVariants`) so the display stays consistent without a page reload.
+
+**Component swapping constraint:** The Studio's hover overlay draws candidates from `output.ia.sections[].candidate_components` — the set the IA evaluated as semantically appropriate for that section's beat and funnel context. Only candidates that exist in `MODULE_REGISTRY` are shown. This prevents swapping a hero for a social card and prevents inserting editorial variants where the semantic mapping doesn't support them. The constraint is structural, not enforced by runtime rules.
+
+**`PUT /api/output/save` extension:** Now accepts optional `component` (string) and `variant` (string | null) fields alongside the existing `slots` object. At least one of `slots` or `component` must be present. The slot editor continues to pass only `slots`; the Studio passes only `component`. Both paths write through the same route.
 
 ---
 
@@ -224,13 +231,18 @@ mode/
     │   │   ├── run/
     │   │   │   ├── page.tsx         ← server: reads active build ts + variant labels
     │   │   │   └── RunClient.tsx    ← "use client" — Deploy button + deploy status panel
+    │   │   ├── studio/
+    │   │   │   ├── page.tsx         ← server: reads active build manifest + variant outputs + theme/scale JSON
+    │   │   │   └── StudioClient.tsx ← "use client" — fixed full-screen canvas; birds-eye + expanded views; token panel + component swapper
     │   │   ├── preview/page.tsx     ← renders output JSON; supports ?file= param
     │   │   └── site/page.tsx        ← site view: fixed dark nav + PreviewClient; reads site manifest
     │   └── api/
     │       ├── config/route.ts      ← GET: active preset + variant config
     │       ├── output/
     │       │   ├── route.ts         ← GET: list output files
-    │       │   └── save/route.ts    ← PUT: merge updated slots into output file (slot editor save)
+    │       │   └── save/route.ts    ← PUT: write slots, component, and/or variant to output file (slot editor + Studio)
+    │       ├── tokens/
+    │       │   └── theme/route.ts   ← PUT: merge palette_modes + accent into theme.json (Studio token panel save)
     │       ├── admin/
     │       │   └── deploy/route.ts  ← POST: commit output/ + config/, push to trigger Vercel deploy
     │       ├── palette/
@@ -294,19 +306,21 @@ When dropping back in after time away, start here:
 - **Wordmark** ✓ — `ui/public/wordmark.svg`; rendered as `<img>` directly in NavigationHeader (h-7) and FooterMinimal (h-6). No slot dependency.
 - **Build tab foundational warning** ✓ — red "Foundational" chip at top of Build tab reminds that a build overwrites all slot edits.
 - **Run / Deploy panel** ✓ — shows active build timestamp + variant labels, last deploy time, and a Deploy button that commits `output/` + `config/` and pushes (content-lane deploy separate from code git push).
+- **Studio** ✓ — `/admin/studio`. Birds-eye canvas + expanded view. Live token remapping constrained to `color-scale.json` vocabulary via inline swatch picker. CSS var updates apply across all rendered variants instantly. Component swapper on section hover: draws from IA `candidate_components`, semantically constrained by classification and context.
 
 ---
 
 ## What's next (as of June 2026)
 
-The human-in-the-loop editing layer is now complete. The iteration loop is open. Priority shifts to output quality and the demo moment.
+The Studio is the primary editing surface. The next lift is making the component layer configurable at a deeper level.
 
-### 1. Token remapping editor
-The two-layer structure is in place. The next surface is a UI for remapping `theme.json` assignments — not a color picker (open hex space) but a constrained selector: for each semantic token, choose from the entries in `color-scale.json`. The constraint is intentional. A buyer who wants `dark.border` to use their brand's `indigo.300` instead of `gray.700` makes that decision here. Vocabulary is fixed; assignment is flexible.
+### 1. Component editor (future — the Figma replacement vision)
+The Studio currently lets you swap between IA-vetted candidates for each section. The next layer is letting users duplicate, edit, or create components entirely within the Studio — defining which visual zones of a component (page bleed bg, container bg, keylines, SVG fills, text) are bound to which semantic token. This is the anatomy binding layer: zone-level CSS custom properties per component, making the connection between semantic tokens and visual expression configurable rather than hardcoded in JSX. This is the "kill Figma" direction — a code-native component design surface that understands semantic intent, not just visual properties.
 
-Separately: what should MODE's default `light`, `neutral`, and `dark` actually look like? The defaults (Tailwind gray) are functional but generic. Swap `color-scale.json` for Radix Colors and re-tune `theme.json` assignments when ready to set real brand tone.
+### 2. Swap `color-scale.json` for real brand palette
+The defaults (Tailwind gray + indigo) are functional but generic. Replace with Radix Colors or a brand-specific scale, then retune `theme.json` assignments to express real brand tone. The Studio's constrained picker makes this a visual operation — no file editing required.
 
-### 2. CMS integration — persistent content layer
+### 3. CMS integration — persistent content layer
 The inline slot editor proves the editing workflow. When ready to add multi-session persistence, versioning, and multi-user editing, connect to a headless CMS. **Payload CMS** is the right fit: TypeScript-native, runs locally alongside Next.js, self-hosted, schema defined in code. Content types map directly to the slot schema already defined in `lib/types.ts`. **Sanity** is an alternative: managed, excellent editing UX, free tier — better if local service overhead is unwanted.
 
 The CMS integration waits until the content schema is stable. Every component slot addition currently requires no migration; a CMS would require one. Schema is stable enough now to consider starting.
@@ -335,6 +349,7 @@ The CMS integration waits until the content schema is stable. Every component sl
 - Wordmark ✓
 - Build tab foundational warning ✓
 - Run / Deploy panel ✓
+- Studio ✓ (birds-eye canvas + expanded view + live token remapping + component swapper)
 
 ---
 
