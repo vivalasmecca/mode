@@ -208,7 +208,7 @@
     {
       "section": "Social proof",
       "beat": "Credibility",
-      "component": "TestimonialSingle",
+      "component": "SocialProofBar",
       "variant": "with-company-logo",
       "reasoning": "Validator archetype requires attributed credibility at decision moments. Notes specify 'Always include role and company for Validator credibility' and 'with-company-logo for enterprise social proof. Place near a CTA — testimonials convert when positioned at a decision moment.'",
       "slots": {
