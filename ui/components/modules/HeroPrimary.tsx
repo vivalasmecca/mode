@@ -30,7 +30,7 @@ export function HeroPrimary({ slots, variant, palette }: HeroPrimaryProps) {
       <section className={`${p.bg} py-32 md:py-44`}>
         <div className="mx-auto max-w-5xl px-6 text-center">
           <div className="flex flex-col items-center gap-8">
-            {slots.eyebrow && (
+            {!!slots.eyebrow && (
               <PlaceholderSlot name="eyebrow" value={slots.eyebrow} inline>
                 <p className={`text-xs font-semibold uppercase tracking-widest ${p.muted}`}>
                   {slots.eyebrow as string}
