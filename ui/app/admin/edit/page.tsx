@@ -67,17 +67,17 @@ function variantsFromManifest(manifest: SiteManifest): VariantData[] {
 
 /**
  * Reads named link tokens from product-context.json.
- * Merges checkout.primary_url (existing field) with the named_links map.
- * Filters out nulls and empty strings — only populated entries are returned.
+ * Returns all non-underscore keys with their current values (null if unset).
+ * Merges checkout.primary_url into the "checkout" key for backward compat.
  */
-function getNamedLinks(): Record<string, string> {
+function getNamedLinksRaw(): Record<string, string | null> {
   try {
     const filepath = path.join(DATA_ROOT, "context", "product-context.json");
     if (!fs.existsSync(filepath)) return {};
     const ctx = JSON.parse(fs.readFileSync(filepath, "utf8")) as Record<string, unknown>;
-    const links: Record<string, string> = {};
+    const links: Record<string, string | null> = {};
 
-    // Pull from existing checkout.primary_url field
+    // Pull from existing checkout.primary_url field as fallback for "checkout" key
     const checkout = ctx.checkout as Record<string, unknown> | undefined;
     if (typeof checkout?.primary_url === "string" && checkout.primary_url.trim()) {
       links.checkout = checkout.primary_url.trim();
@@ -88,9 +88,7 @@ function getNamedLinks(): Record<string, string> {
     if (named && typeof named === "object") {
       for (const [k, v] of Object.entries(named)) {
         if (k.startsWith("_")) continue; // skip _note etc.
-        if (typeof v === "string" && v.trim()) {
-          links[k] = v.trim();
-        }
+        links[k] = typeof v === "string" && v.trim() ? v.trim() : null;
       }
     }
 
@@ -137,7 +135,7 @@ export default async function EditPage({
   searchParams: Promise<{ ts?: string; file?: string }>;
 }) {
   const { ts, file } = await searchParams;
-  const namedLinks = getNamedLinks();
+  const namedLinksRaw = getNamedLinksRaw();
 
   // ?ts= → load a specific build's full set of variants via site manifest
   if (ts) {
@@ -155,7 +153,7 @@ export default async function EditPage({
       <EditClient
         variants={variants}
         preset={manifest.preset}
-        namedLinks={namedLinks}
+        namedLinksRaw={namedLinksRaw}
       />
     );
   }
@@ -169,7 +167,7 @@ export default async function EditPage({
     return (
       <EditClient
         variants={[{ label: file, filename: file, output }]}
-        namedLinks={namedLinks}
+        namedLinksRaw={namedLinksRaw}
       />
     );
   }
@@ -184,7 +182,7 @@ export default async function EditPage({
         <EditClient
           variants={variants}
           preset={manifest.preset}
-          namedLinks={namedLinks}
+          namedLinksRaw={namedLinksRaw}
         />
       );
     }
@@ -196,7 +194,7 @@ export default async function EditPage({
   return (
     <EditClient
       variants={[{ label: filename, filename, output }]}
-      namedLinks={namedLinks}
+      namedLinksRaw={namedLinksRaw}
     />
   );
 }

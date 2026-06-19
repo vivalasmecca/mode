@@ -462,16 +462,78 @@ type DraftMap = Record<number, Record<number, Record<string, unknown>>>;
 type CommittedMap = Record<number, Record<number, Record<string, unknown>>>;
 
 // ---------------------------------------------------------------------------
+// Links panel — named link URL inputs, saves to product-context.json
+// ---------------------------------------------------------------------------
+
+function LinksPanel({
+  linkValues,
+  savedLinkValues,
+  onChange,
+  onSave,
+  saveState,
+}: {
+  linkValues: Record<string, string>;
+  savedLinkValues: Record<string, string>;
+  onChange: (key: string, value: string) => void;
+  onSave: () => void;
+  saveState: "idle" | "saving" | "saved" | "error";
+}) {
+  const keys = Object.keys(linkValues);
+  if (keys.length === 0) return null;
+  const hasChanges = keys.some((k) => linkValues[k] !== savedLinkValues[k]);
+
+  return (
+    <div className="border-b border-gray-200 bg-white px-6 py-4">
+      <div className="flex items-center gap-4 flex-wrap">
+        <span className="flex-shrink-0 text-xs font-semibold uppercase tracking-widest text-gray-400">
+          Links
+        </span>
+        {keys.map((key) => (
+          <div key={key} className="flex items-center gap-1.5 min-w-0 flex-1" style={{ minWidth: "200px", maxWidth: "340px" }}>
+            <label className="flex-shrink-0 text-xs font-medium text-gray-500 w-16 text-right">
+              {key}
+            </label>
+            <input
+              type="url"
+              value={linkValues[key]}
+              onChange={(e) => onChange(key, e.target.value)}
+              placeholder="https://…"
+              className="min-w-0 flex-1 rounded-md border border-gray-200 px-2.5 py-1.5 font-mono text-xs text-gray-900 placeholder-gray-300 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+            />
+          </div>
+        ))}
+        <button
+          onClick={onSave}
+          disabled={!hasChanges || saveState === "saving"}
+          className={`flex-shrink-0 rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${
+            saveState === "saved"
+              ? "bg-green-50 text-green-700"
+              : hasChanges
+              ? "bg-indigo-600 text-white hover:bg-indigo-700"
+              : "cursor-not-allowed bg-gray-100 text-gray-400"
+          }`}
+        >
+          {saveState === "saving" ? "Saving…" : saveState === "saved" ? "Saved ✓" : "Save links"}
+        </button>
+        {saveState === "error" && (
+          <span className="text-xs text-red-600">Failed to save</span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Main component
 // ---------------------------------------------------------------------------
 
 interface EditClientProps {
   variants: VariantData[];
   preset?: string;
-  namedLinks?: Record<string, string>;
+  namedLinksRaw?: Record<string, string | null>;
 }
 
-export function EditClient({ variants, preset, namedLinks }: EditClientProps) {
+export function EditClient({ variants, preset, namedLinksRaw = {} }: EditClientProps) {
   const [activeVariant, setActiveVariant] = useState(0);
   const [selectedSection, setSelectedSection] = useState<number | null>(
     variants[0]?.output.page.length > 0 ? 0 : null
@@ -484,6 +546,42 @@ export function EditClient({ variants, preset, namedLinks }: EditClientProps) {
   } | null>(null);
   const [savingKey, setSavingKey] = useState<string | null>(null);
   const [syncing, setSyncing] = useState(false);
+
+  // Named links state — initialized from server props, updated locally on save
+  const initialLinkValues = Object.fromEntries(
+    Object.entries(namedLinksRaw)
+      .filter(([k]) => !k.startsWith("_"))
+      .map(([k, v]) => [k, v ?? ""])
+  );
+  const [linkValues, setLinkValues] = useState<Record<string, string>>(initialLinkValues);
+  const [savedLinkValues, setSavedLinkValues] = useState<Record<string, string>>(initialLinkValues);
+  const [linksSaveState, setLinksSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
+
+  // Effective named links for HrefField shortcuts (non-empty values only)
+  const effectiveNamedLinks = Object.fromEntries(
+    Object.entries(linkValues).filter(([, v]) => v.trim() !== "")
+  );
+
+  async function saveLinks() {
+    setLinksSaveState("saving");
+    try {
+      const res = await fetch("/api/brand/links", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          links: Object.fromEntries(
+            Object.entries(linkValues).map(([k, v]) => [k, v.trim() || null])
+          ),
+        }),
+      });
+      if (!res.ok) throw new Error();
+      setSavedLinkValues({ ...linkValues });
+      setLinksSaveState("saved");
+      setTimeout(() => setLinksSaveState("idle"), 3000);
+    } catch {
+      setLinksSaveState("error");
+    }
+  }
 
   const draftsRef = useRef<DraftMap>(drafts);
   useEffect(() => {
@@ -670,6 +768,13 @@ export function EditClient({ variants, preset, namedLinks }: EditClientProps) {
 
   return (
     <>
+      <LinksPanel
+        linkValues={linkValues}
+        savedLinkValues={savedLinkValues}
+        onChange={(key, value) => setLinkValues((prev) => ({ ...prev, [key]: value }))}
+        onSave={saveLinks}
+        saveState={linksSaveState}
+      />
       <div className="flex">
         {/* ----------------------------------------------------------------
             Left panel — variant tabs + section list
@@ -874,7 +979,7 @@ export function EditClient({ variants, preset, namedLinks }: EditClientProps) {
                       <SlotField
                         slotKey={key}
                         value={value}
-                        namedLinks={namedLinks}
+                        namedLinks={effectiveNamedLinks}
                         onChange={(v) => {
                           if (type !== "skip") {
                             updateSlot(activeVariant, selectedSection, key, v);
