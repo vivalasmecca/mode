@@ -1,43 +1,43 @@
 {
-  "_note": "MODE expression layer. Maps semantic palette tokens to color scale references (see color-scale.json). This is the brand's responsibility — reassign these references to apply your visual language without touching the intent layer (mode-tokens.json). Use dot notation to reference scale entries: \"gray.900\", \"indigo.600\". Top-level entries like \"white\" are referenced by name. Changes take effect on next request — no rebuild required.",
+  "_note": "MODE expression layer. Maps semantic palette tokens to color scale references (see color-scale.json). This is the brand's responsibility — reassign these references to apply your visual language without touching the intent layer (mode-tokens.json). Use dot notation to reference scale entries: \"slate.12\", \"violet.9\". Top-level entries like \"white\" are referenced by name. Changes take effect on next request — no rebuild required.",
   "palette_modes": {
     "light": {
       "_description": "Neutral canvas. Chrome, top-of-funnel, low-emphasis sections.",
       "bg": "white",
-      "text": "gray.900",
-      "subtext": "gray.600",
-      "muted": "gray.400",
-      "border": "gray.100",
-      "iconBg": "gray.100"
+      "text": "slate.12",
+      "subtext": "slate.11",
+      "muted": "slate.9",
+      "border": "slate.4",
+      "iconBg": "slate.3"
     },
     "neutral": {
       "_description": "Mild separation. Supporting context, informational sections.",
-      "bg": "gray.50",
-      "text": "gray.900",
-      "subtext": "gray.600",
-      "muted": "gray.500",
-      "border": "gray.200",
-      "iconBg": "gray.100"
+      "bg": "slate.2",
+      "text": "slate.12",
+      "subtext": "slate.11",
+      "muted": "slate.10",
+      "border": "slate.5",
+      "iconBg": "slate.3"
     },
     "dark": {
       "_description": "High emphasis. Spotlights whatever the preset assigns it to.",
-      "bg": "gray.900",
+      "bg": "slate.12",
       "text": "white",
-      "subtext": "gray.300",
-      "muted": "gray.500",
-      "border": "gray.700",
-      "iconBg": "gray.800"
+      "subtext": "slate.3",
+      "muted": "slate.8",
+      "border": "slate.10",
+      "iconBg": "slate.11"
     }
   },
   "accent": {
     "_note": "Brand primary CTA color. Global — not per-preset. Two variants: button on a light/neutral section vs. on a dark section.",
     "on_light": {
-      "bg": "indigo.600",
+      "bg": "violet.9",
       "text": "white"
     },
     "on_dark": {
       "bg": "white",
-      "text": "gray.900"
+      "text": "slate.12"
     }
   }
 }
