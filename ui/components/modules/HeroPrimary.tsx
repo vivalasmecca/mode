@@ -60,7 +60,7 @@ export function HeroPrimary({ slots, variant, palette }: HeroPrimaryProps) {
                     size="lg"
                   />
                 </PlaceholderSlot>
-                {slots.cta_secondary !== undefined && (
+                {slots.cta_secondary != null && (
                   <PlaceholderSlot name="cta_secondary" value={slots.cta_secondary} inline>
                     <CTAButton
                       label={(slots.cta_secondary as CTAButtonSlot).label}
@@ -105,7 +105,7 @@ export function HeroPrimary({ slots, variant, palette }: HeroPrimaryProps) {
                     size="lg"
                   />
                 </PlaceholderSlot>
-                {slots.cta_secondary !== undefined && (
+                {slots.cta_secondary != null && (
                   <PlaceholderSlot name="cta_secondary" value={slots.cta_secondary} inline>
                     <CTAButton
                       label={(slots.cta_secondary as CTAButtonSlot).label}
