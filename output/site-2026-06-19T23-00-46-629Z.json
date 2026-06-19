@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0.0",
+  "built_at": "2026-06-19T23:00:46.629Z",
+  "ts": "2026-06-19T23-00-46-629Z",
+  "preset": "funnel-driven",
+  "palette_driver": "funnel_stage",
+  "brief": {
+    "audience": "Startups seeking an intent-aware, ai-first design system",
+    "goal": "Convert to paid",
+    "context_mode": "organic",
+    "content_notes": "",
+    "archetype": "Validator",
+    "funnel_stage": "awareness"
+  },
+  "pages": [
+    {
+      "label": "awareness",
+      "filename": "page-2026-06-19T23-00-46-629Z-awareness.json",
+      "previewUrl": "/admin/preview?file=page-2026-06-19T23-00-46-629Z-awareness.json",
+      "siteUrl": "/admin/site?ts=2026-06-19T23-00-46-629Z&page=awareness"
+    },
+    {
+      "label": "consideration",
+      "filename": "page-2026-06-19T23-00-46-629Z-consideration.json",
+      "previewUrl": "/admin/preview?file=page-2026-06-19T23-00-46-629Z-consideration.json",
+      "siteUrl": "/admin/site?ts=2026-06-19T23-00-46-629Z&page=consideration"
+    },
+    {
+      "label": "decision",
+      "filename": "page-2026-06-19T23-00-46-629Z-decision.json",
+      "previewUrl": "/admin/preview?file=page-2026-06-19T23-00-46-629Z-decision.json",
+      "siteUrl": "/admin/site?ts=2026-06-19T23-00-46-629Z&page=decision"
+    },
+    {
+      "label": "conversion",
+      "filename": "page-2026-06-19T23-00-46-629Z-conversion.json",
+      "previewUrl": "/admin/preview?file=page-2026-06-19T23-00-46-629Z-conversion.json",
+      "siteUrl": "/admin/site?ts=2026-06-19T23-00-46-629Z&page=conversion"
+    }
+  ]
+}

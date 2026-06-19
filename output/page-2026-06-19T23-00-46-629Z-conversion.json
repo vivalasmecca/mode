@@ -1,0 +1,213 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at": "2026-06-19T23:00:46.629Z",
+  "variant": "conversion",
+  "preset": "funnel-driven",
+  "preset_description": "Dark = decision signal. Emphasis accumulates toward conversion — trust anchors and commitment moments are dark, top-of-funnel is light.",
+  "palette_driver": "funnel_stage",
+  "brief": {
+    "audience": "Startups seeking an intent-aware, ai-first design system",
+    "goal": "Convert to paid",
+    "context_mode": "organic",
+    "content_notes": "",
+    "archetype": "Validator",
+    "funnel_stage": "conversion"
+  },
+  "behavioral_tokens": {
+    "require_trust_signal": true,
+    "allow_secondary_cta": true,
+    "subhead_policy": "always",
+    "copy_density": "medium",
+    "evidence_density": "high"
+  },
+  "accent_tokens": {
+    "_note": "Brand primary CTA color. Global — not per-preset. Two variants: button on a light/neutral section vs. on a dark section.",
+    "on_light": {
+      "bg": "violet.9",
+      "text": "white"
+    },
+    "on_dark": {
+      "bg": "white",
+      "text": "slate.12"
+    }
+  },
+  "ia": {
+    "beats": [
+      {
+        "name": "Orientation",
+        "rationale": "Slim hero providing immediate context: this is MODE, the intent-aware, AI-first design system for startups. Gives the page a clear title and frames the decision moment that follows, satisfying the mandatory hero requirement for conversion-stage pages."
+      },
+      {
+        "name": "Evidence",
+        "rationale": "The Validator archetype demands proof before committing. Inserting a focused evidence beat—key metrics, adoption stats, or a compact case-study data point—directly after the hero satisfies this psychological need and builds confidence right before pricing."
+      },
+      {
+        "name": "Credibility",
+        "rationale": "Validators also need trust signals. A brief credibility beat with customer logos, testimonials, or notable startup endorsements reinforces the evidence just presented and removes remaining doubt before the decision."
+      },
+      {
+        "name": "Decision",
+        "rationale": "Conversion-stage funnel requires a Decision beat before Conversion. Presents pricing tiers and plan comparison so the startup can evaluate commitment level with full clarity, framed by the proof they just absorbed."
+      },
+      {
+        "name": "Conversion",
+        "rationale": "The primary CTA and commitment prompt. Placed immediately before Recovery as required. Captures the action—sign-up or checkout—while momentum from evidence, credibility, and decision framing is at its peak."
+      },
+      {
+        "name": "Recovery",
+        "rationale": "Final beat providing secondary paths (contact sales, explore docs, FAQ links) and standard footer. Catches any visitor not ready to convert and ensures no dead-end exits."
+      }
+    ],
+    "sections": [
+      {
+        "name": "Navigation",
+        "beat": "Orientation",
+        "rationale": "Global navigation — wayfinding and persistent CTA for the session.",
+        "candidate_components": [
+          "NavigationHeader"
+        ]
+      },
+      {
+        "name": "Hero",
+        "beat": "Orientation",
+        "rationale": "Slim hero providing immediate context: this is MODE, the intent-aware, AI-first design system for startups. Gives the page a clear title and frames the decision moment that follows, satisfying the mandatory hero requirement for conversion-stage pages.",
+        "candidate_components": [
+          "HeroPrimary"
+        ]
+      },
+      {
+        "name": "Pricing",
+        "beat": "Decision",
+        "rationale": "Conversion-stage funnel requires a Decision beat before Conversion. Presents pricing tiers and plan comparison so the startup can evaluate commitment level with full clarity, framed by the proof they just absorbed.",
+        "candidate_components": [
+          "PricingCard"
+        ]
+      },
+      {
+        "name": "CTA",
+        "beat": "Conversion",
+        "rationale": "The primary CTA and commitment prompt. Placed immediately before Recovery as required. Captures the action—sign-up or checkout—while momentum from evidence, credibility, and decision framing is at its peak.",
+        "candidate_components": [
+          "CTABanner"
+        ]
+      },
+      {
+        "name": "Footer",
+        "beat": "Recovery",
+        "rationale": "Page close — brand mark, minimal navigation, and legal.",
+        "candidate_components": [
+          "FooterMinimal"
+        ]
+      }
+    ]
+  },
+  "page": [
+    {
+      "section": "Navigation",
+      "beat": "Orientation",
+      "component": "NavigationHeader",
+      "variant": "minimal",
+      "reasoning": "Conversion stage demands minimal variant: 'minimal variant for conversion-focused pages — strip nav_links, keep logo and single CTA only.' This removes distractions and preserves the persistent CTA, 'the most converted element on most SaaS pages.'",
+      "slots": {
+        "logo": "[logo]",
+        "nav_links": [],
+        "cta_primary": {
+          "label": "Get MODE",
+          "href": "#"
+        },
+        "cta_secondary": null
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Hero",
+      "beat": "Orientation",
+      "component": "HeroPrimary",
+      "variant": "text-only",
+      "reasoning": "Conversion funnel stage rule requires text-only: 'For conversion stage use text-only: slim title and subhead only, no media, no secondary CTA — orients the visitor without competing with the decision moment below.'",
+      "slots": {
+        "eyebrow": "AI-first design system — conversion stage",
+        "headline": "Your design system knows how to render. MODE teaches it why.",
+        "subhead": "The semantic intelligence layer for code-first SaaS teams. Components that resolve behavior, copy density, and visual emphasis to the right experience — without manual variants.",
+        "cta_primary": {
+          "label": "Get MODE — $1,199",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "Join Studio waitlist",
+          "href": "#"
+        },
+        "media": null,
+        "trust_signal": "One-time payment. Lifetime access. No subscription."
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Pricing",
+      "beat": "Decision",
+      "component": "PricingCard",
+      "variant": "highlighted",
+      "reasoning": "Validator archetype with conversion intent requires highlighted variant to establish recommendation: 'highlighted variant for recommended plan — use sparingly (one per pricing section). Validator variant includes description and longer feature list.'",
+      "slots": {
+        "plan_name": "MODE Kit",
+        "badge": "Most popular",
+        "price": "$1,199",
+        "billing_period": "one-time",
+        "description": "The full intelligence layer. Resolution engine, component manifest, token config, palette map, IA planner, multi-variant generation, and Next.js preview UI. Yours forever — no runtime dependency, no lock-in.",
+        "features": [
+          "Semantic resolution engine — 4-dimension model (archetype, funnel stage, intent state, context mode)",
+          "Component manifest — 11 components, fully specified with slot schemas and zone affinity",
+          "IA planner + multi-variant generation powered by Claude Opus",
+          "Three palette presets — funnel-driven, archetype-driven, feature-emphasis",
+          "Token dashboard with editable palette map and accent configuration",
+          "Lifetime access — lives in your codebase, not a vendor dashboard"
+        ],
+        "cta": {
+          "label": "Get MODE",
+          "href": "#"
+        }
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "CTA",
+      "beat": "Conversion",
+      "component": "CTABanner",
+      "variant": "minimal",
+      "reasoning": "Validator archetype demands trust signals in conversion context: 'Validator variant: include subhead and trust_signal (e.g., 'No credit card required'). minimal for high-frequency use — above footer, between sections.'",
+      "slots": {
+        "headline": "The intelligence layer is ready. Is your design system?",
+        "subhead": "Running in under an hour. Configured once. No Figma handoff cycles, no manual variants, no ongoing subscription.",
+        "cta_primary": {
+          "label": "Get MODE — $1,199",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "Join the Studio waitlist",
+          "href": "#"
+        },
+        "trust_signal": "One-time payment. Own the code. No usage-based billing, ever."
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Footer",
+      "beat": "Recovery",
+      "component": "FooterMinimal",
+      "variant": "with-cta",
+      "reasoning": "Conversion stage on pricing page requires recovery mechanism: 'with-cta variant recaptures departing users on key conversion pages — use on pricing and signup flows.'",
+      "slots": {
+        "logo": "[logo]",
+        "nav_columns": [],
+        "legal_text": "© 2025 MODE. All rights reserved.",
+        "social_links": [],
+        "cta": {
+          "label": "Get MODE",
+          "href": "#"
+        }
+      },
+      "palette": "light"
+    }
+  ],
+  "preview_url": "/admin/preview?file=page-2026-06-19T23-00-46-629Z-conversion.json"
+}

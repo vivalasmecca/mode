@@ -1,0 +1,334 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at": "2026-06-19T23:00:46.629Z",
+  "variant": "consideration",
+  "preset": "funnel-driven",
+  "preset_description": "Dark = decision signal. Emphasis accumulates toward conversion — trust anchors and commitment moments are dark, top-of-funnel is light.",
+  "palette_driver": "funnel_stage",
+  "brief": {
+    "audience": "Startups seeking an intent-aware, ai-first design system",
+    "goal": "Convert to paid",
+    "context_mode": "organic",
+    "content_notes": "",
+    "archetype": "Validator",
+    "funnel_stage": "consideration"
+  },
+  "behavioral_tokens": {
+    "require_trust_signal": true,
+    "allow_secondary_cta": true,
+    "subhead_policy": "always",
+    "copy_density": "medium",
+    "evidence_density": "high"
+  },
+  "accent_tokens": {
+    "_note": "Brand primary CTA color. Global — not per-preset. Two variants: button on a light/neutral section vs. on a dark section.",
+    "on_light": {
+      "bg": "violet.9",
+      "text": "white"
+    },
+    "on_dark": {
+      "bg": "white",
+      "text": "slate.12"
+    }
+  },
+  "ia": {
+    "beats": [
+      {
+        "name": "Orientation",
+        "rationale": "Establishes immediate context: MODE is an intent-aware, AI-first design system built for startups. Frames the problem space and signals relevance to the audience, anchoring the narrative before any persuasion begins."
+      },
+      {
+        "name": "Value",
+        "rationale": "With context set, the Validator needs to understand what MODE actually delivers — adaptive intent detection, AI-driven component logic, and design-to-code acceleration. Presenting capabilities and outcome promises here builds a concrete mental model of the product before asking for trust."
+      },
+      {
+        "name": "Credibility",
+        "rationale": "Validators require social proof before they internalize value claims. Placing credibility after value lets startup founders see who else has adopted MODE — customer logos, testimonials from comparable startups, and authority signals that confirm the product is real and trusted."
+      },
+      {
+        "name": "Evidence",
+        "rationale": "The Validator archetype demands hard proof. Metrics (e.g., time-to-ship reduction, conversion lift, adoption stats) and case study data from startup customers substantiate the value claims and credibility signals, closing the skepticism gap that sits between interest and commitment."
+      },
+      {
+        "name": "Decision",
+        "rationale": "At consideration stage with a Validator, presenting plan comparison and pricing transparently signals confidence and respects the audience's need to evaluate. Positioned after evidence, it channels accumulated conviction into a concrete choice frame."
+      },
+      {
+        "name": "Conversion",
+        "rationale": "Immediately follows Decision per structural rules. A clear CTA — start a paid plan or trial — captures the momentum built through value, proof, and pricing. Copy reinforces low-risk commitment aligned with startup budget sensitivity."
+      },
+      {
+        "name": "Recovery",
+        "rationale": "Final beat provides secondary paths for Validators not yet ready: documentation links, a comparison guide, demo booking, and footer navigation. Ensures no visitor exits without an alternative route back into the funnel."
+      }
+    ],
+    "sections": [
+      {
+        "name": "Navigation",
+        "beat": "Orientation",
+        "rationale": "Global navigation — wayfinding and persistent CTA for the session.",
+        "candidate_components": [
+          "NavigationHeader"
+        ]
+      },
+      {
+        "name": "Hero",
+        "beat": "Orientation",
+        "rationale": "Establishes immediate context: MODE is an intent-aware, AI-first design system built for startups. Frames the problem space and signals relevance to the audience, anchoring the narrative before any persuasion begins.",
+        "candidate_components": [
+          "HeroPrimary",
+          "HeroStatement"
+        ]
+      },
+      {
+        "name": "Features",
+        "beat": "Value",
+        "rationale": "With context set, the Validator needs to understand what MODE actually delivers — adaptive intent detection, AI-driven component logic, and design-to-code acceleration. Presenting capabilities and outcome promises here builds a concrete mental model of the product before asking for trust.",
+        "candidate_components": [
+          "FeatureGrid",
+          "ContentSection"
+        ]
+      },
+      {
+        "name": "Social proof",
+        "beat": "Credibility",
+        "rationale": "Validators require social proof before they internalize value claims. Placing credibility after value lets startup founders see who else has adopted MODE — customer logos, testimonials from comparable startups, and authority signals that confirm the product is real and trusted.",
+        "candidate_components": [
+          "SocialProofBar",
+          "TestimonialSingle"
+        ]
+      },
+      {
+        "name": "Proof points",
+        "beat": "Evidence",
+        "rationale": "The Validator archetype demands hard proof. Metrics (e.g., time-to-ship reduction, conversion lift, adoption stats) and case study data from startup customers substantiate the value claims and credibility signals, closing the skepticism gap that sits between interest and commitment.",
+        "candidate_components": [
+          "StatBlock",
+          "TestimonialSingle"
+        ]
+      },
+      {
+        "name": "Footer",
+        "beat": "Recovery",
+        "rationale": "Page close — brand mark, minimal navigation, and legal.",
+        "candidate_components": [
+          "FooterMinimal"
+        ]
+      }
+    ]
+  },
+  "page": [
+    {
+      "section": "Navigation",
+      "beat": "Orientation",
+      "component": "NavigationHeader",
+      "variant": "minimal",
+      "reasoning": "Conversion stage pages benefit from minimal variant which strips nav_links and keeps only logo and single CTA — this reduces friction at the decision moment",
+      "slots": {
+        "logo": "[logo]",
+        "nav_links": [],
+        "cta_primary": {
+          "label": "Get MODE",
+          "href": "#"
+        },
+        "cta_secondary": null
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Hero",
+      "beat": "Orientation",
+      "component": "HeroPrimary",
+      "variant": "text-only",
+      "reasoning": "Consideration/conversion funnel stage requires text-only variant: slim title and subhead only, no media, no secondary CTA — orients the visitor without competing with the decision moment below",
+      "slots": {
+        "eyebrow": "Intent-aware design system",
+        "headline": "Your design system knows how to render. MODE teaches it why.",
+        "subhead": "MODE is the semantic intelligence layer for code-first SaaS design systems. Components that resolve to the right behavior for every archetype, funnel stage, and context — without manual variants.",
+        "cta_primary": {
+          "label": "Get MODE — $1,199",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "See how it works",
+          "href": "#"
+        },
+        "media": null,
+        "trust_signal": "One-time purchase. Lifetime access. No subscription."
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Features",
+      "beat": "Value",
+      "component": "FeatureGrid",
+      "variant": "3-col-icon",
+      "reasoning": "Validator archetype benefits from outcome-oriented descriptions in the default 3-col-icon layout, which structures product capabilities for credibility and specificity",
+      "slots": {
+        "headline": "What MODE resolves — automatically.",
+        "subhead": "Eleven components. Four resolution dimensions. Zero manual variant decisions.",
+        "features": [
+          {
+            "icon": "🧠",
+            "title": "Semantic resolution engine",
+            "description": "Components evaluate archetype, funnel stage, intent state, and context mode on every render — so the right experience ships by default, not by convention."
+          },
+          {
+            "icon": "⚡",
+            "title": "IA planner",
+            "description": "Go from brief to full page architecture in seconds. Claude Opus maps the intent model to a component layout before you write a line of markup."
+          },
+          {
+            "icon": "🔀",
+            "title": "Multi-variant generation",
+            "description": "One brief produces Mover, Validator, and Explorer variants in parallel. Evaluate three differentiated directions without three separate briefs."
+          },
+          {
+            "icon": "🎨",
+            "title": "Palette map",
+            "description": "Visual emphasis accumulates semantically toward conversion. No manual accent assignment — the system knows which components carry the most weight per funnel stage."
+          },
+          {
+            "icon": "🧩",
+            "title": "Behavioral tokens",
+            "description": "Copy density, evidence requirements, and CTA rules are archetype-driven. The system enforces the right register without a style guide review loop."
+          },
+          {
+            "icon": "🏗️",
+            "title": "Component manifest",
+            "description": "Eleven components fully specified with zone affinity, slot schemas, and usage intent. A shared contract between your design intelligence and your codebase."
+          }
+        ]
+      },
+      "palette": "neutral"
+    },
+    {
+      "section": "Features",
+      "beat": "Value",
+      "component": "ContentSection",
+      "variant": "with-callout",
+      "reasoning": "Validator archetype optimized pages benefit from structured argument depth; with-callout variant separates key proof points for visual emphasis",
+      "slots": {
+        "headline": "What MODE resolves — automatically.",
+        "body": "[body]",
+        "callout": null,
+        "media": null,
+        "cta": null,
+        "subhead": "Eleven components. Four resolution dimensions. Zero manual variant decisions.",
+        "features": [
+          {
+            "icon": "🧠",
+            "title": "Semantic resolution engine",
+            "description": "Components evaluate archetype, funnel stage, intent state, and context mode on every render — so the right experience ships by default, not by convention."
+          },
+          {
+            "icon": "⚡",
+            "title": "IA planner",
+            "description": "Go from brief to full page architecture in seconds. Claude Opus maps the intent model to a component layout before you write a line of markup."
+          },
+          {
+            "icon": "🔀",
+            "title": "Multi-variant generation",
+            "description": "One brief produces Mover, Validator, and Explorer variants in parallel. Evaluate three differentiated directions without three separate briefs."
+          },
+          {
+            "icon": "🎨",
+            "title": "Palette map",
+            "description": "Visual emphasis accumulates semantically toward conversion. No manual accent assignment — the system knows which components carry the most weight per funnel stage."
+          },
+          {
+            "icon": "🧩",
+            "title": "Behavioral tokens",
+            "description": "Copy density, evidence requirements, and CTA rules are archetype-driven. The system enforces the right register without a style guide review loop."
+          },
+          {
+            "icon": "🏗️",
+            "title": "Component manifest",
+            "description": "Eleven components fully specified with zone affinity, slot schemas, and usage intent. A shared contract between your design intelligence and your codebase."
+          }
+        ]
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Social proof",
+      "beat": "Credibility",
+      "component": "SocialProofBar",
+      "variant": "quote-with-logos",
+      "reasoning": "Validator variant leads with quote, logos below — establishing credibility through both attributed narrative and brand recognition",
+      "slots": {
+        "headline": "Built for teams evaluating what comes after component libraries.",
+        "logos": [],
+        "quote": "We were maintaining three variant sets for every major landing section — one for paid traffic, one for organic, one for retargeting. MODE collapsed that into a single source of truth. The resolution engine handles the branching logic we were doing by hand.",
+        "attribution": "Head of Growth Engineering, early-access customer",
+        "attribution_logo": null
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Social proof",
+      "beat": "Credibility",
+      "component": "TestimonialSingle",
+      "variant": "with-photo",
+      "reasoning": "Validator archetype requires with-photo variant which increases engagement and perceived authenticity, and should always include role and company for credibility",
+      "slots": {
+        "quote": "We were maintaining three variant sets for every major landing section — one for paid traffic, one for organic, one for retargeting. MODE collapsed that into a single source of truth. The resolution engine handles the branching logic we were doing by hand.",
+        "author_name": "[author_name]",
+        "author_title": "[author_title]",
+        "company": "[company]",
+        "photo": null,
+        "company_logo": null,
+        "headline": "Built for teams evaluating what comes after component libraries.",
+        "attribution": "Head of Growth Engineering, early-access customer"
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Proof points",
+      "beat": "Evidence",
+      "component": "StatBlock",
+      "variant": "with-source",
+      "reasoning": "Validator contexts require with-source attribution — unsourced stats reduce trust, making source-attributed metrics essential for this archetype",
+      "slots": {
+        "headline": "What teams measure after adopting MODE.",
+        "stats": [
+          {
+            "value": "< 1 hr",
+            "label": "Median time from install to first intent-resolved page",
+            "source": "Internal data, early-access cohort"
+          },
+          {
+            "value": "3×",
+            "label": "More page variants evaluated per brief with multi-variant generation",
+            "source": "Internal data, early-access cohort"
+          },
+          {
+            "value": "0",
+            "label": "Runtime dependencies — MODE lives in your repo, fully owned",
+            "source": "Product specification"
+          }
+        ]
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Footer",
+      "beat": "Recovery",
+      "component": "FooterMinimal",
+      "variant": "with-cta",
+      "reasoning": "Conversion stage page requires with-cta variant to recapture departing users at the moment of exit on key conversion pages",
+      "slots": {
+        "logo": "[logo]",
+        "nav_columns": [],
+        "legal_text": "© 2025 MODE. All rights reserved.",
+        "social_links": [],
+        "cta": {
+          "label": "Get MODE",
+          "href": "#"
+        }
+      },
+      "palette": "light"
+    }
+  ],
+  "preview_url": "/admin/preview?file=page-2026-06-19T23-00-46-629Z-consideration.json"
+}
