@@ -314,9 +314,8 @@ The CMS integration waits until the content schema is stable. Every component sl
 ---
 
 ### Level 1 — demo readiness
-- **Mover contrast build** — run archetype-driven preset with Mover. Same product, same funnel stage, different IA and copy register. This is the demo moment. Requires no code — just a build run.
 - **LemonSqueezy setup** — add checkout URL via the Edit tab Links panel (`checkout` token). CTAs point to real checkout automatically on next build. No code change needed.
-- **Analytics attribution** — fire a page-load event with variant served + signals used. Needed to evaluate whether routing is working in production.
+- **Analytics attribution** ✓ — local event log at `output/events.jsonl`; Run tab shows routing decisions with signal source chips. Wire PostHog when ready for production observability.
 
 ### Level 2 — output quality
 - **Brand brief** — write `context/brand-brief.md` (tone, pillars, claim territory). Immediately improves copy register. Brand tab has the editor.
@@ -328,6 +327,8 @@ The CMS integration waits until the content schema is stable. Every component sl
 - Page beats (7-beat narrative taxonomy, IA planning, section naming) ✓
 - Expressive hero variants (editorial layout for awareness stage) ✓
 - Component library tab in admin dashboard ✓
+- Mover contrast build ✓ (tested; ongoing — run any preset/archetype combination as needed)
+- Analytics attribution ✓ (local JSONL log + Run tab activity view; PostHog additive later)
 - theme.json / CSS variables layer ✓ (palette-vars.ts → html style → static palette.ts)
 - Inline slot editor / Edit tab ✓
 - Named links panel ✓
