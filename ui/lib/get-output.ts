@@ -66,6 +66,90 @@ export function getPageRegistry(): PageRegistryEntry[] {
 }
 
 /**
+ * Finds the most recent output file for a given variant label.
+ *
+ * Search order:
+ * 1. The supplied active build (if any)
+ * 2. All site manifests in the output directory, newest first
+ * 3. Direct scan of output/*.json files matching *-{variantLabel}.json
+ *
+ * This lets the pricing page (label "conversion") survive when the active
+ * build is archetype-driven and has no conversion variant.
+ */
+export function findVariantFile(
+  variantLabel: string,
+  activeBuildTs?: string | null
+): { filename: string; output: PageOutput } | null {
+  // 1. Active build
+  if (activeBuildTs) {
+    const manifest = getSiteManifest(activeBuildTs);
+    if (manifest) {
+      const page = manifest.pages.find((p) => p.label === variantLabel);
+      if (page) {
+        const output = getOutputByFile(page.filename);
+        if (output) return { filename: page.filename, output };
+      }
+    }
+  }
+
+  // 2. All site manifests, newest first
+  try {
+    const outputDir = path.join(DATA_ROOT, "output");
+    if (fs.existsSync(outputDir)) {
+      const manifests = fs
+        .readdirSync(outputDir)
+        .filter((f) => f.startsWith("site-") && f.endsWith(".json"))
+        .map((f) => ({
+          name: f,
+          mtime: fs.statSync(path.join(outputDir, f)).mtime.getTime(),
+        }))
+        .sort((a, b) => b.mtime - a.mtime);
+
+      for (const m of manifests) {
+        try {
+          const manifest = JSON.parse(
+            fs.readFileSync(path.join(outputDir, m.name), "utf8")
+          ) as SiteManifest;
+          const page = manifest.pages.find((p) => p.label === variantLabel);
+          if (page) {
+            const output = getOutputByFile(page.filename);
+            if (output) return { filename: page.filename, output };
+          }
+        } catch {
+          // skip malformed manifests
+        }
+      }
+    }
+  } catch {
+    // fall through
+  }
+
+  // 3. Direct output file scan (e.g. page-{ts}-conversion.json)
+  try {
+    const outputDir = path.join(DATA_ROOT, "output");
+    if (fs.existsSync(outputDir)) {
+      const suffix = `-${variantLabel}.json`;
+      const files = fs
+        .readdirSync(outputDir)
+        .filter((f) => f.startsWith("page-") && f.endsWith(suffix))
+        .map((f) => ({
+          name: f,
+          mtime: fs.statSync(path.join(outputDir, f)).mtime.getTime(),
+        }))
+        .sort((a, b) => b.mtime - a.mtime);
+      if (files.length > 0) {
+        const output = getOutputByFile(files[0].name);
+        if (output) return { filename: files[0].name, output };
+      }
+    }
+  } catch {
+    // fall through
+  }
+
+  return null;
+}
+
+/**
  * Reads the most recent JSON output file from output/.
  * Used directly by server components (no HTTP, no port dependency).
  */

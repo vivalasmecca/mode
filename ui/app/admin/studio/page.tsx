@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import { DATA_ROOT, getOutputByFile, getSiteManifest, getPageRegistry } from "@/lib/get-output";
+import { DATA_ROOT, getOutputByFile, getSiteManifest, getPageRegistry, findVariantFile } from "@/lib/get-output";
 import type { PageOutput, VariantOverrideMap } from "@/lib/types";
 import { StudioClient } from "./StudioClient";
 
@@ -49,6 +49,24 @@ export default function StudioPage() {
           route: variantLabelToRoute[page.label] ?? null,
         });
       }
+    }
+  }
+
+  // Add supplemental page cards for registry entries whose variant_label is not
+  // already in the active build. This keeps the pricing page visible in Studio
+  // even when an archetype-driven build (no conversion variant) is active.
+  const loadedLabels = new Set(variants.map((v) => v.label));
+  for (const entry of pageRegistry) {
+    if (!entry.variant_label) continue;
+    if (loadedLabels.has(entry.variant_label)) continue; // already present from active build
+    const found = findVariantFile(entry.variant_label, buildTs);
+    if (found) {
+      variants.push({
+        label: entry.label,
+        filename: found.filename,
+        output: found.output,
+        route: entry.route,
+      });
     }
   }
 

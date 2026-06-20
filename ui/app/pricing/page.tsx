@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import { DATA_ROOT, getOutputByFile, getSiteManifest } from "@/lib/get-output";
+import { DATA_ROOT, findVariantFile } from "@/lib/get-output";
 import { PreviewClient } from "@/components/preview/PreviewClient";
 import type { VariantOverrideMap } from "@/lib/types";
 
@@ -40,21 +40,14 @@ function NoActiveBuild() {
 
 export default async function Pricing() {
   const routing = getRoutingConfig();
-  if (!routing) return <NoActiveBuild />;
 
-  const manifest = getSiteManifest(routing.ts);
-  if (!manifest) return <NoActiveBuild />;
+  // Always serve the conversion variant, searching across all builds if needed.
+  // When an archetype-driven build is active, the conversion file lives in an
+  // earlier funnel build — findVariantFile searches all manifests newest-first.
+  const found = findVariantFile("conversion", routing?.ts ?? null);
+  if (!found) return <NoActiveBuild />;
 
-  // Pricing page always serves the conversion variant regardless of visitor's funnel stage.
-  // The homepage adapts to where visitors are in their journey; pricing is always the close.
-  const page =
-    manifest.pages.find((p) => p.label.toLowerCase() === "conversion") ??
-    manifest.pages[manifest.pages.length - 1];
-
-  if (!page) return <NoActiveBuild />;
-
-  const output = getOutputByFile(page.filename);
-  if (!output) return <NoActiveBuild />;
+  const { output } = found;
 
   let variantOverrides: VariantOverrideMap = {};
   try {

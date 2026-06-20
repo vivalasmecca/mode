@@ -5,6 +5,7 @@ import {
   getOutputByFile,
   getSiteManifest,
   getPageRegistry,
+  findVariantFile,
   DATA_ROOT,
 } from "@/lib/get-output";
 import type { PageRegistryEntry } from "@/lib/get-output";
@@ -215,22 +216,25 @@ export default async function EditPage({
     if (!entry) return <NotFound message={`Page "${page}" not found in registry.`} />;
 
     if (entry.variant_label) {
-      // Load only the matching variant from the active build (or latest manifest as fallback)
+      // Use findVariantFile so this works even when the active build is archetype-driven
+      // (no conversion variant). Searches all manifests newest-first as fallback.
       const buildTs = getActiveBuildTs();
-      const manifest = buildTs ? getSiteManifest(buildTs) : getLatestSiteManifest();
-      if (!manifest) return <NotFound message="No active build. Generate pages first." />;
-      const pageEntry = manifest.pages.find((p) => p.label === entry.variant_label);
-      if (!pageEntry) {
-        return <NotFound message={`Variant "${entry.variant_label}" not found in active build.`} />;
+      const found = findVariantFile(entry.variant_label, buildTs);
+      if (!found) {
+        return (
+          <>
+            <PageNav pages={pageRegistry} activePage={entry.label} />
+            <NotFound
+              message={`No "${entry.variant_label}" variant found in any build. Run a funnel-driven build to generate the ${entry.label} page.`}
+            />
+          </>
+        );
       }
-      const output = getOutputByFile(pageEntry.filename);
-      if (!output) return <NotFound message={`Output file for "${entry.label}" not found.`} />;
       return (
         <>
           <PageNav pages={pageRegistry} activePage={entry.label} />
           <EditClient
-            variants={[{ label: entry.label, filename: pageEntry.filename, output }]}
-            preset={manifest.preset}
+            variants={[{ label: entry.label, filename: found.filename, output: found.output }]}
             namedLinksRaw={namedLinksRaw}
           />
         </>
