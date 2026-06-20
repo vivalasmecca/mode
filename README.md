@@ -102,7 +102,11 @@ The proxy reads query params as direct overrides, making it easy to test any var
 | `mode-nu.vercel.app/?utm_medium=retargeting` | decision |
 | `mode-nu.vercel.app/?utm_campaign=checkout-now` | conversion |
 
-**Cookie progression** — visit any UTM URL first, then go to the bare `/`. The proxy advances the funnel stage one step and stores it in a `mode_funnel_stage` cookie, so the next bare visit automatically loads the next stage. Clear cookies to reset to awareness.
+**Cookie progression** — organic visits to `/` accumulate against a threshold before the stage advances. The current threshold is 3 visits at a stage before moving to the next. UTM and query param signals bypass the threshold and pin the stage immediately. Two cookies are written: `mode_funnel_stage` (current stage) and `mode_stage_visits` (visit count at current stage). Clear both to reset to awareness.
+
+The homepage is capped at `decision` — conversion is never served at `/` because that register belongs to `/pricing`. Once the cookie reaches conversion, the homepage still serves the decision variant.
+
+To change the threshold: edit `STAGE_ADVANCE_THRESHOLD` in `ui/proxy.ts`. Exposing this to the dashboard (without requiring a code edit) is a future improvement.
 
 **Default** — `mode-nu.vercel.app/` with no params and no cookie → awareness.
 
@@ -239,10 +243,40 @@ Funnel stage and archetype are genuinely independent dimensions doing different 
 
 | Item | Notes |
 |------|-------|
-| **Multi-page demo** | Homepage + pricing page showing semantic coherence across a funnel journey. Requires `/pricing` route, `page_type` in brief, cross-page nav wiring. |
+| **Decision stage IA improvements** | See IA notes section below. Current IA is missing a feature/value block. Decision hero needs a pricing-aware variant option at build time. |
 | External design system integration | Document the component registration contract for buyers with existing component libraries. Variant swapping is the universal primitive; slot visibility is MODE-first-party only. |
+| Dashboard cookie threshold control | `STAGE_ADVANCE_THRESHOLD` is currently hardcoded in `ui/proxy.ts`. Should be configurable from the dashboard (Run tab or a routing config panel) without a code edit. |
 | Page zones (longer horizon) | IA planner generates zone map first, then section fill per zone. Funnel stage controls zone weight; archetype controls density within zones. Requires manifest zone affinity per component. |
 | CMS as revision layer | After content schema is stable. LLM authors → CMS is the human exception-handling surface. Payload or Sanity. |
+
+---
+
+## Decision stage IA — design notes
+
+The decision stage is the last page a visitor sees before they go to `/pricing`. Its job is different from awareness or consideration: the visitor is already informed, they're evaluating whether to commit. The IA should reflect that.
+
+**What the current decision stage IA generates:**
+1. Navigation (minimal) → Hero (text-only, "Your trial worked. Here's what you're keeping.")
+2. TestimonialSingle (credibility)
+3. StatBlock (proof points)
+4. PricingCard (pricing signal)
+5. CTABanner (commitment CTA)
+6. Footer
+
+**What's missing:**
+
+**A feature/value block.** The jump from proof (testimonial + stats) directly to a pricing card skips the "here's what you get" moment. A FeatureGrid or equivalent should appear between the credibility beat and the pricing beat — not as an awareness-style feature showcase, but with direct language framed as confirmation: "Here's what's in the system you're evaluating." The copy register should be conclusive, not introductory.
+
+**A pricing-aware hero variant.** The current hero is pure orientation text. At decision stage, surfacing the price in the hero itself — "MODE Kit — $1,199. One purchase, lifetime access." — removes a click and anchors the offer before anything else. This would be a new hero variant, not a general pattern. The IA planner would need to know this variant exists and select it when the funnel stage is `decision` and there's a price signal in the product context.
+
+To implement this, add a `hero-with-price` variant to `HeroPrimary` in `manifest/components.json` with a `price_display` slot (string). Update the IA planner prompt to prefer this variant at decision stage when `product-context.json` has pricing data. The component renders the price as a secondary visual element below the headline — not as a CTA, as a fact.
+
+**What to avoid:**
+
+- Auto-redirect to checkout. The decision page should not skip the `/pricing` page — the pricing page has a specific job (conversion register, comparison, full proof) and bypassing it removes that. CTAs should link to `/pricing`, not to checkout directly.
+- Recovery popups at the page level are a valid future concept (catch bouncing visitors before they leave), but these belong in a separate layer and should not be part of the IA output. They are client-side behavior, not semantic page structure.
+
+**The current IA is not wrong — it's just incomplete.** Trust + proof + pricing is a valid decision-stage structure. Adding the feature block and the pricing hero variant makes it more specific to what the decision moment actually requires.
 
 ---
 
