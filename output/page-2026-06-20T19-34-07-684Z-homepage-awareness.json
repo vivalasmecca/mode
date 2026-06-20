@@ -1,0 +1,186 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at": "2026-06-20T19:34:07.684Z",
+  "variant": "awareness",
+  "preset": "funnel-driven",
+  "preset_description": "Dark = decision signal. Emphasis accumulates toward conversion — trust anchors and commitment moments are dark, top-of-funnel is light.",
+  "palette_driver": "funnel_stage",
+  "brief": {
+    "audience": "growth-focused SaaS teams who need a semantic design layer that adapts to visitor intent",
+    "goal": "demonstrate MODE's ability to generate intent-aware pages at funnel scale",
+    "context_mode": "organic",
+    "archetype": "Validator",
+    "funnel_stage": "awareness"
+  },
+  "behavioral_tokens": {
+    "require_trust_signal": true,
+    "allow_secondary_cta": true,
+    "subhead_policy": "always",
+    "copy_density": "medium",
+    "evidence_density": "high"
+  },
+  "accent_tokens": {
+    "_note": "Brand primary CTA color. Global — not per-preset. Two variants: button on a light/neutral section vs. on a dark section.",
+    "on_light": {
+      "bg": "violet.9",
+      "text": "white"
+    },
+    "on_dark": {
+      "bg": "white",
+      "text": "slate.12"
+    }
+  },
+  "ia": {
+    "beats": [
+      {
+        "name": "Orientation",
+        "rationale": "Establishes context for growth-focused SaaS teams, introduces MODE as a semantic design layer that adapts to visitor intent. Sets the stage with a clear who/what/why without aggressive selling, appropriate for awareness-stage organic visitors."
+      },
+      {
+        "name": "Value",
+        "rationale": "Immediately follows orientation to articulate what MODE actually does — intent-aware page generation at funnel scale. At awareness stage, this educates the Validator archetype on capabilities and outcome promises before asking them to trust anything, giving them substance to evaluate."
+      },
+      {
+        "name": "Credibility",
+        "rationale": "Validators need proof before committing. Placing trust signals, customer logos, and authority markers after the value proposition gives social validation to the claims just made. At awareness stage this builds foundational trust without being pushy."
+      },
+      {
+        "name": "Evidence",
+        "rationale": "The Validator archetype specifically demands evidence — statistics, metrics, and concrete proof points. This beat deepens the credibility established above with quantifiable results, satisfying the Validator's need to verify claims before considering any next step."
+      },
+      {
+        "name": "Conversion",
+        "rationale": "Awareness-stage conversion is kept soft — a low-commitment CTA such as 'explore the system' or 'see it in action' rather than a purchase prompt. Positioned after Evidence so the Validator has accumulated enough proof to feel comfortable taking even a small next step. No Decision beat is included per awareness-stage rules."
+      },
+      {
+        "name": "Recovery",
+        "rationale": "Provides secondary paths — documentation links, blog content, alternative entry points — for Validators who aren't yet ready to convert. Ensures no visitor hits a dead end, capturing residual interest through footer navigation and exit handling."
+      }
+    ],
+    "sections": [
+      {
+        "name": "Navigation",
+        "beat": "Orientation",
+        "rationale": "Global navigation — wayfinding and persistent CTA for the session.",
+        "candidate_components": [
+          "NavigationHeader"
+        ]
+      },
+      {
+        "name": "Hero",
+        "beat": "Orientation",
+        "rationale": "Establishes context for growth-focused SaaS teams, introduces MODE as a semantic design layer that adapts to visitor intent. Sets the stage with a clear who/what/why without aggressive selling, appropriate for awareness-stage organic visitors.",
+        "candidate_components": [
+          "HeroPrimary",
+          "HeroStatement"
+        ]
+      },
+      {
+        "name": "Social proof",
+        "beat": "Credibility",
+        "rationale": "Validators need proof before committing. Placing trust signals, customer logos, and authority markers after the value proposition gives social validation to the claims just made. At awareness stage this builds foundational trust without being pushy.",
+        "candidate_components": [
+          "SocialProofBar"
+        ]
+      },
+      {
+        "name": "Footer",
+        "beat": "Recovery",
+        "rationale": "Page close — brand mark, minimal navigation, and legal.",
+        "candidate_components": [
+          "FooterMinimal"
+        ]
+      }
+    ]
+  },
+  "page": [
+    {
+      "section": "Navigation",
+      "beat": "Orientation",
+      "component": "NavigationHeader",
+      "variant": "full",
+      "reasoning": "Awareness stage funnel requires 'full for exploration and top-funnel pages' per notes. The persistent CTA in nav must be present for session conversion opportunity.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_links": [
+          {
+            "label": "Home",
+            "href": "/"
+          },
+          {
+            "label": "Pricing",
+            "href": "/pricing"
+          }
+        ],
+        "cta_primary": {
+          "label": "Get MODE",
+          "href": "https://hyvedigital.lemonsqueezy.com/checkout/buy/91423b71-edcb-466c-8e2f-f51c1bede692"
+        },
+        "cta_secondary": {
+          "label": "View demo",
+          "href": "https://mode-nu.vercel.app/"
+        }
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Hero",
+      "beat": "Orientation",
+      "component": "HeroPrimary",
+      "variant": "editorial",
+      "reasoning": "Awareness funnel stage requires 'editorial variant is the high-expression awareness layout' per notes. Validator archetype requires 'Validator variant always includes trust_signal' which editorial supports through its dominant, credibility-focused presentation.",
+      "slots": {
+        "eyebrow": "Intent-aware design systems",
+        "headline": "Your design system knows how to render. MODE teaches it why.",
+        "subhead": "MODE is a semantic intelligence layer for SaaS design systems — resolving component behavior, visual emphasis, and content register to the right experience for every visitor archetype, funnel stage, and context. No manual variants.",
+        "cta_primary": {
+          "label": "Get MODE — $1,199",
+          "href": "https://hyvedigital.lemonsqueezy.com/checkout/buy/91423b71-edcb-466c-8e2f-f51c1bede692"
+        },
+        "cta_secondary": {
+          "label": "Explore the live demo",
+          "href": "https://mode-nu.vercel.app/"
+        },
+        "media": null,
+        "trust_signal": "Lifetime access. No subscription. Runs in your codebase — not a third-party tool.",
+        "logos": null,
+        "price_display": null
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Social proof",
+      "beat": "Credibility",
+      "component": "SocialProofBar",
+      "variant": "quote-with-logos",
+      "reasoning": "Validator archetype requires 'Validator variant leads with quote, logos below' per notes. This variant directly addresses the Validator's need for social-proof elements to establish credibility and trust.",
+      "slots": {
+        "headline": "Built for teams that measure what they ship",
+        "logos": null,
+        "quote": "We eliminated an entire class of QA work. The resolution engine makes decisions we used to make manually in Figma — and it makes them consistently.",
+        "attribution": "Senior product engineer, B2B SaaS team",
+        "attribution_logo": null
+      },
+      "palette": "neutral"
+    },
+    {
+      "section": "Footer",
+      "beat": "Recovery",
+      "component": "FooterMinimal",
+      "variant": "standard",
+      "reasoning": "Awareness stage does not require conversion recovery; standard footer is the default for top-funnel pages without immediate conversion pressure.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_columns": [],
+        "legal_text": "© 2025 MODE by Hyve Digital. All rights reserved.",
+        "social_links": [],
+        "cta": {
+          "label": "Get MODE",
+          "href": "https://hyvedigital.lemonsqueezy.com/checkout/buy/91423b71-edcb-466c-8e2f-f51c1bede692"
+        }
+      },
+      "palette": "light"
+    }
+  ],
+  "preview_url": "/admin/preview?file=page-2026-06-20T19-34-07-684Z-homepage-awareness.json"
+}

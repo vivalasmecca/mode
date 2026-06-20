@@ -141,7 +141,7 @@
       "section": "Hero",
       "beat": "Orientation",
       "component": "HeroPrimary",
-      "variant": "with-price",
+      "variant": "with-social-proof",
       "reasoning": "For conversion stage use text-only: slim title and subhead only, no media, no secondary CTA — orients the visitor without competing with the decision moment below.",
       "slots": {
         "eyebrow": "AI-first design system · Decision stage",

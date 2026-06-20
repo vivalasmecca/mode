@@ -1,0 +1,210 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at": "2026-06-20T18:27:29.755Z",
+  "variant": "Explorer",
+  "preset": "archetype-driven",
+  "preset_description": "Dark = identity signal. Visual language expresses who the user is. Validator gets authority and weight (heavy dark). Mover gets minimal light with one dark CTA punch. Explorer gets all-neutral — open, spacious, no urgency.",
+  "palette_driver": "archetype",
+  "brief": {
+    "audience": "Startups needing an AI-ready design system",
+    "goal": "Convert to paid",
+    "context_mode": "organic",
+    "content_notes": "",
+    "funnel_stage": "decision",
+    "archetype": "Explorer"
+  },
+  "behavioral_tokens": {
+    "require_trust_signal": false,
+    "allow_secondary_cta": true,
+    "subhead_policy": "always",
+    "copy_density": "high",
+    "evidence_density": "medium"
+  },
+  "accent_tokens": {
+    "_note": "Brand primary CTA color. Global — not per-preset. Two variants: button on a light/neutral section vs. on a dark section.",
+    "on_light": {
+      "bg": "violet.9",
+      "text": "white"
+    },
+    "on_dark": {
+      "bg": "white",
+      "text": "slate.12"
+    }
+  },
+  "ia": {
+    "beats": [
+      {
+        "name": "Orientation",
+        "rationale": "Always first. Establishes context for startups seeking an AI-ready design system. Uses the with-price hero variant required at decision stage — surfaces the offer (price + CTA) above the fold so the Explorer immediately understands what MODE is, who it's for, and what it costs before scrolling into proof sections."
+      },
+      {
+        "name": "Credibility",
+        "rationale": "Required by both the decision funnel (appears before Conversion) and the Explorer archetype. Placed early to earn trust with startup-relevant social proof — logos, testimonials, or partner badges — so the discovery-minded Explorer feels confident continuing rather than pressured."
+      },
+      {
+        "name": "Value",
+        "rationale": "Required by the Explorer archetype, who is in discovery mode and needs to understand capabilities before committing. Highlights AI-readiness, component flexibility, and startup-friendly workflows — giving the Explorer room to explore what MODE offers without hard-sell pressure."
+      },
+      {
+        "name": "Evidence",
+        "rationale": "Required at the decision stage before Conversion. Provides concrete metrics, case study data, or adoption stats from other startups to substantiate the Value claims. Gives the Explorer factual grounding that supports their self-directed evaluation process."
+      },
+      {
+        "name": "Decision",
+        "rationale": "Required at the decision stage before Conversion. Presents plan comparison and pricing details so the startup can frame their choice. Keeps the tone informational rather than high-pressure, respecting the Explorer's preference for autonomous decision-making."
+      },
+      {
+        "name": "Conversion",
+        "rationale": "Must appear immediately before Recovery per system rules. Provides the final CTA to convert to paid. Kept confident but low-pressure — a clear commitment prompt that lets the Explorer act on their own terms after having explored all proof and pricing."
+      },
+      {
+        "name": "Recovery",
+        "rationale": "Always last. Offers secondary paths — documentation, sandbox, contact — so the Explorer who isn't ready to commit has meaningful exit options that keep them in MODE's ecosystem."
+      }
+    ],
+    "sections": [
+      {
+        "name": "Navigation",
+        "beat": "Orientation",
+        "rationale": "Global navigation — wayfinding and persistent CTA for the session.",
+        "candidate_components": [
+          "NavigationHeader"
+        ]
+      },
+      {
+        "name": "Hero",
+        "beat": "Orientation",
+        "rationale": "Always first. Establishes context for startups seeking an AI-ready design system. Uses the with-price hero variant required at decision stage — surfaces the offer (price + CTA) above the fold so the Explorer immediately understands what MODE is, who it's for, and what it costs before scrolling into proof sections.",
+        "candidate_components": [
+          "HeroPrimary"
+        ]
+      },
+      {
+        "name": "Features",
+        "beat": "Value",
+        "rationale": "Required by the Explorer archetype, who is in discovery mode and needs to understand capabilities before committing. Highlights AI-readiness, component flexibility, and startup-friendly workflows — giving the Explorer room to explore what MODE offers without hard-sell pressure.",
+        "candidate_components": [
+          "FeatureGrid"
+        ]
+      },
+      {
+        "name": "Footer",
+        "beat": "Recovery",
+        "rationale": "Page close — brand mark, minimal navigation, and legal.",
+        "candidate_components": [
+          "FooterMinimal"
+        ]
+      }
+    ]
+  },
+  "page": [
+    {
+      "section": "Navigation",
+      "beat": "Orientation",
+      "component": "NavigationHeader",
+      "variant": "full",
+      "reasoning": "Explorer archetype on decision-stage page requires 'full for exploration and top-funnel pages' — Explorers need wayfinding context and breathing room to continue discovery, even in conversion moment. The persistent CTA in nav is preserved per rules.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_links": [],
+        "cta_primary": {
+          "label": "Get MODE",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "View pricing",
+          "href": "#"
+        }
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Hero",
+      "beat": "Orientation",
+      "component": "HeroPrimary",
+      "variant": "editorial",
+      "reasoning": "Explorer archetype 'prefers editorial or with-social-proof — discovery tone, breathing room, no pressure toward conversion.' Editorial variant delivers 'high-expression awareness layout: centered, full-width, dominant headline, eyebrow context label' appropriate for Explorers who need to orient themselves before deciding.",
+      "slots": {
+        "eyebrow": "Intent-aware design system for startups",
+        "headline": "Your design system knows how to render. MODE teaches it why.",
+        "subhead": "MODE is the semantic intelligence layer above your component library. It resolves behavior, visual expression, and copy register to the right experience for every user archetype, funnel stage, and context — without manual variants or QA overhead.",
+        "cta_primary": {
+          "label": "Get MODE",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "Explore the architecture",
+          "href": "#"
+        },
+        "media": null,
+        "trust_signal": "One-time purchase. Lifetime access. Runs in your codebase — no vendor lock-in.",
+        "logos": null,
+        "price_display": "$1,199 one-time"
+      },
+      "palette": "neutral"
+    },
+    {
+      "section": "Features",
+      "beat": "Value",
+      "component": "FeatureGrid",
+      "variant": "2-col-heavy",
+      "reasoning": "Explorer variant 'uses 2-col-heavy with longer copy per feature' — this breathing room and deeper articulation supports exploratory evaluation behavior without forcing a compressed, efficiency-focused layout.",
+      "slots": {
+        "headline": "Everything the resolution layer needs to do its job",
+        "subhead": "MODE doesn't add more settings — it adds judgment. Here's what that looks like across the system.",
+        "features": [
+          {
+            "icon": "🧠",
+            "title": "Semantic resolution engine",
+            "description": "Components resolve behavior across four dimensions simultaneously — archetype, funnel stage, intent state, and context mode. The right experience surfaces automatically, without a single conditional variant written by hand."
+          },
+          {
+            "icon": "⚡",
+            "title": "IA planner — brief to architecture in seconds",
+            "description": "Describe your page goal and audience. MODE's IA planner, powered by Claude Opus, returns a full page architecture with component selection, zone affinity, and copy register — before you've written a line of code."
+          },
+          {
+            "icon": "🔀",
+            "title": "Multi-variant generation",
+            "description": "One brief produces Mover, Validator, and Explorer variants in parallel. Each resolves independently to the right tone, evidence weight, and CTA pressure — giving your team three production-ready directions without three rounds of copy review."
+          },
+          {
+            "icon": "🎨",
+            "title": "Palette map — visual emphasis without manual assignment",
+            "description": "Visual weight accumulates semantically toward conversion. The palette map resolves per component per funnel stage, so primary actions read clearly at every scroll depth — configured once, correct everywhere."
+          },
+          {
+            "icon": "🧩",
+            "title": "Component manifest — 11 components, fully specified",
+            "description": "Every component ships with zone affinity, slot schemas, and usage intent already defined. Built on Radix UI primitives — zero new patterns to learn, zero guessing about where a component belongs in a page flow."
+          },
+          {
+            "icon": "🔒",
+            "title": "Full ownership, no runtime dependency",
+            "description": "MODE lives in your codebase. No vendor dashboard, no usage-based billing, no lock-in. Bring your own Anthropic API key, fork the resolution engine, extend the manifest. The intelligence layer is infrastructure you control outright."
+          }
+        ]
+      },
+      "palette": "neutral"
+    },
+    {
+      "section": "Footer",
+      "beat": "Recovery",
+      "component": "FooterMinimal",
+      "variant": "with-cta",
+      "reasoning": "Decision-stage conversion page benefits from 'with-cta variant recaptures departing users on key conversion pages — use on pricing and signup flows,' ensuring Explorers who reach the footer still have a clear conversion path.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_columns": [],
+        "legal_text": "© 2025 MODE. All rights reserved.",
+        "social_links": [],
+        "cta": {
+          "label": "Get MODE",
+          "href": "#"
+        }
+      },
+      "palette": "light"
+    }
+  ],
+  "preview_url": "/admin/preview?file=page-2026-06-20T18-27-29-755Z-explorer.json"
+}

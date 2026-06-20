@@ -1,0 +1,186 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at": "2026-06-20T18:37:00.816Z",
+  "variant": "awareness",
+  "preset": "funnel-driven",
+  "preset_description": "Dark = decision signal. Emphasis accumulates toward conversion — trust anchors and commitment moments are dark, top-of-funnel is light.",
+  "palette_driver": "funnel_stage",
+  "brief": {
+    "audience": "growth-focused SaaS teams who need a semantic design layer that adapts to visitor intent",
+    "goal": "demonstrate MODE's ability to generate intent-aware pages at funnel scale",
+    "context_mode": "organic",
+    "archetype": "Validator",
+    "funnel_stage": "awareness"
+  },
+  "behavioral_tokens": {
+    "require_trust_signal": true,
+    "allow_secondary_cta": true,
+    "subhead_policy": "always",
+    "copy_density": "medium",
+    "evidence_density": "high"
+  },
+  "accent_tokens": {
+    "_note": "Brand primary CTA color. Global — not per-preset. Two variants: button on a light/neutral section vs. on a dark section.",
+    "on_light": {
+      "bg": "violet.9",
+      "text": "white"
+    },
+    "on_dark": {
+      "bg": "white",
+      "text": "slate.12"
+    }
+  },
+  "ia": {
+    "beats": [
+      {
+        "name": "Orientation",
+        "rationale": "Establishes context for growth-focused SaaS teams, introducing MODE as a semantic design layer that adapts to visitor intent. Sets the stage with clear who-this-is-for framing. As an awareness-stage organic visitor, the hero should be soft and educational rather than transactional."
+      },
+      {
+        "name": "Value",
+        "rationale": "Immediately after orientation, articulate MODE's core capabilities — intent-aware page generation, semantic design layers, funnel-scale adaptability. At awareness stage, this educates the visitor on what's possible before asking them to trust or act. Frames outcomes without hard selling."
+      },
+      {
+        "name": "Credibility",
+        "rationale": "The Validator archetype demands proof before committing. Placing credibility signals — customer logos, authority markers, trust badges — after the value proposition gives social validation to the claims just made. At awareness stage, this builds foundational trust without overwhelming."
+      },
+      {
+        "name": "Evidence",
+        "rationale": "Critical for the Validator archetype. Concrete metrics, case study data, and proof points substantiate the value and credibility beats. Validators won't move forward without tangible evidence. Positioned here to create a logical proof chain: what it does → who trusts it → what it has achieved."
+      },
+      {
+        "name": "Conversion",
+        "rationale": "Awareness-stage conversion should be soft — a low-commitment CTA such as 'Explore the docs,' 'See a demo page,' or 'Try the playground.' No pricing or hard commitment. Positioned immediately before Recovery per system rules. The preceding proof chain satisfies the Validator's need for evidence before any action prompt."
+      },
+      {
+        "name": "Recovery",
+        "rationale": "Final beat provides secondary navigation paths, footer links, and exit handling. Catches visitors who aren't ready to convert with alternative routes — blog content, documentation, community links — keeping awareness-stage visitors in the ecosystem even if they don't act on the primary CTA."
+      }
+    ],
+    "sections": [
+      {
+        "name": "Navigation",
+        "beat": "Orientation",
+        "rationale": "Global navigation — wayfinding and persistent CTA for the session.",
+        "candidate_components": [
+          "NavigationHeader"
+        ]
+      },
+      {
+        "name": "Hero",
+        "beat": "Orientation",
+        "rationale": "Establishes context for growth-focused SaaS teams, introducing MODE as a semantic design layer that adapts to visitor intent. Sets the stage with clear who-this-is-for framing. As an awareness-stage organic visitor, the hero should be soft and educational rather than transactional.",
+        "candidate_components": [
+          "HeroPrimary",
+          "HeroStatement"
+        ]
+      },
+      {
+        "name": "Social proof",
+        "beat": "Credibility",
+        "rationale": "The Validator archetype demands proof before committing. Placing credibility signals — customer logos, authority markers, trust badges — after the value proposition gives social validation to the claims just made. At awareness stage, this builds foundational trust without overwhelming.",
+        "candidate_components": [
+          "SocialProofBar"
+        ]
+      },
+      {
+        "name": "Footer",
+        "beat": "Recovery",
+        "rationale": "Page close — brand mark, minimal navigation, and legal.",
+        "candidate_components": [
+          "FooterMinimal"
+        ]
+      }
+    ]
+  },
+  "page": [
+    {
+      "section": "Navigation",
+      "beat": "Orientation",
+      "component": "NavigationHeader",
+      "variant": "full",
+      "reasoning": "Awareness stage pages require full navigation to support exploration context. The notes specify 'full for exploration and top-funnel pages,' and this awareness-stage brief is positioned at the top of the funnel.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_links": [
+          {
+            "label": "Home",
+            "href": "/"
+          },
+          {
+            "label": "Pricing",
+            "href": "/pricing"
+          }
+        ],
+        "cta_primary": {
+          "label": "Get MODE",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "See how it works",
+          "href": "#"
+        }
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Hero",
+      "beat": "Orientation",
+      "component": "HeroPrimary",
+      "variant": "editorial",
+      "reasoning": "Awareness funnel stage requires the editorial variant—'the high-expression awareness layout: centered, full-width, dominant headline, eyebrow context label — no media.' Additionally, Validator archetype pairs with editorial through the trust_signal inclusion noted in the Validator guidance.",
+      "slots": {
+        "eyebrow": "Semantic design intelligence for SaaS teams",
+        "headline": "Your design system knows how to render. MODE teaches it why.",
+        "subhead": "MODE is the intent layer above your component library — resolving behavior, visual expression, and copy register to the right experience for every visitor archetype and funnel stage. No manual variants. No QA overhead.",
+        "cta_primary": {
+          "label": "See how MODE works",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "Read the docs",
+          "href": "#"
+        },
+        "media": null,
+        "trust_signal": "No subscription. Lifetime access. Runs in your codebase.",
+        "logos": null,
+        "price_display": null
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Social proof",
+      "beat": "Credibility",
+      "component": "SocialProofBar",
+      "variant": "quote-with-logos",
+      "reasoning": "Validator archetype requires variants containing 'social-proof,' 'with-photo,' or 'with-source.' The quote-with-logos variant aligns with Validator credibility needs. Notes confirm 'Validator variant leads with quote, logos below' and recommends 'drop directly below HeroPrimary on awareness pages.'",
+      "slots": {
+        "headline": "Built for teams who move in code, not Figma handoff cycles.",
+        "logos": null,
+        "quote": "We were generating three page variants manually for every campaign. MODE collapsed that to a single brief. The resolution engine makes the right call — we stopped second-guessing archetype logic entirely.",
+        "attribution": "Head of Growth, B2B SaaS team — internal beta cohort, 2024",
+        "attribution_logo": null
+      },
+      "palette": "neutral"
+    },
+    {
+      "section": "Footer",
+      "beat": "Recovery",
+      "component": "FooterMinimal",
+      "variant": "standard",
+      "reasoning": "Awareness stage does not require conversion recovery messaging. The standard variant is the default and appropriate for top-funnel pages where the goal is demonstration and exploration, not immediate conversion capture.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_columns": [],
+        "legal_text": "© 2025 MODE. All rights reserved.",
+        "social_links": [],
+        "cta": {
+          "label": "Get MODE",
+          "href": "#"
+        }
+      },
+      "palette": "light"
+    }
+  ],
+  "preview_url": "/admin/preview?file=page-2026-06-20T18-37-00-816Z-homepage-awareness.json"
+}

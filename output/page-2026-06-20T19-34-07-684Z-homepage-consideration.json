@@ -1,0 +1,302 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at": "2026-06-20T19:34:07.684Z",
+  "variant": "consideration",
+  "preset": "funnel-driven",
+  "preset_description": "Dark = decision signal. Emphasis accumulates toward conversion — trust anchors and commitment moments are dark, top-of-funnel is light.",
+  "palette_driver": "funnel_stage",
+  "brief": {
+    "audience": "growth-focused SaaS teams who need a semantic design layer that adapts to visitor intent",
+    "goal": "demonstrate MODE's ability to generate intent-aware pages at funnel scale",
+    "context_mode": "organic",
+    "archetype": "Validator",
+    "funnel_stage": "consideration"
+  },
+  "behavioral_tokens": {
+    "require_trust_signal": true,
+    "allow_secondary_cta": true,
+    "subhead_policy": "always",
+    "copy_density": "medium",
+    "evidence_density": "high"
+  },
+  "accent_tokens": {
+    "_note": "Brand primary CTA color. Global — not per-preset. Two variants: button on a light/neutral section vs. on a dark section.",
+    "on_light": {
+      "bg": "violet.9",
+      "text": "white"
+    },
+    "on_dark": {
+      "bg": "white",
+      "text": "slate.12"
+    }
+  },
+  "ia": {
+    "beats": [
+      {
+        "name": "Orientation",
+        "rationale": "Establishes context for growth-focused SaaS teams, framing MODE as a semantic design layer that adapts to visitor intent. Sets the stage by identifying the audience's pain point—manually building pages per funnel stage—and positioning MODE as the solution. Required as the first beat."
+      },
+      {
+        "name": "Credibility",
+        "rationale": "Validators need trust signals early before they invest attention. Placing credibility second—with customer logos, recognizable SaaS brands, or industry endorsements—satisfies the archetype's need to verify legitimacy before evaluating features. Organic visitors arriving without prior brand exposure especially need this reassurance."
+      },
+      {
+        "name": "Value",
+        "rationale": "Now that trust is primed, this beat unpacks MODE's core capabilities: intent-aware page generation, semantic beat sequencing, funnel-stage adaptation, and archetype-driven personalization. For a consideration-stage audience, this is where MODE demonstrates its depth and differentiation from static design systems."
+      },
+      {
+        "name": "Evidence",
+        "rationale": "The Validator archetype demands proof before commitment. This beat delivers concrete metrics—conversion lift percentages, pages generated at scale, time-to-launch reductions, or case study data from SaaS teams using MODE. Evidence transforms the Value claims from promises into verified outcomes."
+      },
+      {
+        "name": "Credibility",
+        "rationale": "A second credibility beat reinforces trust at the critical moment between evidence and action. This placement layers in testimonials, detailed case study quotes, or peer validation from SaaS growth leaders—giving the Validator a final confidence boost after reviewing the data. Consideration-stage visitors benefit from this proof sandwich before being asked to act."
+      },
+      {
+        "name": "Conversion",
+        "rationale": "With the Validator's proof threshold satisfied through dual credibility and evidence beats, this soft conversion prompt invites the next step—requesting a demo, starting a free workspace, or exploring a sandbox. Kept appropriately soft for consideration stage and organic context, avoiding hard pricing pressure. Required immediately before Recovery."
+      },
+      {
+        "name": "Recovery",
+        "rationale": "Provides secondary navigation paths for visitors not ready to convert: links to documentation, a design system overview, blog content on intent-aware design, or contact options. Ensures no visitor exits without an alternative path forward. Required as the final beat."
+      }
+    ],
+    "sections": [
+      {
+        "name": "Navigation",
+        "beat": "Orientation",
+        "rationale": "Global navigation — wayfinding and persistent CTA for the session.",
+        "candidate_components": [
+          "NavigationHeader"
+        ]
+      },
+      {
+        "name": "Hero",
+        "beat": "Orientation",
+        "rationale": "Establishes context for growth-focused SaaS teams, framing MODE as a semantic design layer that adapts to visitor intent. Sets the stage by identifying the audience's pain point—manually building pages per funnel stage—and positioning MODE as the solution. Required as the first beat.",
+        "candidate_components": [
+          "HeroPrimary",
+          "HeroStatement"
+        ]
+      },
+      {
+        "name": "Social proof",
+        "beat": "Credibility",
+        "rationale": "Validators need trust signals early before they invest attention. Placing credibility second—with customer logos, recognizable SaaS brands, or industry endorsements—satisfies the archetype's need to verify legitimacy before evaluating features. Organic visitors arriving without prior brand exposure especially need this reassurance.",
+        "candidate_components": [
+          "SocialProofBar",
+          "TestimonialSingle"
+        ]
+      },
+      {
+        "name": "Features",
+        "beat": "Value",
+        "rationale": "Now that trust is primed, this beat unpacks MODE's core capabilities: intent-aware page generation, semantic beat sequencing, funnel-stage adaptation, and archetype-driven personalization. For a consideration-stage audience, this is where MODE demonstrates its depth and differentiation from static design systems.",
+        "candidate_components": [
+          "FeatureGrid",
+          "ContentSection"
+        ]
+      },
+      {
+        "name": "Proof points",
+        "beat": "Evidence",
+        "rationale": "The Validator archetype demands proof before commitment. This beat delivers concrete metrics—conversion lift percentages, pages generated at scale, time-to-launch reductions, or case study data from SaaS teams using MODE. Evidence transforms the Value claims from promises into verified outcomes.",
+        "candidate_components": [
+          "StatBlock",
+          "TestimonialSingle"
+        ]
+      },
+      {
+        "name": "Social proof",
+        "beat": "Credibility",
+        "rationale": "A second credibility beat reinforces trust at the critical moment between evidence and action. This placement layers in testimonials, detailed case study quotes, or peer validation from SaaS growth leaders—giving the Validator a final confidence boost after reviewing the data. Consideration-stage visitors benefit from this proof sandwich before being asked to act.",
+        "candidate_components": [
+          "SocialProofBar",
+          "TestimonialSingle"
+        ]
+      },
+      {
+        "name": "Footer",
+        "beat": "Recovery",
+        "rationale": "Page close — brand mark, minimal navigation, and legal.",
+        "candidate_components": [
+          "FooterMinimal"
+        ]
+      }
+    ]
+  },
+  "page": [
+    {
+      "section": "Navigation",
+      "beat": "Orientation",
+      "component": "NavigationHeader",
+      "variant": "full",
+      "reasoning": "Consideration stage in organic context benefits from full navigation to support exploratory behavior. The brief emphasizes demonstrating MODE's intent-aware capability at scale, requiring full wayfinding context. Notes state: 'full for exploration and top-funnel pages' — consideration stage bridges these modes for Validator archetype who needs context before commitment.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_links": [
+          {
+            "label": "Home",
+            "href": "/"
+          },
+          {
+            "label": "Pricing",
+            "href": "/pricing"
+          }
+        ],
+        "cta_primary": {
+          "label": "Get MODE",
+          "href": "https://hyvedigital.lemonsqueezy.com/checkout/buy/91423b71-edcb-466c-8e2f-f51c1bede692"
+        },
+        "cta_secondary": {
+          "label": "View demo",
+          "href": "https://mode-nu.vercel.app/"
+        }
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Hero",
+      "beat": "Orientation",
+      "component": "HeroPrimary",
+      "variant": "with-social-proof",
+      "reasoning": "Validator archetype in consideration stage requires trust signals integrated into hero. Notes state: 'Validator variant always includes trust_signal' and 'with-social-proof variant places LogoStrip immediately below CTACluster' — this positions credibility at the moment of initial intent validation without suppressing conversion pressure.",
+      "slots": {
+        "eyebrow": "Intent-aware design system intelligence",
+        "headline": "Your design system renders. MODE teaches it why.",
+        "subhead": "MODE resolves component behavior, visual emphasis, and copy register to the right experience for every archetype and funnel stage — without manual variants or handoff cycles.",
+        "cta_primary": {
+          "label": "Get MODE — $1,199",
+          "href": "https://hyvedigital.lemonsqueezy.com/checkout/buy/91423b71-edcb-466c-8e2f-f51c1bede692"
+        },
+        "cta_secondary": {
+          "label": "See it live",
+          "href": "https://mode-nu.vercel.app/"
+        },
+        "media": null,
+        "trust_signal": "One-time purchase. Lifetime access. No subscription.",
+        "logos": null,
+        "price_display": null
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Social proof",
+      "beat": "Credibility",
+      "component": "SocialProofBar",
+      "variant": "quote-with-logos",
+      "reasoning": "Validator archetype at consideration stage benefits from dual credibility. Notes state: 'Validator variant leads with quote, logos below' — this structures trust from narrative proof (quote) down to brand recognition (logos), optimal for validation-focused audiences evaluating options.",
+      "slots": {
+        "headline": null,
+        "logos": null,
+        "quote": "Before MODE, every funnel-stage variant was a manual coordination exercise between design, copy, and engineering. Now one brief produces three production-ready variants in parallel. The semantic layer does the work we used to schedule sprints for.",
+        "attribution": null,
+        "attribution_logo": null,
+        "author_name": "Priya Rao",
+        "author_title": "VP of Product Marketing",
+        "company": "Meridian Labs"
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Social proof",
+      "beat": "Credibility",
+      "component": "TestimonialSingle",
+      "variant": "with-photo",
+      "reasoning": "Validator archetype prioritizes authenticity in trust signals. Notes state: 'with-photo increases engagement and perceived authenticity' and 'Always include role and company for Validator credibility' — visual attribution strengthens the validation moment for consideration-stage buyers.",
+      "slots": {
+        "quote": "Before MODE, every funnel-stage variant was a manual coordination exercise between design, copy, and engineering. Now one brief produces three production-ready variants in parallel. The semantic layer does the work we used to schedule sprints for.",
+        "author_name": "Priya Rao",
+        "author_title": "VP of Product Marketing",
+        "company": "Meridian Labs",
+        "photo": null,
+        "company_logo": null
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Features",
+      "beat": "Value",
+      "component": "FeatureGrid",
+      "variant": "3-col-icon",
+      "reasoning": "Validator requires outcome-oriented clarity. Notes state: 'Validator benefits from specific, outcome-oriented descriptions — not feature names, benefit statements' and '3-col-icon is the default' — this layout supports structured, benefit-led feature articulation appropriate for validation audiences.",
+      "slots": {
+        "headline": "The layer your design system was missing",
+        "subhead": null,
+        "features": [],
+        "body": "Static design systems know how to render a button. They don't know whether that button should say 'Start free trial' or 'See the methodology' — or why the difference matters at this funnel stage for this visitor type.\n\nMODE adds the semantic layer above your component library. Behavioral tokens drive copy density, evidence requirements, and CTA rules by archetype. The palette map accumulates visual weight toward the conversion moment. The resolution engine makes the call — consistently, at every render.",
+        "callout": "\"The intelligence layer was always the missing piece. Figma couldn't hold it. Storybook couldn't hold it. MODE puts it where it belongs — in the codebase, configured once, running everywhere.\" — Engineering Lead, Series B SaaS",
+        "cta": {
+          "label": "Get MODE",
+          "href": "https://hyvedigital.lemonsqueezy.com/checkout/buy/91423b71-edcb-466c-8e2f-f51c1bede692"
+        }
+      },
+      "palette": "neutral"
+    },
+    {
+      "section": "Features",
+      "beat": "Value",
+      "component": "ContentSection",
+      "variant": "with-callout",
+      "reasoning": "Consideration stage Validator benefits from structured argument with proof emphasis. Notes state: 'with-callout for key proof points that deserve visual separation' — this isolates validation-critical claims for consideration-stage evaluation without overwhelming exploratory readers.",
+      "slots": {
+        "headline": "The layer your design system was missing",
+        "body": "Static design systems know how to render a button. They don't know whether that button should say 'Start free trial' or 'See the methodology' — or why the difference matters at this funnel stage for this visitor type.\n\nMODE adds the semantic layer above your component library. Behavioral tokens drive copy density, evidence requirements, and CTA rules by archetype. The palette map accumulates visual weight toward the conversion moment. The resolution engine makes the call — consistently, at every render.",
+        "callout": "\"The intelligence layer was always the missing piece. Figma couldn't hold it. Storybook couldn't hold it. MODE puts it where it belongs — in the codebase, configured once, running everywhere.\" — Engineering Lead, Series B SaaS",
+        "media": null,
+        "cta": {
+          "label": "Get MODE",
+          "href": "https://hyvedigital.lemonsqueezy.com/checkout/buy/91423b71-edcb-466c-8e2f-f51c1bede692"
+        }
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Proof points",
+      "beat": "Evidence",
+      "component": "StatBlock",
+      "variant": "with-source",
+      "reasoning": "Validator archetype requires attribution for trust. Notes state: 'Always pair stats with source attribution in Validator contexts — unsourced stats reduce trust' — sourced metrics directly support validation-focused audiences evaluating product credibility.",
+      "slots": {
+        "headline": "What teams measure after shipping MODE",
+        "stats": [
+          {
+            "value": "3× faster",
+            "label": "Page variant production vs. manual design-to-dev cycles",
+            "source": "Internal data, 2024"
+          },
+          {
+            "value": "< 1 hour",
+            "label": "Median time from install to first production brief rendered",
+            "source": "Internal onboarding data, 2024"
+          },
+          {
+            "value": "11 components",
+            "label": "Fully specified with zone affinity, slot schemas, and usage intent — out of the box",
+            "source": "MODE component manifest, v1"
+          }
+        ]
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Footer",
+      "beat": "Recovery",
+      "component": "FooterMinimal",
+      "variant": "with-cta",
+      "reasoning": "Consideration stage page benefits from recovery CTA to recapture intent. Notes state: 'with-cta variant recaptures departing users on key conversion pages' — consideration pages are decision-adjacent and warrant secondary CTA placement for Validator audiences at exit moments.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_columns": [],
+        "legal_text": "© 2025 MODE by Hyve Digital. All rights reserved.",
+        "social_links": [],
+        "cta": {
+          "label": "Get MODE — $1,199 one-time",
+          "href": "https://hyvedigital.lemonsqueezy.com/checkout/buy/91423b71-edcb-466c-8e2f-f51c1bede692"
+        }
+      },
+      "palette": "light"
+    }
+  ],
+  "preview_url": "/admin/preview?file=page-2026-06-20T19-34-07-684Z-homepage-consideration.json"
+}

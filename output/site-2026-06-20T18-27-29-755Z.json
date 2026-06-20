@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0.0",
+  "built_at": "2026-06-20T18:27:29.755Z",
+  "ts": "2026-06-20T18-27-29-755Z",
+  "preset": "archetype-driven",
+  "palette_driver": "archetype",
+  "brief": {
+    "audience": "Startups needing an AI-ready design system",
+    "goal": "Convert to paid",
+    "context_mode": "organic",
+    "content_notes": "",
+    "funnel_stage": "decision",
+    "archetype": "Mover"
+  },
+  "pages": [
+    {
+      "label": "mover",
+      "filename": "page-2026-06-20T18-27-29-755Z-mover.json",
+      "previewUrl": "/admin/preview?file=page-2026-06-20T18-27-29-755Z-mover.json",
+      "siteUrl": "/admin/site?ts=2026-06-20T18-27-29-755Z&page=mover"
+    },
+    {
+      "label": "validator",
+      "filename": "page-2026-06-20T18-27-29-755Z-validator.json",
+      "previewUrl": "/admin/preview?file=page-2026-06-20T18-27-29-755Z-validator.json",
+      "siteUrl": "/admin/site?ts=2026-06-20T18-27-29-755Z&page=validator"
+    },
+    {
+      "label": "explorer",
+      "filename": "page-2026-06-20T18-27-29-755Z-explorer.json",
+      "previewUrl": "/admin/preview?file=page-2026-06-20T18-27-29-755Z-explorer.json",
+      "siteUrl": "/admin/site?ts=2026-06-20T18-27-29-755Z&page=explorer"
+    }
+  ]
+}

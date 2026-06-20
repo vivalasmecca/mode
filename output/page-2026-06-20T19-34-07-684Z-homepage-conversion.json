@@ -1,0 +1,218 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at": "2026-06-20T19:34:07.684Z",
+  "variant": "conversion",
+  "preset": "funnel-driven",
+  "preset_description": "Dark = decision signal. Emphasis accumulates toward conversion — trust anchors and commitment moments are dark, top-of-funnel is light.",
+  "palette_driver": "funnel_stage",
+  "brief": {
+    "audience": "growth-focused SaaS teams who need a semantic design layer that adapts to visitor intent",
+    "goal": "demonstrate MODE's ability to generate intent-aware pages at funnel scale",
+    "context_mode": "organic",
+    "archetype": "Validator",
+    "funnel_stage": "conversion"
+  },
+  "behavioral_tokens": {
+    "require_trust_signal": true,
+    "allow_secondary_cta": true,
+    "subhead_policy": "always",
+    "copy_density": "medium",
+    "evidence_density": "high"
+  },
+  "accent_tokens": {
+    "_note": "Brand primary CTA color. Global — not per-preset. Two variants: button on a light/neutral section vs. on a dark section.",
+    "on_light": {
+      "bg": "violet.9",
+      "text": "white"
+    },
+    "on_dark": {
+      "bg": "white",
+      "text": "slate.12"
+    }
+  },
+  "ia": {
+    "beats": [
+      {
+        "name": "Orientation",
+        "rationale": "Hero (slim) is required on every page including conversion. Provides a concise page title and context so the growth-focused SaaS visitor knows exactly what they are about to commit to — MODE's intent-aware design layer — before any decision UI appears."
+      },
+      {
+        "name": "Decision",
+        "rationale": "Conversion funnel stage mandates Decision immediately after the slim Hero. Presents plan comparison and pricing so the visitor can evaluate their options in a stripped, distraction-free layout."
+      },
+      {
+        "name": "Conversion",
+        "rationale": "Must appear immediately before Recovery per structural rules. Delivers the final CTA and commitment prompt to capture the action while the decision framing is fresh."
+      },
+      {
+        "name": "Recovery",
+        "rationale": "Required as the last beat. Provides secondary paths and exit handling for visitors who aren't ready to commit, maintaining a clean page close."
+      }
+    ],
+    "sections": [
+      {
+        "name": "Navigation",
+        "beat": "Orientation",
+        "rationale": "Global navigation — wayfinding and persistent CTA for the session.",
+        "candidate_components": [
+          "NavigationHeader"
+        ]
+      },
+      {
+        "name": "Hero",
+        "beat": "Orientation",
+        "rationale": "Hero (slim) is required on every page including conversion. Provides a concise page title and context so the growth-focused SaaS visitor knows exactly what they are about to commit to — MODE's intent-aware design layer — before any decision UI appears.",
+        "candidate_components": [
+          "HeroPrimary"
+        ]
+      },
+      {
+        "name": "Pricing",
+        "beat": "Decision",
+        "rationale": "Conversion funnel stage mandates Decision immediately after the slim Hero. Presents plan comparison and pricing so the visitor can evaluate their options in a stripped, distraction-free layout.",
+        "candidate_components": [
+          "PricingCard"
+        ]
+      },
+      {
+        "name": "CTA",
+        "beat": "Conversion",
+        "rationale": "Must appear immediately before Recovery per structural rules. Delivers the final CTA and commitment prompt to capture the action while the decision framing is fresh.",
+        "candidate_components": [
+          "CTABanner"
+        ]
+      },
+      {
+        "name": "Footer",
+        "beat": "Recovery",
+        "rationale": "Page close — brand mark, minimal navigation, and legal.",
+        "candidate_components": [
+          "FooterMinimal"
+        ]
+      }
+    ]
+  },
+  "page": [
+    {
+      "section": "Navigation",
+      "beat": "Orientation",
+      "component": "NavigationHeader",
+      "variant": "minimal",
+      "reasoning": "Conversion-focused page with Validator archetype requires minimal variant: 'minimal variant for conversion-focused pages — strip nav_links, keep logo and single CTA only.' The persistent CTA in nav is critical for Validators who need clear trust signals.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_links": [
+          {
+            "label": "Home",
+            "href": "/"
+          },
+          {
+            "label": "Pricing",
+            "href": "/pricing"
+          }
+        ],
+        "cta_primary": {
+          "label": "Get MODE",
+          "href": "https://hyvedigital.lemonsqueezy.com/checkout/buy/91423b71-edcb-466c-8e2f-f51c1bede692"
+        },
+        "cta_secondary": {
+          "label": "View demo",
+          "href": "https://mode-nu.vercel.app/"
+        }
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Hero",
+      "beat": "Orientation",
+      "component": "HeroPrimary",
+      "variant": "with-social-proof",
+      "reasoning": "Validator archetype at conversion stage requires trust signals. Notes state 'Validator variant always includes trust_signal' and 'with-social-proof variant places LogoStrip immediately below CTACluster,' which directly addresses the Validator's need for social proof to reduce decision friction at the conversion moment.",
+      "slots": {
+        "eyebrow": "Intent-aware design system — one-time purchase",
+        "headline": "The semantic layer your design system is missing.",
+        "subhead": "MODE resolves component behavior, visual emphasis, and content register to the right experience for every visitor archetype and funnel stage — without manual variants.",
+        "cta_primary": {
+          "label": "Get MODE — $1,199",
+          "href": "https://hyvedigital.lemonsqueezy.com/checkout/buy/91423b71-edcb-466c-8e2f-f51c1bede692"
+        },
+        "cta_secondary": {
+          "label": "See it live",
+          "href": "https://mode-nu.vercel.app/"
+        },
+        "media": null,
+        "trust_signal": "Lifetime access. No subscription. No runtime dependency.",
+        "logos": null,
+        "price_display": "$1,199 one-time"
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Pricing",
+      "beat": "Decision",
+      "component": "PricingCard",
+      "variant": "highlighted",
+      "reasoning": "Validator archetype with pricing display requires 'Validator variant includes description and longer feature list.' The highlighted variant surfaces the recommended plan, which aligns with Validator's preference for clear decision guidance and comprehensive feature transparency to justify commitment.",
+      "slots": {
+        "plan_name": "MODE Kit",
+        "badge": "Lifetime access",
+        "price": "$1,199",
+        "billing_period": "one-time purchase",
+        "description": "The full intelligence layer. Resolution engine, component manifest, token config, palette map, IA planner, multi-variant generation, and Next.js preview UI. Yours forever — no subscriptions, no vendor lock-in.",
+        "features": [
+          "Semantic resolution engine — four-dimension model (archetype, funnel stage, intent state, context mode)",
+          "Component manifest — 11 components fully specified with zone affinity and slot schemas",
+          "IA planner + multi-variant generation (Mover, Validator, Explorer in one brief)",
+          "Three palette presets — funnel-driven, archetype-driven, feature-emphasis",
+          "Token dashboard with editable palette map and accent configuration",
+          "Lifetime access — lives in your codebase, fork and extend freely"
+        ],
+        "cta": {
+          "label": "Get MODE",
+          "href": "https://hyvedigital.lemonsqueezy.com/checkout/buy/91423b71-edcb-466c-8e2f-f51c1bede692"
+        }
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "CTA",
+      "beat": "Conversion",
+      "component": "CTABanner",
+      "variant": "centered",
+      "reasoning": "Validator archetype at conversion stage requires trust signals in the terminal CTA. Notes state 'Validator variant: include subhead and trust_signal (e.g., 'No credit card required'),' which the centered variant supports with clear positioning for the trust message alongside the conversion action.",
+      "slots": {
+        "headline": "Your design system renders. MODE makes it reason.",
+        "subhead": "One purchase. Lifetime access. Running in under an hour — configured once, owned by your team forever.",
+        "cta_primary": {
+          "label": "Get MODE — $1,199",
+          "href": "https://hyvedigital.lemonsqueezy.com/checkout/buy/91423b71-edcb-466c-8e2f-f51c1bede692"
+        },
+        "cta_secondary": {
+          "label": "View live preview",
+          "href": "https://mode-nu.vercel.app/"
+        },
+        "trust_signal": "One-time payment. No subscription. No credit card stored after purchase."
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Footer",
+      "beat": "Recovery",
+      "component": "FooterMinimal",
+      "variant": "with-cta",
+      "reasoning": "Conversion funnel stage on a high-intent page requires 'with-cta variant recaptures departing users on key conversion pages — use on pricing and signup flows,' ensuring final recovery opportunity for Validators ready to commit.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_columns": [],
+        "legal_text": "© 2025 MODE by Hyve Digital. All rights reserved.",
+        "social_links": [],
+        "cta": {
+          "label": "Get MODE",
+          "href": "https://hyvedigital.lemonsqueezy.com/checkout/buy/91423b71-edcb-466c-8e2f-f51c1bede692"
+        }
+      },
+      "palette": "light"
+    }
+  ],
+  "preview_url": "/admin/preview?file=page-2026-06-20T19-34-07-684Z-homepage-conversion.json"
+}
