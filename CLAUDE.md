@@ -491,6 +491,12 @@ The dashboard was built incrementally as features were added, organized by capab
 
 **The connection to the Studio orchestration question:** the missing orchestration layer might not be a view at all. It might be the site setup flow — the moment where you declare your page structure, set the variant dimension, and understand the semantic logic before generating anything. If that deliberate onboarding moment existed, the Studio could go back to being what it should be: evaluation after intent is set, not the place where intent gets figured out.
 
+**The toy trial moment.** The palette mode selection step isn't just a configuration decision — it's the moment where the value proposition becomes self-evident rather than described. Watching the same content shift in register, emphasis, and sequence as the intent context changes — awareness feeling open, conversion feeling focused, the Validator variant deepening where the Mover variant collapses — is something no other design system can show. It's not a feature list claim; it's visible in about 15 seconds once the right surface exists.
+
+This means the onboarding design problem is: what is the shortest path from "I just got the kit" to those 15 seconds? Currently the answer is: write a brief, run a build, navigate to Studio, figure out the birds-eye view. That's too long and requires too much assumed context. The toy trial should probably work with zero configuration — a pre-loaded demo brief or a one-URL paste that extracts enough to generate something real — so the first thing a new user sees is the "whoa," not a setup form.
+
+Getting the toy trial right is the highest-leverage onboarding problem. Everything else (site spec, component import, palette decision) is easier once someone has already understood why the system exists.
+
 *Neither journey has a designed first-use experience yet. The right form isn't clear enough to build. End-user validation — using the live site and dashboard as an actual new user would — is the prerequisite for designing this well.*
 
 ---
