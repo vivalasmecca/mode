@@ -71,12 +71,12 @@ The dashboard and preview routes are under `/admin` and are blocked on Vercel (4
 | Local URL | Purpose |
 |-----------|---------|
 | `localhost:3000/admin` | Overview — latest output metadata + design tokens card |
-| `localhost:3000/admin/build` | Build tab — generate, activate, deploy |
+| `localhost:3000/admin/build` | Build tab — Site Build card (all pages at once) + per-page build form |
 | `localhost:3000/admin/edit` | Slot editor — per-section field editing with CTA + link support |
 | `localhost:3000/admin/brand` | Brand context editor — URL extraction + product context + brand brief |
 | `localhost:3000/admin/palette` | Palette map editor — per-preset grid + accent editor |
 | `localhost:3000/admin/studio` | Studio — full-screen canvas, live token remapping, component swapper, variant editor, design system |
-| `localhost:3000/admin/run` | Deploy panel — activate build, commit and push content files |
+| `localhost:3000/admin/run` | Deploy panel — commit and push content files to trigger Vercel build |
 | `localhost:3000/admin/concepts` | Reference docs for all brief fields and system concepts |
 | `localhost:3000/admin/preview?file=page-{ts}-{variant}.json` | Preview a specific variant |
 | `localhost:3000/admin/site?ts={ts}` | Site view — all variants from a build with linked nav |
@@ -134,25 +134,40 @@ git push origin main
 ```
 mode/
 ├── agent/
-│   ├── page-builder.js        # Orchestrator. Runs the full pipeline, writes output JSON.
-│   ├── ia-planner.js          # LLM call (Claude Opus) → proposes section IA from brief.
+│   ├── site-builder.js        # Site orchestrator. Builds all pages × variants in one run.
+│   ├── page-builder.js        # Single-page CLI orchestrator (not used by UI).
+│   ├── ia-planner.js          # LLM call (Claude Opus) → proposes beat sequence + sections.
 │   ├── component-selector.js  # LLM call (Claude Haiku) → selects component per IA slot.
+│   ├── token-resolver.js      # Resolves behavioral tokens + palette from mode-tokens.json.
 │   └── content-generator.js   # LLM call (Claude Sonnet) → fills all slot values in one batch.
+├── config/
+│   ├── site.json              # Site declaration: pages, routes, variant dimensions, nav links.
+│   ├── pages.json             # Page registry: routes + filenames written by site build.
+│   └── routing.json           # Active build timestamp pointer. Written by Activate.
 ├── manifest/
-│   ├── components.json        # 11 components with archetypes, funnel stages, variants, slots.
+│   ├── components.json        # 20+ components with beats, archetypes, funnel stages, variants, slots.
 │   └── micro-blocks.json      # Primitive definitions.
 ├── tokens/
-│   └── mode-tokens.json       # Token dimension structure (profiles not yet populated).
+│   ├── mode-tokens.json       # Palette maps + behavioral tokens per preset + global accent.
+│   ├── color-scale.json       # Color vocabulary: full Radix Colors (31 hues × 12 steps).
+│   ├── theme.json             # Semantic assignment: maps palette tokens to color-scale entries.
+│   └── variant-overrides.json # Named variant registry (slot visibility + layout per variant).
+├── context/
+│   ├── product-context.json   # Structured product facts injected into every build.
+│   └── brand-brief.md         # Tone, pillars, claim territory injected as prompt fragment.
 ├── output/
-│   └── *.json                 # Agent output files. Preview reads the most recent.
-└── ui/                        # Next.js preview app.
-    ├── app/preview/page.tsx   # Preview route — reads latest output JSON, renders modules.
+│   ├── page-{ts}-{variant}.json   # Generated page outputs.
+│   └── site-{ts}.json             # Site manifest linking all variants from a build.
+└── ui/                        # Next.js 16 dashboard + preview.
+    ├── app/
+    │   ├── admin/build/       # Build tab — per-page build form + Site Build card.
+    │   └── api/generate/site/ # POST endpoint for coordinated site builds.
     ├── components/
     │   ├── modules/           # One file per manifest component.
-    │   └── blocks/            # Primitive micro-block components.
+    │   └── blocks/            # Micro-block primitives.
     └── lib/
         ├── types.ts           # Schema contract between agent output and UI.
-        └── get-output.ts      # Reads latest JSON from output/.
+        └── get-output.ts      # File reads: output, manifests, page registry, site config.
 ```
 
 ### Three-tier model
@@ -172,54 +187,63 @@ MICRO-BLOCK LAYER       — How. Reusable primitives modules are built from.
 | Intent state | Session-level | (TBD) |
 | Context mode | Environmental | organic, campaign, retargeting |
 
-### Page zones (concept — not yet built)
+### Narrative beats (built)
 
-A zone is a unit of narrative work on the page. Not "here is a testimonial" but "here is the trust-building moment." Zones sit above sections in the hierarchy:
+The IA planner structures every page around a 7-beat taxonomy. Each section is assigned one beat; the beat sequence is the narrative spine of the page.
 
-```
-Page → Zones → Sections → Components → Micro-blocks
-```
-
-**Proposed zone types:**
-
-| Zone | Job |
+| Beat | Job |
 |---|---|
 | Orientation | Establishes what page this is |
 | Credibility | Proof that the claim is real |
 | Value | What you actually get |
-| Peer Validation | Others have made this decision |
+| Evidence | Specific, sourced substantiation |
 | Decision | The commitment moment |
 | Conversion | The close |
 | Recovery | Last chance before they leave |
 
-**Funnel stage controls zone weight and presence.** Zones don't just vary in content — they vary in whether they exist at all, how many sections fill them, and where they sit in the page order.
+Funnel stage controls which beats appear and in what order. Awareness pages lead with Orientation and Value; conversion pages strip to Orientation and Conversion. Recovery is present only at decision stage and later.
 
-| Zone | Awareness | Consideration | Decision |
-|---|---|---|---|
-| Orientation | Heavy | Light | Minimal |
-| Credibility | Light | Medium | Heavy |
-| Value | Heavy | Heavy | Condensed |
-| Peer Validation | — | Medium | Heavy |
-| Decision | — | Light | Heavy |
-| Conversion | Soft | Moderate | Aggressive |
-| Recovery | — | — | Present |
+Archetype drives behavioral tokens within each beat — copy density, evidence level, CTA rules. A Validator at the Evidence beat gets sourced stats and testimonials; a Mover gets a single credibility signal and moves on.
 
-**Archetype controls density and component choice within each zone.** For the same zone at the same funnel stage, archetype determines how many sections fill it and which components are used:
+### Page zones (longer horizon — not yet built)
+
+Zones are a planned structural layer *above* beats. A zone groups multiple related sections under one narrative purpose. The current flat section list is a simplification — beats already capture the right taxonomy, but zones would make multi-section groupings trackable and governable.
 
 ```
-Credibility zone, decision stage:
-  Validator → LogoBar + StatBlock (sourced) + TestimonialSingle   [3 sections]
-  Mover     → LogoBar only                                         [1 section]
-  Explorer  → StatBlock (contextual) + ContentSection              [2 sections, different type]
+Page → Zones → Sections (each with a beat) → Components → Micro-blocks
 ```
 
-Funnel stage and archetype are genuinely independent dimensions doing different jobs: funnel stage sets the zone map, archetype sets the intensity and component choice within each zone.
+When this gets tackled: the IA planner generates a zone map first, then fills sections per zone. `manifest/components.json` gains zone affinity per component. Output JSON carries zone labels. The current architecture is compatible — just not zone-aware yet.
 
-**Implications for the build when this gets tackled:**
-- The IA planner needs a two-step generation: zone map first, then section fill per zone
-- `manifest/components.json` needs zone affinity per component (which zones a component belongs to)
-- Output JSON should carry zone labels so the label overlay can surface them
-- The current flat section list is a simplification of this model — compatible, just not zone-aware yet
+---
+
+## Two build modes — and why they stay separate
+
+The admin Build tab has two distinct paths. It matters to understand them as separate paradigms, not variations of the same thing.
+
+### Site Build (funnel methodology)
+
+Triggered by the **Site Build card** at the top of the Build tab. Reads `config/site.json` and generates all pages and variants in one coordinated run.
+
+- Routing dimension: **funnel stage** (awareness → consideration → decision → conversion)
+- Pages: Homepage (4 variants) + Pricing (1 variant) = 5 outputs per build
+- Nav links injected into every NavigationHeader from `site.json`
+- `config/pages.json` updated with explicit filenames — `/pricing` reads its file directly and survives subsequent archetype builds without breaking
+- Activate: writes `config/routing.json` with the site build's timestamp; homepage routes by detected funnel stage
+
+The funnel site build is the primary deployment path. The visitor's position in the funnel determines which homepage variant they see. `/pricing` is always the conversion-stage page regardless of which variant the homepage is serving.
+
+### Per-page Build (archetype methodology)
+
+Triggered by the **brief form** below the Site Build card. Generates N variants of a single page using whichever preset is selected.
+
+- Funnel-driven: 4 variants keyed by funnel stage (same dimension as site build, but for one page only)
+- Archetype-driven: 3 variants keyed by archetype (Mover, Validator, Explorer)
+- Feature-emphasis: 4 variants, editorial intent drives palette instead of funnel stage
+
+Archetype mode is a **different routing paradigm** — the visitor's identity type (not funnel position) determines which variant they see. This affects everything: variant labels, the routing signal in `proxy.ts`, and the structure of the site manifest. Archetype builds are valid and produce good output. They just don't compose with the funnel site structure.
+
+**The current boundary:** archetype-mode site building (generating a multi-page site where archetype is the routing dimension) is deferred until the funnel site build flow is fully locked. The two paradigms need to be validated separately before a unified config tries to express both.
 
 ---
 
@@ -229,6 +253,8 @@ Funnel stage and archetype are genuinely independent dimensions doing different 
 
 - **Agent pipeline** — brief → IA proposal → human approval → component selection → token resolution → content generation → JSON output. Four-step, three LLM models.
 - **Multi-variant builds** — one run produces N variant files (4 for funnel-driven, 3 for archetype-driven). Site manifest links them. `/admin/site` renders all with linked nav.
+- **Site build** — `config/site.json` declares all pages (routes, variant dimensions, nav links). `agent/site-builder.js` orchestrates a full site in one run: all page × variant combos in parallel, nav links injected into every NavigationHeader, output files written, `config/pages.json` updated with explicit filenames for single-variant pages. Site Build card in the admin Build tab triggers via `POST /api/generate/site`.
+- **Pricing page stability** — `/pricing` now reads its output file directly from the filename written into `config/pages.json` by the site build, bypassing the active build's variant set entirely. A subsequent archetype build can be activated without breaking `/pricing`. Falls back to `findVariantFile("conversion")` if no explicit filename is set (pre-site-build behavior).
 - **Three palette presets** — funnel-driven, feature-emphasis, archetype-driven. Selectable per build in the Build form without config file edits.
 - **CSS variables layer** — `color-scale.json` (vocabulary) + `theme.json` (semantic assignment via dot-notation). Resolves at request time, no rebuild needed.
 - **Slot editor** — Edit tab with per-section field editing, CTA (label + href) support, named links panel.
@@ -243,9 +269,11 @@ Funnel stage and archetype are genuinely independent dimensions doing different 
 
 | Item | Notes |
 |------|-------|
+| **Lock funnel-mode site building** | Validate the end-to-end site build → activate → deploy flow using funnel methodology. Confirm routing, `/pricing` stability, and nav injection across a full Vercel deployment before expanding further. |
 | **Decision stage IA improvements** | See IA notes section below. Current IA is missing a feature/value block. Decision hero needs a pricing-aware variant option at build time. |
+| Archetype-mode site building | **Deferred until funnel-mode site building is locked.** Archetype mode uses a different routing paradigm (3 variants: Mover/Validator/Explorer) and a different variant dimension — it doesn't map cleanly onto the funnel site structure. The two modes need to be validated and understood as separate before a unified site config tries to handle both. |
 | External design system integration | Document the component registration contract for buyers with existing component libraries. Variant swapping is the universal primitive; slot visibility is MODE-first-party only. |
-| Dashboard cookie threshold control | `STAGE_ADVANCE_THRESHOLD` is currently hardcoded in `ui/proxy.ts`. Should be configurable from the dashboard (Run tab or a routing config panel) without a code edit. |
+| Dashboard cookie threshold control | `STAGE_ADVANCE_THRESHOLD` is currently hardcoded in `ui/proxy.ts`. Should be configurable from the dashboard without a code edit. |
 | Page zones (longer horizon) | IA planner generates zone map first, then section fill per zone. Funnel stage controls zone weight; archetype controls density within zones. Requires manifest zone affinity per component. |
 | CMS as revision layer | After content schema is stable. LLM authors → CMS is the human exception-handling surface. Payload or Sanity. |
 

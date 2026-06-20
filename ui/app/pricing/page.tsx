@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import { DATA_ROOT, findVariantFile } from "@/lib/get-output";
+import { DATA_ROOT, findVariantFile, getPageRegistry, getOutputByFile } from "@/lib/get-output";
 import { PreviewClient } from "@/components/preview/PreviewClient";
 import type { VariantOverrideMap } from "@/lib/types";
 
@@ -41,10 +41,18 @@ function NoActiveBuild() {
 export default async function Pricing() {
   const routing = getRoutingConfig();
 
-  // Always serve the conversion variant, searching across all builds if needed.
-  // When an archetype-driven build is active, the conversion file lives in an
-  // earlier funnel build — findVariantFile searches all manifests newest-first.
-  const found = findVariantFile("conversion", routing?.ts ?? null);
+  // Prefer an explicit filename from config/pages.json written by a site build.
+  // This lets /pricing survive when the active build is archetype-driven (no
+  // conversion variant) by reading its dedicated file directly.
+  // Falls back to findVariantFile which searches all manifests newest-first.
+  const registry = getPageRegistry();
+  const pricingEntry = registry.find((e) => e.route === "/pricing");
+  const found = pricingEntry?.filename
+    ? (() => {
+        const output = getOutputByFile(pricingEntry.filename!);
+        return output ? { output } : null;
+      })()
+    : findVariantFile("conversion", routing?.ts ?? null);
   if (!found) return <NoActiveBuild />;
 
   const { output } = found;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import type { SiteConfig } from "@/lib/types";
 
 interface PresetConfig {
   key: string;
@@ -77,7 +78,11 @@ const PALETTE_DRIVER_LABELS: Record<string, string> = {
   editorial_intent: "editorial intent",
 };
 
-export default function BuildClient() {
+interface BuildClientProps {
+  siteConfig?: SiteConfig | null;
+}
+
+export default function BuildClient({ siteConfig }: BuildClientProps) {
   const [step, setStep] = useState<Step>("config-loading");
   const [allPresets, setAllPresets] = useState<PresetConfig[]>([]);
   const [selectedPreset, setSelectedPreset] = useState<PresetConfig | null>(null);
@@ -103,6 +108,17 @@ export default function BuildClient() {
   const [repaletteError, setRepaletteError] = useState("");
   const [deployState, setDeployState] = useState<"idle" | "loading" | "done" | "error">("idle");
   const [deployMessage, setDeployMessage] = useState("");
+
+  // ─── Site build state ───────────────────────────────────────────────────────
+  const [siteStep, setSiteStep] = useState<"idle" | "loading" | "done" | "error">("idle");
+  const [siteTs, setSiteTs] = useState("");
+  const [siteSiteUrl, setSiteSiteUrl] = useState("");
+  const [siteError, setSiteError] = useState("");
+  const [siteActivateState, setSiteActivateState] = useState<"idle" | "loading" | "done" | "error">("idle");
+
+  const totalVariantCount = siteConfig
+    ? siteConfig.pages.reduce((sum, p) => sum + p.variant_values.length, 0)
+    : 0;
 
   useEffect(() => {
     fetch("/api/config")
@@ -274,6 +290,41 @@ export default function BuildClient() {
     }
   }
 
+  async function handleSiteBuild() {
+    setSiteStep("loading");
+    setSiteError("");
+    setSiteActivateState("idle");
+    try {
+      const res = await fetch("/api/generate/site", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Site build failed");
+      setSiteTs(data.ts);
+      setSiteSiteUrl(data.siteUrl);
+      setSiteStep("done");
+      window.open(data.siteUrl, "_blank", "noopener,noreferrer");
+    } catch (err) {
+      setSiteError(err instanceof Error ? err.message : String(err));
+      setSiteStep("error");
+    }
+  }
+
+  async function handleSiteActivate() {
+    setSiteActivateState("loading");
+    try {
+      const res = await fetch("/api/routing/activate", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ts: siteTs }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Activation failed");
+      setSiteActivateState("done");
+    } catch (err) {
+      setSiteError(err instanceof Error ? err.message : String(err));
+      setSiteActivateState("error");
+    }
+  }
+
   // ─── Loading states ────────────────────────────────────────────────────────
 
   if (step === "config-loading") {
@@ -365,7 +416,7 @@ export default function BuildClient() {
             </div>
             <div className="px-5 py-4 space-y-3">
               <p className="text-sm text-gray-500">
-                Switch to a different palette approach. Remaps visual emphasis per section — all copy is preserved exactly.
+                Switch to a different palette mode. Remaps visual emphasis per section — all copy is preserved exactly.
               </p>
               <div className="flex items-center gap-3">
                 <select
@@ -376,7 +427,7 @@ export default function BuildClient() {
                   }}
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
                 >
-                  <option value="">Select a palette approach…</option>
+                  <option value="">Select a palette mode…</option>
                   {allPresets.map((p) => (
                     <option key={p.key} value={p.key}>
                       {p.key} — {PALETTE_DRIVER_LABELS[p.paletteDriver] ?? p.paletteDriver}
@@ -683,20 +734,128 @@ export default function BuildClient() {
   return (
     <main>
       <div className="max-w-3xl mx-auto px-6 py-8 space-y-6">
+        {/* Site Build card — shown when config/site.json is present */}
+        {siteConfig && (
+          <div className="border border-gray-200 rounded-lg overflow-hidden">
+            <div className="bg-gray-50 border-b border-gray-200 px-4 py-2.5">
+              <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-500">
+                Site Build
+              </h3>
+            </div>
+            <div className="px-5 py-4 space-y-3">
+              <p className="text-sm text-gray-500">
+                Generate all {totalVariantCount} page-variants in one run with shared nav links injected.
+              </p>
+              {/* Palette mode + page chips */}
+              <div className="flex flex-wrap gap-2 items-center">
+                {(() => {
+                  const sitePresetKey = siteConfig.pages[0]?.preset ?? "";
+                  const sitePresetConfig = allPresets.find((p) => p.key === sitePresetKey);
+                  return sitePresetKey ? (
+                    <div className="text-xs bg-indigo-50 border border-indigo-100 text-indigo-700 rounded px-2.5 py-1 font-mono font-medium">
+                      {sitePresetKey}
+                      {sitePresetConfig && (
+                        <span className="text-indigo-400 font-sans font-normal ml-1">
+                          · {PALETTE_DRIVER_LABELS[sitePresetConfig.paletteDriver] ?? sitePresetConfig.paletteDriver}
+                        </span>
+                      )}
+                    </div>
+                  ) : null;
+                })()}
+                <span className="text-gray-200 text-xs">|</span>
+                {siteConfig.pages.map((p) => (
+                  <div
+                    key={p.label}
+                    className="text-xs bg-white border border-gray-200 rounded px-2.5 py-1"
+                  >
+                    <span className="font-medium">{p.label}</span>
+                    <span className="text-gray-400 ml-1">
+                      ({p.variant_values.length} variant{p.variant_values.length > 1 ? "s" : ""})
+                    </span>
+                  </div>
+                ))}
+              </div>
+              {/* Build states */}
+              {siteStep === "idle" && (
+                <button
+                  onClick={handleSiteBuild}
+                  className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 transition-colors"
+                >
+                  Build Site
+                </button>
+              )}
+              {siteStep === "loading" && (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+                  <span className="text-sm text-gray-600">
+                    Building {totalVariantCount} page-variants…
+                  </span>
+                </div>
+              )}
+              {siteStep === "done" && (
+                <div className="flex items-center gap-3 flex-wrap">
+                  <a
+                    href={siteSiteUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors"
+                  >
+                    View Site →
+                  </a>
+                  {siteActivateState === "done" ? (
+                    <span className="text-sm text-green-700">Activated</span>
+                  ) : (
+                    <button
+                      onClick={handleSiteActivate}
+                      disabled={siteActivateState === "loading"}
+                      className="px-3 py-1.5 bg-white border border-gray-300 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      {siteActivateState === "loading" ? "Activating…" : "Activate"}
+                    </button>
+                  )}
+                  <button
+                    onClick={() => {
+                      setSiteStep("idle");
+                      setSiteTs("");
+                      setSiteSiteUrl("");
+                      setSiteError("");
+                      setSiteActivateState("idle");
+                    }}
+                    className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    Build again
+                  </button>
+                </div>
+              )}
+              {siteStep === "error" && (
+                <div className="space-y-2">
+                  <p className="text-sm text-red-600 font-mono break-all">{siteError}</p>
+                  <button
+                    onClick={() => setSiteStep("idle")}
+                    className="text-xs text-gray-500 hover:text-gray-700 transition-colors"
+                  >
+                    Try again
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         <div>
           <h2 className="text-base font-semibold text-gray-900">New Build</h2>
           <p className="text-sm text-gray-500 mt-1">
-            Choose a palette approach, fill in the brief. The system generates all{" "}
+            Choose a palette mode, fill in the brief. The system generates all{" "}
             {selectedPreset.variantValues.length}{" "}
             {selectedPreset.variantDimension.replace("_", " ")} variants automatically.
           </p>
         </div>
 
-        {/* Palette driver selector */}
+        {/* Palette mode selector */}
         <div className="border border-gray-200 rounded-lg overflow-hidden">
           <div className="bg-gray-50 border-b border-gray-200 px-4 py-2.5">
             <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-500">
-              Palette Approach
+              Palette Mode
             </h3>
           </div>
           <div className="p-5 space-y-3">

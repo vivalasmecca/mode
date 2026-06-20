@@ -1,0 +1,30 @@
+{
+  "site_name": "MODE",
+  "nav_links": [
+    { "label": "Home", "href": "/" },
+    { "label": "Pricing", "href": "/pricing" }
+  ],
+  "shared_brief": {
+    "audience": "growth-focused SaaS teams who need a semantic design layer that adapts to visitor intent",
+    "goal": "demonstrate MODE's ability to generate intent-aware pages at funnel scale",
+    "context_mode": "organic"
+  },
+  "pages": [
+    {
+      "label": "Homepage",
+      "route": "/",
+      "preset": "funnel-driven",
+      "variant_dimension": "funnel_stage",
+      "variant_values": ["awareness", "consideration", "decision", "conversion"],
+      "brief_overrides": { "archetype": "Validator" }
+    },
+    {
+      "label": "Pricing",
+      "route": "/pricing",
+      "preset": "funnel-driven",
+      "variant_dimension": "funnel_stage",
+      "variant_values": ["conversion"],
+      "brief_overrides": { "archetype": "Validator" }
+    }
+  ]
+}

@@ -1,12 +1,14 @@
 import * as fs from "fs";
 import * as path from "path";
-import type { PageOutput, SiteManifest } from "./types";
+import type { PageOutput, SiteManifest, SiteConfig } from "./types";
 
 export interface PageRegistryEntry {
   label: string;
   route: string;
   /** When set, this page serves only the variant from the active build whose label matches this value. */
   variant_label?: string;
+  /** When set by a site build, this page reads its output directly from this file — no cross-build search. */
+  filename?: string;
 }
 
 /**
@@ -147,6 +149,20 @@ export function findVariantFile(
   }
 
   return null;
+}
+
+/**
+ * Reads config/site.json — the site-level declaration of all pages, nav links,
+ * and shared brief. Returns null if the file does not exist.
+ */
+export function getSiteConfig(): SiteConfig | null {
+  try {
+    const filepath = path.join(DATA_ROOT, "config", "site.json");
+    if (!fs.existsSync(filepath)) return null;
+    return JSON.parse(fs.readFileSync(filepath, "utf8")) as SiteConfig;
+  } catch {
+    return null;
+  }
 }
 
 /**

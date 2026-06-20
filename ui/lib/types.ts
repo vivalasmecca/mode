@@ -105,6 +105,29 @@ export interface SitePage {
   filename: string;
   previewUrl: string;
   siteUrl: string;
+  page?: string;   // human label from site.json: "Homepage", "Pricing"
+  route?: string;  // URL route from site.json: "/", "/pricing"
+}
+
+export interface SiteNavLink {
+  label: string;
+  href: string;
+}
+
+export interface SitePageSpec {
+  label: string;
+  route: string;
+  preset: string;
+  variant_dimension: string;
+  variant_values: string[];
+  brief_overrides?: Record<string, string>;
+}
+
+export interface SiteConfig {
+  site_name: string;
+  nav_links: SiteNavLink[];
+  shared_brief: Record<string, string>;
+  pages: SitePageSpec[];
 }
 
 export interface SiteManifest {
