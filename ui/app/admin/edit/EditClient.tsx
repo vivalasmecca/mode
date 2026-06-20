@@ -2,8 +2,32 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import Link from "next/link";
-import type { PageOutput } from "@/lib/types";
+import type { PageOutput, PageSection, PaletteMode, ComponentSlots } from "@/lib/types";
 import type { VariantData } from "./page";
+
+// ---------------------------------------------------------------------------
+// ComponentSpec — passed from server, used by the add-section picker
+// ---------------------------------------------------------------------------
+
+export interface ComponentSpec {
+  name: string;
+  purpose: string;
+  beats: string[];
+  funnel_stages: string[];
+  archetypes: string[];
+  variants: string[];
+  slots: Record<string, string>;
+}
+
+const ADDABLE_BEATS = ["Credibility", "Value", "Evidence", "Decision", "Conversion"];
+
+const BEAT_SECTION_NAMES: Record<string, string> = {
+  Credibility: "Social proof",
+  Value: "Features",
+  Evidence: "Proof points",
+  Decision: "Pricing",
+  Conversion: "CTA",
+};
 
 // ---------------------------------------------------------------------------
 // Href combobox — text input + named link dropdown
@@ -540,9 +564,10 @@ interface EditClientProps {
   variants: VariantData[];
   preset?: string;
   namedLinksRaw?: Record<string, string | null>;
+  componentSpecs?: ComponentSpec[];
 }
 
-export function EditClient({ variants, preset, namedLinksRaw = {} }: EditClientProps) {
+export function EditClient({ variants, preset, namedLinksRaw = {}, componentSpecs = [] }: EditClientProps) {
   const [activeVariant, setActiveVariant] = useState(0);
   const [selectedSection, setSelectedSection] = useState<number | null>(
     variants[0]?.output.page.length > 0 ? 0 : null
@@ -555,6 +580,17 @@ export function EditClient({ variants, preset, namedLinksRaw = {} }: EditClientP
   } | null>(null);
   const [savingKey, setSavingKey] = useState<string | null>(null);
   const [syncing, setSyncing] = useState(false);
+
+  // Add-section picker state
+  const [addMode, setAddMode] = useState(false);
+  const [pickerBeat, setPickerBeat] = useState(ADDABLE_BEATS[0]);
+  const [pickerComponent, setPickerComponent] = useState("");
+  const [pickerVariant, setPickerVariant] = useState("");
+  const [pickerPalette, setPickerPalette] = useState<PaletteMode>("neutral");
+  const [pickerAdding, setPickerAdding] = useState<"idle" | "adding" | "generating">("idle");
+
+  // Local page overrides — tracks sections appended client-side before reload
+  const [localPages, setLocalPages] = useState<Record<number, PageSection[]>>({});
 
   // Named links state — initialized from server props, updated locally on save
   const initialLinkValues = Object.fromEntries(
@@ -612,11 +648,123 @@ export function EditClient({ variants, preset, namedLinksRaw = {} }: EditClientP
   }
 
   function getSlotsFor(vIdx: number, sIdx: number): Record<string, unknown> {
+    const basePage = localPages[vIdx] ?? variants[vIdx].output.page;
     return (
       drafts[vIdx]?.[sIdx] ??
       committed[vIdx]?.[sIdx] ??
-      (variants[vIdx].output.page[sIdx].slots as Record<string, unknown>)
+      ((basePage[sIdx]?.slots as Record<string, unknown>) ?? {})
     );
+  }
+
+  // ── Add-section picker helpers ───────────────────────────────────────────
+
+  function getPickerComponents(beat: string): ComponentSpec[] {
+    return componentSpecs.filter((c) => c.beats.includes(beat));
+  }
+
+  function openAddMode() {
+    const beat = ADDABLE_BEATS[0];
+    const comps = getPickerComponents(beat);
+    const first = comps[0];
+    setPickerBeat(beat);
+    setPickerComponent(first?.name ?? "");
+    setPickerVariant(first?.variants[0] ?? "");
+    setPickerPalette("neutral");
+    setAddMode(true);
+    setSelectedSection(null);
+  }
+
+  function handlePickerBeatChange(beat: string) {
+    setPickerBeat(beat);
+    const comps = getPickerComponents(beat);
+    const first = comps[0];
+    setPickerComponent(first?.name ?? "");
+    setPickerVariant(first?.variants[0] ?? "");
+  }
+
+  function handlePickerComponentChange(name: string) {
+    setPickerComponent(name);
+    const comp = componentSpecs.find((c) => c.name === name);
+    setPickerVariant(comp?.variants[0] ?? "");
+  }
+
+  function buildStubSection(): PageSection {
+    const comp = componentSpecs.find((c) => c.name === pickerComponent);
+    const slots: ComponentSlots = {};
+    if (comp?.slots) {
+      for (const [k, t] of Object.entries(comp.slots)) {
+        slots[k] = t.includes("[]") ? [] : null;
+      }
+    }
+    return {
+      section: BEAT_SECTION_NAMES[pickerBeat] ?? pickerBeat,
+      beat: pickerBeat,
+      component: pickerComponent,
+      variant: pickerVariant || null,
+      palette: pickerPalette,
+      reasoning: null,
+      slots,
+    };
+  }
+
+  async function handleAddSection(generate: boolean) {
+    if (!pickerComponent || !currentVariant) return;
+    setPickerAdding(generate ? "generating" : "adding");
+
+    const stubSection = buildStubSection();
+    let finalSection: PageSection = stubSection;
+
+    if (generate) {
+      try {
+        const res = await fetch("/api/generate/section", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ file: currentVariant.filename, section: stubSection }),
+        });
+        if (res.ok) {
+          const data = await res.json() as { slots?: ComponentSlots };
+          if (data.slots) finalSection = { ...stubSection, slots: data.slots };
+        }
+      } catch {
+        // fall back to blank slots
+      }
+    }
+
+    try {
+      const res = await fetch("/api/output/save", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          file: currentVariant.filename,
+          action: "append",
+          section: finalSection,
+        }),
+      });
+
+      if (!res.ok) {
+        setToast({ message: "Failed to add section", type: "error" });
+        setPickerAdding("idle");
+        return;
+      }
+
+      // Update local state so the new section appears immediately
+      const basePage = localPages[activeVariant] ?? currentOutput!.page;
+      const insertAt = Math.max(0, basePage.length - 1);
+      const newPage = [
+        ...basePage.slice(0, insertAt),
+        finalSection,
+        basePage[insertAt],
+      ] as PageSection[];
+
+      setLocalPages((prev) => ({ ...prev, [activeVariant]: newPage }));
+      setAddMode(false);
+      setPickerAdding("idle");
+      setSelectedSection(insertAt);
+      setToast({ message: "Section added", type: "saved" });
+    } catch {
+      setToast({ message: "Failed to add section", type: "error" });
+      setPickerAdding("idle");
+    }
   }
 
   function updateSlot(vIdx: number, sIdx: number, key: string, value: unknown) {
@@ -767,7 +915,7 @@ export function EditClient({ variants, preset, namedLinksRaw = {} }: EditClientP
     0
   );
 
-  const currentSections = currentOutput?.page ?? [];
+  const currentSections = localPages[activeVariant] ?? currentOutput?.page ?? [];
   const selectedSlots =
     selectedSection !== null
       ? getSlotsFor(activeVariant, selectedSection)
@@ -838,53 +986,85 @@ export function EditClient({ variants, preset, namedLinksRaw = {} }: EditClientP
             </div>
           )}
 
-          {/* Section rows */}
-          <ul className="divide-y divide-gray-100">
-            {currentSections.map((section, i) => {
-              const active = selectedSection === i;
-              const unsaved = hasUnsaved(activeVariant, i);
-              return (
-                <li key={i}>
-                  <button
-                    onClick={() => setSelectedSection(i)}
-                    className={`w-full px-4 py-3 text-left transition-colors ${
-                      active ? "bg-indigo-50" : "hover:bg-gray-50"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      {unsaved && (
+          {/* Section rows — grouped by beat */}
+          <ul className="pb-1">
+            {(() => {
+              let lastBeat: string | null = null;
+              return currentSections.flatMap((section, i) => {
+                const active = selectedSection === i;
+                const unsaved = hasUnsaved(activeVariant, i);
+                const beatChanged = section.beat && section.beat !== lastBeat;
+                if (section.beat) lastBeat = section.beat;
+
+                const sectionRow = (
+                  <li key={i} className="border-b border-gray-100">
+                    <button
+                      onClick={() => setSelectedSection(i)}
+                      className={`w-full px-4 py-3 text-left transition-colors ${
+                        active ? "bg-indigo-50" : "hover:bg-gray-50"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        {unsaved && (
+                          <span
+                            className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-amber-400"
+                            title="Unsaved changes"
+                          />
+                        )}
                         <span
-                          className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-amber-400"
-                          title="Unsaved changes"
-                        />
-                      )}
-                      <span
-                        className={`truncate text-sm font-medium ${
-                          active ? "text-indigo-700" : "text-gray-900"
-                        }`}
-                      >
-                        {section.section}
+                          className={`truncate text-sm font-medium ${
+                            active ? "text-indigo-700" : "text-gray-900"
+                          }`}
+                        >
+                          {section.section}
+                        </span>
+                        <PaletteChip mode={section.palette} />
+                      </div>
+                      <div className="mt-1 flex flex-wrap items-center gap-1">
+                        <span className="inline-flex items-center rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-600">
+                          {section.component}
+                        </span>
+                        {section.variant && (
+                          <>
+                            <span className="text-xs text-gray-400">›</span>
+                            <span className="inline-flex items-center rounded bg-blue-50 px-1.5 py-0.5 text-xs text-blue-600">
+                              {section.variant}
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    </button>
+                  </li>
+                );
+
+                if (!beatChanged || i === 0) return [sectionRow];
+
+                return [
+                  <li key={`beat-${i}`} className="border-b border-gray-200 bg-gray-50 px-4 py-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+                        {section.beat}
                       </span>
-                      <PaletteChip mode={section.palette} />
+                      <div className="h-px flex-1 bg-gray-200" />
                     </div>
-                    <div className="mt-1 flex flex-wrap items-center gap-1">
-                      <span className="inline-flex items-center rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-600">
-                        {section.component}
-                      </span>
-                      {section.variant && (
-                        <>
-                          <span className="text-xs text-gray-400">›</span>
-                          <span className="inline-flex items-center rounded bg-blue-50 px-1.5 py-0.5 text-xs text-blue-600">
-                            {section.variant}
-                          </span>
-                        </>
-                      )}
-                    </div>
-                  </button>
-                </li>
-              );
-            })}
+                  </li>,
+                  sectionRow,
+                ];
+              });
+            })()}
           </ul>
+
+          {/* Add section button */}
+          {componentSpecs.length > 0 && (
+            <div className="border-t border-gray-100 px-4 py-3">
+              <button
+                onClick={openAddMode}
+                className="w-full rounded-md border border-dashed border-gray-300 py-2 text-xs font-medium text-gray-500 transition-colors hover:border-indigo-400 hover:text-indigo-600"
+              >
+                + Add section
+              </button>
+            </div>
+          )}
         </div>
 
         {/* ----------------------------------------------------------------
@@ -917,12 +1097,126 @@ export function EditClient({ variants, preset, namedLinksRaw = {} }: EditClientP
             )}
           </div>
 
+          {/* Add-section picker */}
+          {addMode ? (
+            <div className="max-w-2xl px-6 py-6">
+              <div className="mb-5 flex items-center justify-between">
+                <h2 className="text-base font-semibold text-gray-900">Add section</h2>
+                <button
+                  onClick={() => setAddMode(false)}
+                  className="text-xs text-gray-400 hover:text-gray-700"
+                >
+                  Cancel
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {/* Beat */}
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-gray-500">Beat</label>
+                  <select
+                    value={pickerBeat}
+                    onChange={(e) => handlePickerBeatChange(e.target.value)}
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  >
+                    {ADDABLE_BEATS.map((b) => (
+                      <option key={b} value={b}>{b}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Component */}
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-gray-500">Component</label>
+                  {getPickerComponents(pickerBeat).length === 0 ? (
+                    <p className="text-xs text-gray-400">No components available for this beat + funnel stage.</p>
+                  ) : (
+                    <select
+                      value={pickerComponent}
+                      onChange={(e) => handlePickerComponentChange(e.target.value)}
+                      className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    >
+                      {getPickerComponents(pickerBeat).map((c) => (
+                        <option key={c.name} value={c.name}>{c.name}</option>
+                      ))}
+                    </select>
+                  )}
+                  {pickerComponent && (
+                    <p className="mt-1 text-xs text-gray-400">
+                      {componentSpecs.find((c) => c.name === pickerComponent)?.purpose}
+                    </p>
+                  )}
+                </div>
+
+                {/* Variant */}
+                {pickerComponent && (componentSpecs.find((c) => c.name === pickerComponent)?.variants.length ?? 0) > 1 && (
+                  <div>
+                    <label className="mb-1 block text-xs font-medium text-gray-500">Variant</label>
+                    <select
+                      value={pickerVariant}
+                      onChange={(e) => setPickerVariant(e.target.value)}
+                      className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    >
+                      {componentSpecs.find((c) => c.name === pickerComponent)?.variants.map((v) => (
+                        <option key={v} value={v}>{v}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {/* Palette */}
+                <div>
+                  <label className="mb-1.5 block text-xs font-medium text-gray-500">Palette</label>
+                  <div className="flex gap-3">
+                    {(["light", "neutral", "dark"] as PaletteMode[]).map((p) => (
+                      <label key={p} className="flex cursor-pointer items-center gap-1.5">
+                        <input
+                          type="radio"
+                          name="picker-palette"
+                          value={p}
+                          checked={pickerPalette === p}
+                          onChange={() => setPickerPalette(p)}
+                          className="accent-indigo-600"
+                        />
+                        <span className="text-xs text-gray-700">{p}</span>
+                        <PaletteChip mode={p} />
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="mt-6 flex gap-3">
+                <button
+                  onClick={() => handleAddSection(false)}
+                  disabled={!pickerComponent || pickerAdding !== "idle"}
+                  className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:border-gray-400 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {pickerAdding === "adding" ? "Adding…" : "Add blank"}
+                </button>
+                <button
+                  onClick={() => handleAddSection(true)}
+                  disabled={!pickerComponent || pickerAdding !== "idle"}
+                  className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {pickerAdding === "generating" ? "Generating…" : "Generate & add"}
+                </button>
+              </div>
+            </div>
+          ) : null}
+
           {/* Slot editor */}
-          {selectedSectionData && selectedSlots && selectedSection !== null ? (
+          {!addMode && selectedSectionData && selectedSlots && selectedSection !== null ? (
             <div className="max-w-2xl px-6 py-6">
               {/* Section header + save / sync buttons */}
               <div className="mb-6 flex items-start justify-between gap-4">
                 <div>
+                  {selectedSectionData.beat && (
+                    <p className="mb-1 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+                      {selectedSectionData.beat}
+                    </p>
+                  )}
                   <h2 className="text-base font-semibold text-gray-900">
                     {selectedSectionData.section}
                   </h2>
@@ -1003,11 +1297,11 @@ export function EditClient({ variants, preset, namedLinksRaw = {} }: EditClientP
                 })}
               </div>
             </div>
-          ) : (
+          ) : !addMode ? (
             <div className="flex h-64 items-center justify-center text-sm text-gray-400">
               Select a section to edit its slots
             </div>
-          )}
+          ) : null}
         </div>
       </div>
 

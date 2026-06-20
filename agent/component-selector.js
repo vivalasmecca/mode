@@ -104,6 +104,7 @@ async function llmSelectComponents(ia, brief, componentMap) {
               `You are a component selection expert for MODE, an intent-aware SaaS design system.\n\n` +
               `SELECTION RULES:\n` +
               `- For awareness funnel stage: prefer "editorial" variant on hero components — it is the high-expression layout appropriate for the attention-earning moment\n` +
+              `- For decision funnel stage hero components: prefer "with-price" variant — anchors the offer (product name + price) above the fold before proof sections so the visitor knows exactly what they are evaluating\n` +
               `- For conversion funnel stage hero components: prefer "text-only" variant — slim page title and subhead only, no media, no secondary CTA, so it orients without competing with the decision moment below\n` +
               `- For Validator archetype: prefer variants containing "social-proof", "with-photo", or "with-source"\n` +
               `- For Mover archetype: prefer variants containing "minimal" or "text-only"\n` +

@@ -38,14 +38,47 @@ export async function GET(request: Request) {
 export async function PUT(request: Request) {
   try {
     const body = await request.json();
-    const { file, sectionIndex, slots, component, variant, custom_variant } = body as {
+    const { file, action, section, sectionIndex, slots, component, variant, custom_variant } = body as {
       file: unknown;
+      action: unknown;
+      section: unknown;
       sectionIndex: unknown;
       slots: unknown;
       component: unknown;
       variant: unknown;
       custom_variant: unknown;
     };
+
+    // ── Append action: insert a new section before the footer ────────────────
+    if (action === "append") {
+      if (!file || typeof file !== "string") {
+        return Response.json({ error: "Missing or invalid file parameter" }, { status: 400 });
+      }
+      if (!section || typeof section !== "object" || Array.isArray(section)) {
+        return Response.json({ error: "section object is required for append action" }, { status: 400 });
+      }
+
+      const basename = path.basename(file);
+      if (!/^page-.+\.json$/.test(basename)) {
+        return Response.json({ error: "Invalid file name — must match page-*.json" }, { status: 400 });
+      }
+
+      const filepath = path.join(path.join(DATA_ROOT, "output"), basename);
+      if (!fs.existsSync(filepath)) {
+        return Response.json({ error: "File not found" }, { status: 404 });
+      }
+
+      const output = JSON.parse(fs.readFileSync(filepath, "utf8")) as { page?: unknown[] };
+      if (!output.page || !Array.isArray(output.page)) {
+        return Response.json({ error: "Output file has no page array" }, { status: 400 });
+      }
+
+      // Insert before the last section (footer is always last)
+      const insertAt = Math.max(0, output.page.length - 1);
+      output.page.splice(insertAt, 0, section as Record<string, unknown>);
+      fs.writeFileSync(filepath, JSON.stringify(output, null, 2), "utf8");
+      return Response.json({ success: true, insertedAt: insertAt });
+    }
 
     // Validate file
     if (!file || typeof file !== "string") {
@@ -116,11 +149,11 @@ export async function PUT(request: Request) {
     }
 
     // Apply updates to the section
-    const section = output.page[sectionIndex] as Record<string, unknown>;
-    if (slots !== undefined) section.slots = slots;
-    if (component !== undefined) section.component = component;
-    if (variant !== undefined) section.variant = variant;
-    if (custom_variant !== undefined) section.custom_variant = custom_variant;
+    const sectionEntry = output.page[sectionIndex] as Record<string, unknown>;
+    if (slots !== undefined) sectionEntry.slots = slots;
+    if (component !== undefined) sectionEntry.component = component;
+    if (variant !== undefined) sectionEntry.variant = variant;
+    if (custom_variant !== undefined) sectionEntry.custom_variant = custom_variant;
 
     fs.writeFileSync(filepath, JSON.stringify(output, null, 2), "utf8");
 

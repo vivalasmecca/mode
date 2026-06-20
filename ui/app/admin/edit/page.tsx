@@ -11,6 +11,7 @@ import {
 import type { PageRegistryEntry } from "@/lib/get-output";
 import type { SiteManifest } from "@/lib/types";
 import { EditClient } from "./EditClient";
+import type { ComponentSpec } from "./EditClient";
 
 export interface VariantData {
   label: string;
@@ -101,6 +102,37 @@ function getNamedLinksRaw(): Record<string, string | null> {
   }
 }
 
+function getComponentSpecs(): ComponentSpec[] {
+  try {
+    const manifestPath = path.join(DATA_ROOT, "manifest/components.json");
+    if (!fs.existsSync(manifestPath)) return [];
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8")) as {
+      components: Array<{
+        name: string;
+        purpose?: string;
+        beats?: string[];
+        funnel_stages?: string[];
+        archetypes?: string[];
+        variants?: string[];
+        slots?: Record<string, string>;
+      }>;
+    };
+    return manifest.components
+      .filter((c) => !["NavigationHeader", "FooterMinimal"].includes(c.name))
+      .map((c) => ({
+        name: c.name,
+        purpose: c.purpose ?? "",
+        beats: c.beats ?? [],
+        funnel_stages: c.funnel_stages ?? [],
+        archetypes: c.archetypes ?? [],
+        variants: c.variants ?? [],
+        slots: c.slots ?? {},
+      }));
+  } catch {
+    return [];
+  }
+}
+
 function getActiveBuildTs(): string | null {
   try {
     const filepath = path.join(DATA_ROOT, "config", "routing.json");
@@ -188,6 +220,7 @@ export default async function EditPage({
   const { ts, file, page } = await searchParams;
   const namedLinksRaw = getNamedLinksRaw();
   const pageRegistry = getPageRegistry();
+  const componentSpecs = getComponentSpecs();
 
   // ?ts= → load a specific build's full set of variants via site manifest
   if (ts) {
@@ -206,6 +239,7 @@ export default async function EditPage({
         variants={variants}
         preset={manifest.preset}
         namedLinksRaw={namedLinksRaw}
+        componentSpecs={componentSpecs}
       />
     );
   }
@@ -236,6 +270,7 @@ export default async function EditPage({
           <EditClient
             variants={[{ label: entry.label, filename: found.filename, output: found.output }]}
             namedLinksRaw={namedLinksRaw}
+            componentSpecs={componentSpecs}
           />
         </>
       );
@@ -253,13 +288,16 @@ export default async function EditPage({
       <EditClient
         variants={[{ label: file, filename: file, output }]}
         namedLinksRaw={namedLinksRaw}
+        componentSpecs={componentSpecs}
       />
     );
   }
 
-  // No params → prefer the latest site manifest (loads all variants).
-  // Fall back to the latest single page file.
-  const manifest = getLatestSiteManifest();
+  // No params → prefer the ACTIVE build's manifest (same files Studio reads),
+  // so edits here are always reflected in Studio after a reload.
+  // Fall back to the latest site manifest, then the latest single page file.
+  const activeBuildTs = getActiveBuildTs();
+  const manifest = (activeBuildTs ? getSiteManifest(activeBuildTs) : null) ?? getLatestSiteManifest();
   if (manifest) {
     const variants = variantsFromManifest(manifest);
     if (variants.length > 0) {
@@ -270,6 +308,7 @@ export default async function EditPage({
             variants={variants}
             preset={manifest.preset}
             namedLinksRaw={namedLinksRaw}
+            componentSpecs={componentSpecs}
           />
         </>
       );
@@ -283,6 +322,7 @@ export default async function EditPage({
     <EditClient
       variants={[{ label: filename, filename, output }]}
       namedLinksRaw={namedLinksRaw}
+      componentSpecs={componentSpecs}
     />
   );
 }

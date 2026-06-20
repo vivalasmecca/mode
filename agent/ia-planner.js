@@ -33,7 +33,7 @@ const BEAT_NAMES = [
 const BEAT_SEQUENCES = {
   awareness:     ["Orientation", "Value", "Credibility", "Conversion", "Recovery"],
   consideration: ["Orientation", "Credibility", "Value", "Evidence", "Conversion", "Recovery"],
-  decision:      ["Orientation", "Credibility", "Evidence", "Decision", "Conversion", "Recovery"],
+  decision:      ["Orientation", "Credibility", "Value", "Evidence", "Decision", "Conversion", "Recovery"],
   conversion:    ["Orientation", "Decision", "Conversion", "Recovery"],
 };
 

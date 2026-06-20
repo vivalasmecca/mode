@@ -8,6 +8,8 @@ import { PricingCard } from "./PricingCard";
 import { CTABanner } from "./CTABanner";
 import { FooterMinimal } from "./FooterMinimal";
 import { StatBlock } from "./StatBlock";
+import { ContentSection } from "./ContentSection";
+import { HeroStatement } from "./HeroStatement";
 
 export type ModuleComponent = React.ComponentType<{
   slots: ComponentSlots;
@@ -27,4 +29,6 @@ export const MODULE_REGISTRY: Record<string, ModuleComponent> = {
   CTABanner,
   FooterMinimal,
   StatBlock,
+  ContentSection,
+  HeroStatement,
 };
