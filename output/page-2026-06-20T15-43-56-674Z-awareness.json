@@ -103,14 +103,19 @@
       "reasoning": "Awareness funnel stage requires 'full for exploration and top-funnel pages.' The persistent CTA in nav must be maintained as 'the most converted element on most SaaS pages.'",
       "slots": {
         "logo": "[logo]",
-        "nav_links": [],
+        "nav_links": [
+          {
+            "label": "Pricing",
+            "href": "/pricing"
+          }
+        ],
         "cta_primary": {
           "label": "Get MODE",
           "href": "#"
         },
         "cta_secondary": {
           "label": "See how it works",
-          "href": "#"
+          "href": "/#features"
         }
       },
       "palette": "light"

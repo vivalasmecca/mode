@@ -18,6 +18,23 @@ All generation happens through the dashboard. The CLI agent (`node agent/page-bu
 
 ---
 
+## Integration levels
+
+Full documentation in `docs/integration-guide.md`. Summary:
+
+**Level 0 — Routing and palette** (no component work required)
+Visitors are detected and routed to the variant file matching their signal. Each section gets a palette assignment. Your components apply the palette. Effort: middleware config + serving output files.
+
+**Level 1 — Component registration and slot filling**
+MODE's agent generates IA, selects your components, and populates your content slots. Requires registering your components in `manifest/components.json` and accepting a `slots` prop. This is the main integration layer.
+
+**Level 2 — Behavioral tokens and archetype-differentiated copy** (optional)
+Copy density, evidence level, and CTA rules vary by visitor archetype. A Validator gets longer copy with proof points; a Mover gets one-line headlines and a single CTA. This is optional — a single-archetype build produces high-quality content without behavioral token differentiation. Companies that want simpler copy rules can skip this layer entirely and adopt it later.
+
+**What you don't need to do:** rewrite your components, replace your CMS, sync with Figma. The integration surface is a JSON schema, not a platform lock-in.
+
+---
+
 ## Deploying to Vercel
 
 Output files (generated pages + routing config) live in the repo and are committed so Vercel can serve them. The workflow is always local → commit → push → Vercel redeploys.
@@ -53,10 +70,14 @@ The dashboard and preview routes are under `/admin` and are blocked on Vercel (4
 
 | Local URL | Purpose |
 |-----------|---------|
-| `localhost:3000/admin` | Overview — latest output metadata |
+| `localhost:3000/admin` | Overview — latest output metadata + design tokens card |
 | `localhost:3000/admin/build` | Build tab — generate, activate, deploy |
-| `localhost:3000/admin/brand` | Brand context editor |
-| `localhost:3000/admin/palette` | Palette map editor |
+| `localhost:3000/admin/edit` | Slot editor — per-section field editing with CTA + link support |
+| `localhost:3000/admin/brand` | Brand context editor — URL extraction + product context + brand brief |
+| `localhost:3000/admin/palette` | Palette map editor — per-preset grid + accent editor |
+| `localhost:3000/admin/studio` | Studio — full-screen canvas, live token remapping, component swapper, variant editor, design system |
+| `localhost:3000/admin/run` | Deploy panel — activate build, commit and push content files |
+| `localhost:3000/admin/concepts` | Reference docs for all brief fields and system concepts |
 | `localhost:3000/admin/preview?file=page-{ts}-{variant}.json` | Preview a specific variant |
 | `localhost:3000/admin/site?ts={ts}` | Site view — all variants from a build with linked nav |
 
@@ -200,28 +221,28 @@ Funnel stage and archetype are genuinely independent dimensions doing different 
 
 ## Current state
 
-### Done
+### Done (as of June 2026)
 
-- **Agent pipeline** — brief → IA proposal → human approval → component selection → token resolution → content generation → JSON output
-- **Component manifest** — 11 components fully defined with archetypes, funnel stages, variants, slots, notes
-- **Content layer** — single batched Sonnet call fills all slot values in one pass; behavioral tokens drive tone directives (evidence density, trust signal requirements, CTA rules, copy density)
-- **Token config layer** — `mode-tokens.json` has full deployment config: palette modes, behavioral tokens per archetype, palette_map per component × funnel stage. `token-resolver.js` resolves both. `palette` field written to every section in output JSON.
-- **Palette-aware modules** — all 9 module components accept `palette?: PaletteMode` and apply correct bg, text, subtext, muted, border, iconBg classes. Block components (FeatureCard, AuthorLockup, TrustSignal) accept palette from parent.
-- **Preview UI** — Next.js app renders agent output with no unknown components
-- **Module registry** — NavigationHeader, HeroPrimary, SocialProofBar, StatBlock, FeatureGrid, TestimonialSingle, PricingCard, CTABanner, FooterMinimal (+ HeroStatement, ContentSection pending agent use)
-- **Micro-blocks** — AuthorLockup, CTAButton, FeatureCard, HeadlineSubheadLockup, LogoStrip, PlaceholderSlot, PriceDisplay, TrustSignal
-- **Label overlay** — toggleable dev tool shows MODE classification (section name, component, variant, archetype, funnel stage, IA rationale) above each section
+- **Agent pipeline** — brief → IA proposal → human approval → component selection → token resolution → content generation → JSON output. Four-step, three LLM models.
+- **Multi-variant builds** — one run produces N variant files (4 for funnel-driven, 3 for archetype-driven). Site manifest links them. `/admin/site` renders all with linked nav.
+- **Three palette presets** — funnel-driven, feature-emphasis, archetype-driven. Selectable per build in the Build form without config file edits.
+- **CSS variables layer** — `color-scale.json` (vocabulary) + `theme.json` (semantic assignment via dot-notation). Resolves at request time, no rebuild needed.
+- **Slot editor** — Edit tab with per-section field editing, CTA (label + href) support, named links panel.
+- **Studio** — full-screen canvas at `/admin/studio`. Birds-eye view (all variants at scale) + expanded view (1:1 scrollable). Live palette token remapping via color picker (constrained to `color-scale.json` vocabulary). Component swapper with IA candidate chips. Variant row for manifest variant swap. Design System mode for editing `color-scale.json` directly.
+- **Named variant registry** — `tokens/variant-overrides.json`. SlotEditor in Studio creates named variants (slot visibility masks + layout). Any section can reference a named variant via `custom_variant`. Applied at render time in both `/admin/preview` and `localhost:3000`.
+- **Runtime signal routing** — `proxy.ts` detects UTM, cookies, UA → archetype and funnel stage headers. `config/routing.json` points to the active build. Homepage serves the right variant. Query params override for testing (`?archetype=Mover`, `?funnel_stage=decision`).
+- **Brand context** — `context/product-context.json` + `context/brand-brief.md`. Brand tab has URL extractor + editors. Injected into every build.
+- **Deploy panel** — Run tab commits `output/` + `config/` and pushes to trigger Vercel build (content-lane separate from code-lane).
+- **Integration guide** — `docs/integration-guide.md` documents the three adoption levels and buyer integration contract.
 
 ### Up next
 
-| Item | Status | Notes |
-|------|--------|-------|
-| IA revision flow | Stubbed | `page-builder.js` exits if approval !== `y`. Revision loop not implemented. |
-| Visual mapping tool | Open question | How designers set token values per dimension. Composition vs named profiles unresolved — revisit with 2–3 concrete examples. |
-| HeroStatement, ContentSection | Not in UI | In manifest, not yet in module registry (no agent test case exercises them yet). |
-| CMS as revision layer | Future | LLM authors the content; CMS is where humans revise before publish. Agent pushes to Contentful via Management API. Content types derived from manifest slot schemas. See note below. |
-| Page zones | Future concept | Zones sit above sections — each zone has a narrative job (Credibility, Value, Conversion, etc.). Funnel stage controls which zones exist and their weight; archetype controls density and component choice within each zone. Requires IA planner rework and zone affinity on manifest. See architecture section. |
-| Multi-variant generation | Future | One brief generates all archetype variants in a single run. Output schema holds Validator/Mover/Explorer variants side by side. Business owner previews and approves each. Customer is served the right one at runtime — no LLM at request time. |
+| Item | Notes |
+|------|-------|
+| **Multi-page demo** | Homepage + pricing page showing semantic coherence across a funnel journey. Requires `/pricing` route, `page_type` in brief, cross-page nav wiring. |
+| External design system integration | Document the component registration contract for buyers with existing component libraries. Variant swapping is the universal primitive; slot visibility is MODE-first-party only. |
+| Page zones (longer horizon) | IA planner generates zone map first, then section fill per zone. Funnel stage controls zone weight; archetype controls density within zones. Requires manifest zone affinity per component. |
+| CMS as revision layer | After content schema is stable. LLM authors → CMS is the human exception-handling surface. Payload or Sanity. |
 
 ---
 

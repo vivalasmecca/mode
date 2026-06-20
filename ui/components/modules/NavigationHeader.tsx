@@ -25,7 +25,9 @@ export function NavigationHeader({ slots, variant, palette: _palette }: Navigati
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         {/* Logo */}
         <div className="flex items-center gap-8">
-          <img src="/wordmark.svg" alt="Logo" className="h-7 w-auto" />
+          <a href="/">
+            <img src="/wordmark.svg" alt="Logo" className="h-7 w-auto" />
+          </a>
 
           {/* Nav links */}
           {!isMinimal && navLinks.length > 0 && (
