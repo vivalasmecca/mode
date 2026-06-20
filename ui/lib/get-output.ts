@@ -2,6 +2,13 @@ import * as fs from "fs";
 import * as path from "path";
 import type { PageOutput, SiteManifest } from "./types";
 
+export interface PageRegistryEntry {
+  label: string;
+  route: string;
+  /** When set, this page serves only the variant from the active build whose label matches this value. */
+  variant_label?: string;
+}
+
 /**
  * Root directory containing the mode data directories (output/, config/, tokens/, …).
  *
@@ -41,6 +48,20 @@ export function getSiteManifest(ts: string): SiteManifest | null {
     return JSON.parse(fs.readFileSync(filepath, "utf8")) as SiteManifest;
   } catch {
     return null;
+  }
+}
+
+/**
+ * Reads config/pages.json — the page registry mapping named pages to routes and variant sources.
+ * Returns an empty array if the file does not exist.
+ */
+export function getPageRegistry(): PageRegistryEntry[] {
+  try {
+    const filepath = path.join(DATA_ROOT, "config", "pages.json");
+    if (!fs.existsSync(filepath)) return [];
+    return JSON.parse(fs.readFileSync(filepath, "utf8")) as PageRegistryEntry[];
+  } catch {
+    return [];
   }
 }
 

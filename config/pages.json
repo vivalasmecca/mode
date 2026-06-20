@@ -1,0 +1,11 @@
+[
+  {
+    "label": "Homepage",
+    "route": "/"
+  },
+  {
+    "label": "Pricing",
+    "route": "/pricing",
+    "variant_label": "conversion"
+  }
+]

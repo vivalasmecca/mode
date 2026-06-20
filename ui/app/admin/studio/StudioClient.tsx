@@ -25,6 +25,7 @@ export interface Variant {
   label: string;
   filename: string;
   output: PageOutput;
+  route?: string | null;
 }
 
 export interface StudioClientProps {
@@ -1060,6 +1061,9 @@ function VariantCard({
         <p className="text-[11px] text-gray-400 mt-0.5">
           {variant.output.brief.archetype} · {variant.output.brief.funnel_stage}
         </p>
+        {variant.route && (
+          <p className="text-[11px] text-violet-400 font-mono mt-0.5">→ {variant.route}</p>
+        )}
       </div>
     </button>
   );

@@ -4,8 +4,10 @@ import {
   getLatestOutput,
   getOutputByFile,
   getSiteManifest,
+  getPageRegistry,
   DATA_ROOT,
 } from "@/lib/get-output";
+import type { PageRegistryEntry } from "@/lib/get-output";
 import type { SiteManifest } from "@/lib/types";
 import { EditClient } from "./EditClient";
 
@@ -98,6 +100,54 @@ function getNamedLinksRaw(): Record<string, string | null> {
   }
 }
 
+function getActiveBuildTs(): string | null {
+  try {
+    const filepath = path.join(DATA_ROOT, "config", "routing.json");
+    if (!fs.existsSync(filepath)) return null;
+    const data = JSON.parse(fs.readFileSync(filepath, "utf8")) as { ts?: string };
+    return typeof data.ts === "string" && data.ts ? data.ts : null;
+  } catch {
+    return null;
+  }
+}
+
+// ─── Page selector nav ───────────────────────────────────────────────────────
+
+function PageNav({ pages, activePage }: { pages: PageRegistryEntry[]; activePage?: string }) {
+  if (pages.length === 0) return null;
+  return (
+    <div className="border-b border-gray-100 bg-white px-6 py-2.5 flex items-center gap-2">
+      <span className="text-xs font-semibold text-gray-400 mr-1 uppercase tracking-widest">Page</span>
+      <a
+        href="/admin/edit"
+        className={`text-xs px-2.5 py-1 rounded-full font-medium transition-colors ${
+          !activePage
+            ? "bg-gray-900 text-white"
+            : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+        }`}
+      >
+        All variants
+      </a>
+      {pages.map((p) => (
+        <a
+          key={p.label}
+          href={`/admin/edit?page=${encodeURIComponent(p.label)}`}
+          className={`inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium transition-colors ${
+            activePage === p.label
+              ? "bg-gray-900 text-white"
+              : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+          }`}
+        >
+          {p.label}
+          <span className={`font-mono ${activePage === p.label ? "opacity-60" : "opacity-40"}`}>
+            {p.route}
+          </span>
+        </a>
+      ))}
+    </div>
+  );
+}
+
 // ─── Empty / error states ────────────────────────────────────────────────────
 
 function EmptyState() {
@@ -132,10 +182,11 @@ export const dynamic = "force-dynamic";
 export default async function EditPage({
   searchParams,
 }: {
-  searchParams: Promise<{ ts?: string; file?: string }>;
+  searchParams: Promise<{ ts?: string; file?: string; page?: string }>;
 }) {
-  const { ts, file } = await searchParams;
+  const { ts, file, page } = await searchParams;
   const namedLinksRaw = getNamedLinksRaw();
+  const pageRegistry = getPageRegistry();
 
   // ?ts= → load a specific build's full set of variants via site manifest
   if (ts) {
@@ -156,6 +207,36 @@ export default async function EditPage({
         namedLinksRaw={namedLinksRaw}
       />
     );
+  }
+
+  // ?page= → load a specific named page from the registry (e.g. ?page=Pricing)
+  if (page) {
+    const entry = pageRegistry.find((e) => e.label.toLowerCase() === page.toLowerCase());
+    if (!entry) return <NotFound message={`Page "${page}" not found in registry.`} />;
+
+    if (entry.variant_label) {
+      // Load only the matching variant from the active build (or latest manifest as fallback)
+      const buildTs = getActiveBuildTs();
+      const manifest = buildTs ? getSiteManifest(buildTs) : getLatestSiteManifest();
+      if (!manifest) return <NotFound message="No active build. Generate pages first." />;
+      const pageEntry = manifest.pages.find((p) => p.label === entry.variant_label);
+      if (!pageEntry) {
+        return <NotFound message={`Variant "${entry.variant_label}" not found in active build.`} />;
+      }
+      const output = getOutputByFile(pageEntry.filename);
+      if (!output) return <NotFound message={`Output file for "${entry.label}" not found.`} />;
+      return (
+        <>
+          <PageNav pages={pageRegistry} activePage={entry.label} />
+          <EditClient
+            variants={[{ label: entry.label, filename: pageEntry.filename, output }]}
+            preset={manifest.preset}
+            namedLinksRaw={namedLinksRaw}
+          />
+        </>
+      );
+    }
+    // entry has no variant_label — show all variants with this page highlighted; fall through
   }
 
   // ?file= → single-file edit (backward-compatible)
@@ -179,11 +260,14 @@ export default async function EditPage({
     const variants = variantsFromManifest(manifest);
     if (variants.length > 0) {
       return (
-        <EditClient
-          variants={variants}
-          preset={manifest.preset}
-          namedLinksRaw={namedLinksRaw}
-        />
+        <>
+          <PageNav pages={pageRegistry} activePage={page} />
+          <EditClient
+            variants={variants}
+            preset={manifest.preset}
+            namedLinksRaw={namedLinksRaw}
+          />
+        </>
       );
     }
   }

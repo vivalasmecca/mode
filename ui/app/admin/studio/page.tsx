@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import { DATA_ROOT, getOutputByFile, getSiteManifest } from "@/lib/get-output";
+import { DATA_ROOT, getOutputByFile, getSiteManifest, getPageRegistry } from "@/lib/get-output";
 import type { PageOutput, VariantOverrideMap } from "@/lib/types";
 import { StudioClient } from "./StudioClient";
 
@@ -30,11 +30,25 @@ export default function StudioPage() {
   const buildTs = getActiveBuildTs();
   const manifest = buildTs ? getSiteManifest(buildTs) : null;
 
-  const variants: Array<{ label: string; filename: string; output: PageOutput }> = [];
+  // Build a map from variant label → route path (e.g. "conversion" → "/pricing")
+  const pageRegistry = getPageRegistry();
+  const variantLabelToRoute: Record<string, string> = {};
+  for (const entry of pageRegistry) {
+    if (entry.variant_label) variantLabelToRoute[entry.variant_label] = entry.route;
+  }
+
+  const variants: Array<{ label: string; filename: string; output: PageOutput; route?: string | null }> = [];
   if (manifest) {
     for (const page of manifest.pages) {
       const output = getOutputByFile(page.filename);
-      if (output) variants.push({ label: page.label, filename: page.filename, output });
+      if (output) {
+        variants.push({
+          label: page.label,
+          filename: page.filename,
+          output,
+          route: variantLabelToRoute[page.label] ?? null,
+        });
+      }
     }
   }
 
