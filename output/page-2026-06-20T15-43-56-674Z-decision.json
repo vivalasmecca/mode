@@ -141,7 +141,7 @@
       "section": "Hero",
       "beat": "Orientation",
       "component": "HeroPrimary",
-      "variant": "text-only",
+      "variant": "with-price",
       "reasoning": "For conversion stage use text-only: slim title and subhead only, no media, no secondary CTA — orients the visitor without competing with the decision moment below.",
       "slots": {
         "eyebrow": "AI-first design system · Decision stage",
@@ -151,13 +151,11 @@
           "label": "Get MODE — $1,199",
           "href": "#"
         },
-        "cta_secondary": {
-          "label": "See how it works",
-          "href": "#"
-        },
+        "cta_secondary": null,
         "media": null,
         "trust_signal": "One-time payment. Lifetime access. No subscription.",
-        "logos": null
+        "logos": null,
+        "price_display": "MODE Kit — $1,199 · one-time purchase · lifetime access"
       },
       "palette": "dark"
     },

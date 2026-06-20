@@ -23,16 +23,57 @@
         "editorial",
         "with-media",
         "text-only",
-        "with-social-proof"
+        "with-social-proof",
+        "with-price"
       ],
       "variant_slots": {
-        "editorial": ["eyebrow", "headline", "subhead", "cta_primary", "cta_secondary", "trust_signal"],
-        "with-media": ["eyebrow", "headline", "subhead", "cta_primary", "cta_secondary", "trust_signal", "media"],
-        "text-only": ["headline", "subhead", "cta_primary", "cta_secondary", "trust_signal"],
-        "with-social-proof": ["eyebrow", "headline", "subhead", "cta_primary", "cta_secondary", "trust_signal", "logos"]
+        "editorial": [
+          "eyebrow",
+          "headline",
+          "subhead",
+          "cta_primary",
+          "cta_secondary",
+          "trust_signal"
+        ],
+        "with-media": [
+          "eyebrow",
+          "headline",
+          "subhead",
+          "cta_primary",
+          "cta_secondary",
+          "trust_signal",
+          "media"
+        ],
+        "text-only": [
+          "headline",
+          "subhead",
+          "cta_primary",
+          "cta_secondary",
+          "trust_signal"
+        ],
+        "with-social-proof": [
+          "eyebrow",
+          "headline",
+          "subhead",
+          "cta_primary",
+          "cta_secondary",
+          "trust_signal",
+          "logos"
+        ],
+        "with-price": [
+          "eyebrow",
+          "headline",
+          "subhead",
+          "price_display",
+          "cta_primary",
+          "trust_signal"
+        ]
       },
       "properties": {
-        "align": ["left", "center"]
+        "align": [
+          "left",
+          "center"
+        ]
       },
       "slots": {
         "eyebrow": "string | null",
@@ -42,7 +83,8 @@
         "cta_secondary": "CTAButton | null",
         "media": "image | video | null",
         "trust_signal": "string | null",
-        "logos": "image[] | null"
+        "logos": "image[] | null",
+        "price_display": "string | null"
       },
       "micro_blocks": [
         "HeadlineSubheadLockup",
@@ -50,7 +92,7 @@
         "MediaFrame",
         "TrustSignal"
       ],
-      "notes": "Every page requires a Hero \u2014 including conversion. editorial variant is the high-expression awareness layout: centered, full-width, dominant headline, eyebrow context label \u2014 no media. For conversion stage use text-only: slim title and subhead only, no media, no secondary CTA \u2014 orients the visitor without competing with the decision moment below. Validator variant always includes trust_signal. Mover variant suppresses subhead and cta_secondary \u2014 one message, one action. Explorer variant prefers editorial or with-social-proof \u2014 discovery tone, breathing room, no pressure toward conversion. with-social-proof variant places LogoStrip immediately below CTACluster."
+      "notes": "Every page requires a Hero — including conversion. editorial variant is the high-expression awareness layout: centered, full-width, dominant headline, eyebrow context label — no media. text-only for conversion: slim title and subhead only, no media, no secondary CTA — orients the visitor without competing with the decision moment below. with-price for decision stage: centered offer presentation with price_display slot surfacing the price as a fact before the CTA — use when product-context.json has pricing data and the goal is to anchor the commitment. No media, no secondary CTA. Validator variant always includes trust_signal. Mover variant suppresses subhead and cta_secondary — one message, one action. Explorer variant prefers editorial or with-social-proof — discovery tone, breathing room, no pressure toward conversion. with-social-proof variant places LogoStrip immediately below CTACluster."
     },
     {
       "name": "HeroStatement",
@@ -108,7 +150,10 @@
         "list-style"
       ],
       "properties": {
-        "align": ["left", "center"]
+        "align": [
+          "left",
+          "center"
+        ]
       },
       "slots": {
         "headline": "string | null",
@@ -126,7 +171,7 @@
         "FeatureCard",
         "GridLayout"
       ],
-      "notes": "Validator benefits from specific, outcome-oriented descriptions \u2014 not feature names, benefit statements. Explorer variant uses 2-col-heavy with longer copy per feature. 3-col-icon is the default; use for 6 or 9 features. list-style for 4\u20135 features with uneven copy length."
+      "notes": "Validator benefits from specific, outcome-oriented descriptions — not feature names, benefit statements. Explorer variant uses 2-col-heavy with longer copy per feature. 3-col-icon is the default; use for 6 or 9 features. list-style for 4–5 features with uneven copy length."
     },
     {
       "name": "SocialProofBar",
@@ -150,9 +195,19 @@
         "quote-with-logos"
       ],
       "variant_slots": {
-        "logos-only": ["headline"],
-        "single-quote": ["headline", "quote", "attribution"],
-        "quote-with-logos": ["headline", "quote", "attribution"]
+        "logos-only": [
+          "headline"
+        ],
+        "single-quote": [
+          "headline",
+          "quote",
+          "attribution"
+        ],
+        "quote-with-logos": [
+          "headline",
+          "quote",
+          "attribution"
+        ]
       },
       "slots": {
         "headline": "string | null",
@@ -166,7 +221,7 @@
         "QuoteBlock",
         "AuthorLockup"
       ],
-      "notes": "Mover variant is logos-only, no headline \u2014 silent credibility. Validator variant leads with quote, logos below. logos-only is the highest-frequency placement; drop directly below HeroPrimary on awareness pages."
+      "notes": "Mover variant is logos-only, no headline — silent credibility. Validator variant leads with quote, logos below. logos-only is the highest-frequency placement; drop directly below HeroPrimary on awareness pages."
     },
     {
       "name": "StatBlock",
@@ -189,7 +244,10 @@
         "with-source"
       ],
       "properties": {
-        "align": ["center", "left"]
+        "align": [
+          "center",
+          "left"
+        ]
       },
       "slots": {
         "headline": "string | null",
@@ -205,7 +263,7 @@
         "StatUnit",
         "StatGrid"
       ],
-      "notes": "Always pair stats with source attribution in Validator contexts \u2014 unsourced stats reduce trust. Mover variant suppresses sources and headline; pure metric impact. 3-stat is the preferred default. 4-stat requires strong visual balance."
+      "notes": "Always pair stats with source attribution in Validator contexts — unsourced stats reduce trust. Mover variant suppresses sources and headline; pure metric impact. 3-stat is the preferred default. 4-stat requires strong visual balance."
     },
     {
       "name": "PricingCard",
@@ -243,7 +301,7 @@
         "FeatureList",
         "CTAButton"
       ],
-      "notes": "highlighted variant for recommended plan \u2014 use sparingly (one per pricing section). Validator variant includes description and longer feature list. Mover variant strips description; price and CTA only. with-comparison for enterprise tiers where feature differentiation drives upgrade."
+      "notes": "highlighted variant for recommended plan — use sparingly (one per pricing section). Validator variant includes description and longer feature list. Mover variant strips description; price and CTA only. with-comparison for enterprise tiers where feature differentiation drives upgrade."
     },
     {
       "name": "TestimonialSingle",
@@ -277,7 +335,7 @@
         "QuoteBlock",
         "AuthorLockup"
       ],
-      "notes": "Always include role and company for Validator credibility \u2014 anonymous quotes carry no weight. with-photo increases engagement and perceived authenticity. with-company-logo for enterprise social proof. Place near a CTA \u2014 testimonials convert when positioned at a decision moment."
+      "notes": "Always include role and company for Validator credibility — anonymous quotes carry no weight. with-photo increases engagement and perceived authenticity. with-company-logo for enterprise social proof. Place near a CTA — testimonials convert when positioned at a decision moment."
     },
     {
       "name": "CTABanner",
@@ -300,7 +358,10 @@
         "minimal"
       ],
       "properties": {
-        "align": ["center", "left"]
+        "align": [
+          "center",
+          "left"
+        ]
       },
       "slots": {
         "headline": "string",
@@ -314,7 +375,7 @@
         "CTACluster",
         "TrustSignal"
       ],
-      "notes": "Mover variant: strong headline, single CTA, no subhead. Validator variant: include subhead and trust_signal (e.g., 'No credit card required'). minimal for high-frequency use \u2014 above footer, between sections. split for section-end with directional copy on left, CTA on right."
+      "notes": "Mover variant: strong headline, single CTA, no subhead. Validator variant: include subhead and trust_signal (e.g., 'No credit card required'). minimal for high-frequency use — above footer, between sections. split for section-end with directional copy on left, CTA on right."
     },
     {
       "name": "ContentSection",
@@ -389,7 +450,7 @@
         "NavLinks",
         "CTAButton"
       ],
-      "notes": "minimal variant for conversion-focused pages \u2014 strip nav_links, keep logo and single CTA only. transparent for hero sections with media background. full for exploration and top-funnel pages. The persistent CTA in nav is the most converted element on most SaaS pages \u2014 never suppress it."
+      "notes": "minimal variant for conversion-focused pages — strip nav_links, keep logo and single CTA only. transparent for hero sections with media background. full for exploration and top-funnel pages. The persistent CTA in nav is the most converted element on most SaaS pages — never suppress it."
     },
     {
       "name": "FooterMinimal",
@@ -441,7 +502,7 @@
         "NavLinks",
         "LegalCopy"
       ],
-      "notes": "with-cta variant recaptures departing users on key conversion pages \u2014 use on pricing and signup flows. minimal strips nav_columns and social_links; logo + legal only. standard is the default. Keep legal_text concise."
+      "notes": "with-cta variant recaptures departing users on key conversion pages — use on pricing and signup flows. minimal strips nav_columns and social_links; logo + legal only. standard is the default. Keep legal_text concise."
     }
   ]
 }

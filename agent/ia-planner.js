@@ -92,7 +92,7 @@ async function llmPlanBeats(brief) {
               `3. Funnel stage guidance:\n` +
               `   - awareness: light — no Decision beat, soft Conversion\n` +
               `   - consideration: full depth — include Value, Evidence, and Credibility before Conversion\n` +
-              `   - decision: Evidence and Decision required before Conversion\n` +
+              `   - decision: Evidence and Decision required before Conversion. Hero uses with-price variant — surfaces the offer (price + CTA) above the fold before proof sections. Beat order: Orientation → Credibility → Value → Evidence → Decision → Conversion → Recovery.\n` +
               `   - conversion: stripped — Hero (slim) → Decision → Conversion → Recovery only. Hero is required on every page including conversion — it gives the visitor a page title and context before the decision moment. No Credibility, Value, or Evidence beats.`,
             cache_control: { type: "ephemeral" },
           },

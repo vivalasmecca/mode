@@ -30,7 +30,8 @@ function asCTA(slot: unknown): CTAButtonSlot | null {
 export function HeroPrimary({ slots, variant, palette, slotVisibility, layout }: HeroPrimaryProps) {
   const p = getPalette(palette);
   const isEditorial = variant === "editorial";
-  const showMedia = !isEditorial && variant !== "text-only";
+  const isWithPrice = variant === "with-price";
+  const showMedia = !isEditorial && !isWithPrice && variant !== "text-only";
   const showLogos = variant === "with-social-proof";
   const logos = Array.isArray(slots.logos) ? slots.logos : [];
   const isVisible = (name: string) => slotVisibility?.[name] !== false;
@@ -91,6 +92,67 @@ export function HeroPrimary({ slots, variant, palette, slotVisibility, layout }:
                   </PlaceholderSlot>
                 )}
               </div>
+              {isVisible("trust_signal") && (
+                <TrustSignal value={slots.trust_signal as string | null} palette={palette} />
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // with-price: centered offer presentation — headline, subhead, price block, CTA
+  // Used at decision stage when pricing data is available.
+  if (isWithPrice) {
+    return (
+      <section className={`${p.bg} py-24 md:py-32`}>
+        <div className="mx-auto max-w-3xl px-6 text-center">
+          <div className="flex flex-col items-center gap-8">
+            {isVisible("eyebrow") && (
+              <PlaceholderSlot name="eyebrow" value={slots.eyebrow} inline>
+                <p className={`text-xs font-semibold uppercase tracking-widest ${p.muted}`}>
+                  {slots.eyebrow as string}
+                </p>
+              </PlaceholderSlot>
+            )}
+
+            <PlaceholderSlot name="headline" value={slots.headline}>
+              <h1 className={`text-5xl font-bold tracking-tight leading-tight md:text-6xl ${p.text}`}>
+                {slots.headline as string}
+              </h1>
+            </PlaceholderSlot>
+
+            {isVisible("subhead") && (
+              <PlaceholderSlot name="subhead" value={slots.subhead}>
+                <p className={`max-w-xl text-lg leading-relaxed ${p.subtext}`}>
+                  {slots.subhead as string}
+                </p>
+              </PlaceholderSlot>
+            )}
+
+            {/* Price block — the offer as a fact, not a CTA */}
+            <PlaceholderSlot name="price_display" value={slots.price_display}>
+              <div className={`inline-block rounded-xl border ${p.border} px-10 py-5`}>
+                <p className={`text-3xl font-bold tracking-tight ${p.text}`}>
+                  {slots.price_display as string}
+                </p>
+              </div>
+            </PlaceholderSlot>
+
+            <div className="flex flex-col items-center gap-3">
+              {isVisible("cta_primary") && (
+                <PlaceholderSlot name="cta_primary" value={slots.cta_primary} inline>
+                  {slots.cta_primary != null && (
+                    <CTAButton
+                      label={(slots.cta_primary as CTAButtonSlot).label}
+                      href={(slots.cta_primary as CTAButtonSlot).href}
+                      variant={(slots.cta_primary as CTAButtonSlot).variant ?? "primary"}
+                      size="lg"
+                    />
+                  )}
+                </PlaceholderSlot>
+              )}
               {isVisible("trust_signal") && (
                 <TrustSignal value={slots.trust_signal as string | null} palette={palette} />
               )}

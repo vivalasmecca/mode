@@ -160,6 +160,11 @@ function pickVariant(component, brief) {
     return "editorial";
   }
 
+  // Decision stage: prefer with-price — surfaces the offer before any proof sections
+  if (brief.funnel_stage === "decision" && component.variants.includes("with-price")) {
+    return "with-price";
+  }
+
   // Conversion stage: prefer text-only on hero components — slim title, no competing elements
   if (brief.funnel_stage === "conversion" && component.variants.includes("text-only")) {
     return "text-only";
