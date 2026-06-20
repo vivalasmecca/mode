@@ -53,8 +53,13 @@ export default async function Home() {
   const archetype       = h.get("x-mode-archetype")        ?? "Validator";
   const archetypeSignal = h.get("x-mode-archetype-signal") ?? "default";
 
+  // The homepage never serves the conversion register — that belongs to /pricing.
+  // If routing signals have advanced a visitor to conversion, fall back to decision
+  // so the homepage stays in the exploration register and /pricing stays distinct.
+  const effectiveFunnelStage = funnelStage === "conversion" ? "decision" : funnelStage;
+
   // Pick the routing dimension based on what drove this build's palette
-  const variantLabel = manifest.palette_driver === "archetype" ? archetype : funnelStage;
+  const variantLabel = manifest.palette_driver === "archetype" ? archetype : effectiveFunnelStage;
   const page =
     manifest.pages.find((p) => p.label.toLowerCase() === variantLabel.toLowerCase()) ?? manifest.pages[0];
   if (!page) return <NoActiveBuild />;
@@ -74,7 +79,7 @@ export default async function Home() {
 
   logRoutingEvent({
     ts:               new Date().toISOString(),
-    funnel_stage:     funnelStage,
+    funnel_stage:     effectiveFunnelStage,
     funnel_signal:    funnelSignal,
     archetype,
     archetype_signal: archetypeSignal,

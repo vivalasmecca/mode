@@ -3,6 +3,10 @@ import { NextResponse, type NextRequest } from "next/server";
 const FUNNEL_STAGES = ["awareness", "consideration", "decision", "conversion"];
 const ARCHETYPES = ["Mover", "Validator", "Explorer"];
 
+// Number of homepage visits at a stage before advancing to the next.
+// UTM and query param signals bypass this and advance immediately.
+const STAGE_ADVANCE_THRESHOLD = 3;
+
 function detectFunnelStage(
   url: URL,
   cookieFunnel: string | undefined,
@@ -28,7 +32,7 @@ function detectFunnelStage(
   if (/checkout|purchase|buy|cart/.test(utmCampaign))
     return { stage: "conversion", signal: "utm_campaign" };
 
-  // 4. Cookie — stored as the next stage from the previous visit
+  // 4. Cookie — current stage stored from last visit
   if (cookieFunnel && FUNNEL_STAGES.includes(cookieFunnel))
     return { stage: cookieFunnel, signal: "cookie" };
 
@@ -101,17 +105,42 @@ export function proxy(request: NextRequest) {
     },
   });
 
-  // Store the next stage so the following visit gets the advanced stage
-  const nextStage = advanceStage(funnelStage);
-  response.cookies.set("mode_funnel_stage", nextStage, {
-    maxAge: 60 * 60 * 24 * 30,
-    path: "/",
-  });
+  // Determine the next cookie state.
+  //
+  // Explicit signals (param, UTM): pin to the detected stage, reset visit count.
+  // Organic signals (cookie, default): count visits; advance stage only after threshold.
+  // The cookie stores the current stage — not a pre-computed "next" stage.
+  let nextCookieStage: string;
+  let nextVisitCount: number;
+
+  const isExplicitSignal = funnelSignal === "param" || funnelSignal.startsWith("utm");
+  if (isExplicitSignal) {
+    // Explicit override — lock to detected stage, reset counter
+    nextCookieStage = funnelStage;
+    nextVisitCount = 0;
+  } else {
+    // Organic visit — count up; advance after threshold
+    const currentCount = parseInt(
+      request.cookies.get("mode_stage_visits")?.value ?? "0",
+      10,
+    );
+    const newCount = currentCount + 1;
+    const atEnd = funnelStage === FUNNEL_STAGES[FUNNEL_STAGES.length - 1];
+
+    if (newCount >= STAGE_ADVANCE_THRESHOLD && !atEnd) {
+      nextCookieStage = advanceStage(funnelStage);
+      nextVisitCount = 0;
+    } else {
+      nextCookieStage = funnelStage;
+      nextVisitCount = newCount;
+    }
+  }
+
+  const cookieOpts = { maxAge: 60 * 60 * 24 * 30, path: "/" } as const;
+  response.cookies.set("mode_funnel_stage", nextCookieStage, cookieOpts);
+  response.cookies.set("mode_stage_visits", String(nextVisitCount), cookieOpts);
   // Archetype is sticky — set on first detection, preserved thereafter
-  response.cookies.set("mode_archetype", archetype, {
-    maxAge: 60 * 60 * 24 * 30,
-    path: "/",
-  });
+  response.cookies.set("mode_archetype", archetype, cookieOpts);
 
   return response;
 }
