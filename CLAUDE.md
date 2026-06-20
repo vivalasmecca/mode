@@ -448,25 +448,50 @@ Not a design tool — a **semantic decision tool with live component previews**.
 
 ---
 
-## Unresolved: MODE Studio (canvas / orchestration view)
+## Unresolved: Studio drift — orchestrator vs. micromanager
 
-A higher-level concept above the visual mapping tool. The idea: a studio-like experience that reads from your theme and lets you lightly orchestrate and envision changes across the full system — not one variant at a time, but all of them simultaneously on a single canvas.
+The Studio was conceived as an orchestration surface: stand above all variants, make intent decisions about the whole. It has drifted. The accumulated tools (token picker, slot visibility toggles, component swapper, named variant editor, Design System mode, variant row) now operate at the same level of abstraction as the Edit tab. Two detailed editing surfaces; no true orchestration layer.
 
-**The interaction model** is similar to how Claude's design output works: a series of samples rendered on one surface. You can see all variants at once and zoom out to compare, or click into a single artifact to inspect it. For MODE this would mean:
+**The specific drift:** the Studio can now change an individual hex value in a single section of a single variant. That's not orchestration — that's micromanagement. Every tool added was individually justified; collectively they pulled the Studio toward the weeds.
 
-- All generated page variants visible on one canvas
-- Pinch-zoom to compare across variants or drill into one
-- Theme token controls alongside the canvas — adjust a token value and all variants update live
-- Possibly semantic controls too — shift a component's weight for a given context and see the ripple
+**What orchestration actually means at this scale:**
+- Does the site hold a coherent argument end-to-end, across pages — not just within sections?
+- Is emphasis landing at the right moments in the funnel, not just within one page's palette map?
+- When you adjust the brief or the palette intent, what cascades?
 
-**Why this matters:** Right now evaluation happens by opening separate preview tabs and mentally comparing. A canvas view would make differentiation visible at a glance — you'd immediately see whether the funnel stages or archetypes are producing meaningfully different experiences, or whether they're converging.
+None of those questions can be answered from the current Studio. They're brief-level and site-level questions; the Studio is a section-level tool wearing an orchestration costume.
 
-**Relationship to other layers:**
-- Reads from the expression layer (theme tokens → visual output)
-- Reads from the intent layer (preset palette maps → which semantic state per component)
-- Doesn't replace either tool — it's the evaluation and envisioning surface above both
+**The open question:** what is the right form for an orchestration surface? Unclear yet. The end-user validation pass (using the live site as a real visitor) is likely where the need becomes concrete enough to design against. Don't redesign the Studio preemptively — let the gap reveal itself through use.
 
-*This is a longer-horizon concept. Define the expression layer and visual mapping tool first, then the studio becomes the thing that makes both of them legible.*
+*The canvas and editing tools in the current Studio are genuinely useful. The issue is labeling and scope, not the tools themselves. The Studio may need to split: evaluation surface (what it does well) vs. something new for site-level orchestration.*
+
+---
+
+## Unresolved: customer journey and onboarding
+
+The dashboard was built incrementally as features were added, organized by capability (Build, Edit, Studio, Palette, Brand, Run). Two distinct user journeys are now visible — and neither maps cleanly onto that structure.
+
+**Journey 1 — zero to first build (new user)**
+
+1. Spec the site — pages, routes, nav, variant dimension. Currently: manually edit `config/site.json`. No UI for this. The site brief doesn't exist as a first-class concept; the page brief does. This is backwards for how someone actually starts.
+2. Brand setup — product context, brand brief. Brand tab exists.
+3. Palette mode selection — see the three presets with your content, pick one. Currently a radio card in the Build form. Not positioned as a deliberate discovery moment.
+4. First build → validate → deploy.
+
+**Journey 2 — existing design system → MODE**
+
+1. Component import and mapping — register existing components in `manifest/components.json`, implement `ModuleComponent` interface, add to registry. Currently: entirely manual, no UI, no guide.
+2. Site mapping — declare existing pages in `config/site.json`. Also manual.
+3. Palette mode selection — same as journey 1; understand how MODE's presets interact with your component set.
+4. First adapted build → validate → deploy.
+
+**The shared missing moment:** "What happens to my site in each palette mode? Let me see it, then I decide." Both journeys need this decision-support step early — after setup, before the first build commit. It's currently scattered across the Palette tab and Studio canvas, both of which assume familiarity with the system before you can evaluate what you're seeing.
+
+**The dashboard architecture implication:** tabs-by-capability works at small scale. A company with 40 landing pages and an existing design system needs to feel like they're being onboarded into a system, not exploring an admin panel. The right organization is by stage (where are you, what do you decide now, what's next) not by feature. Small site creators may be fine with the current structure; the actual ICP — companies with real page manifests and some budget — probably needs something different.
+
+**The connection to the Studio orchestration question:** the missing orchestration layer might not be a view at all. It might be the site setup flow — the moment where you declare your page structure, set the variant dimension, and understand the semantic logic before generating anything. If that deliberate onboarding moment existed, the Studio could go back to being what it should be: evaluation after intent is set, not the place where intent gets figured out.
+
+*Neither journey has a designed first-use experience yet. The right form isn't clear enough to build. End-user validation — using the live site and dashboard as an actual new user would — is the prerequisite for designing this well.*
 
 ---
 
