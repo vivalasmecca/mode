@@ -499,6 +499,40 @@ Getting the toy trial right is the highest-leverage onboarding problem. Everythi
 
 *Neither journey has a designed first-use experience yet. The right form isn't clear enough to build. End-user validation — using the live site and dashboard as an actual new user would — is the prerequisite for designing this well.*
 
+### Feature artifacts by fork
+
+**Shared — both forks need these**
+
+| Artifact | What it is | Current state |
+|---|---|---|
+| **Toy trial surface** | Zero-config view showing the same content in all palette modes — the aha moment before any setup. Can draw from existing build output files; no new LLM calls required if pre-generated. | Nothing. Studio is only reachable after a build. |
+| **Palette mode comparison** | Designed side-by-side or swappable view of all three presets rendered with real content. A deliberate decision moment, not a radio card in a form. "Here is your site in each mode — pick one." | Radio cards in Build form. Not rendered; not positioned as discovery. |
+| **Site setup UI** | Form to build and edit `config/site.json` — add pages, set routes, variant dimension (funnel stage vs. archetype), variant values, nav links. | Manual JSON file. No UI. |
+| **Onboarding status** | Lightweight setup checklist or progress state — brand context set? site structure declared? first build run? Guides the sequence without being a locked wizard. | Nothing. All tabs equally present; no concept of setup progress. |
+
+**Fork 1 only — zero to first build**
+
+No additional artifacts. The Brand tab, Build form, and deploy pipeline are the right tools — they need to be sequenced and surfaced correctly. Fork 1 is a journey design problem more than a missing feature problem.
+
+**Fork 2 only — existing design system import**
+
+| Artifact | What it is | Current state |
+|---|---|---|
+| **Component manifest editor** | UI to declare external components — name, beats, funnel stages, archetypes, variants, slot schema. Generates the `components.json` entry. | Manual JSON editing. No UI, no guidance. |
+| **Integration scaffold generator** | Takes a component declaration and outputs TypeScript boilerplate implementing the `ModuleComponent` interface with the right props and slot shape. Makes "implement the interface" concrete rather than inferred from examples. | Not built. Pattern must be inferred from existing components. |
+| **Component registration validator** | Checks that every component declared in `manifest/components.json` has a matching key in MODULE_REGISTRY. Surfaces the "unknown component" error at setup time, not at render time in Studio. | Nothing. Error only appears when the Studio tries to render. |
+| **Page mapping mode** | Fork 2 users map existing pages onto MODE's site structure rather than declaring blank ones. The site setup UI needs an "import/declare existing" framing alongside the blank-page path. | Same gap as the shared site setup UI. |
+
+**Sequencing implication**
+
+Toy trial and palette mode comparison are mostly product design problems — they draw from what's already built. High leverage; unblock the aha moment before any configuration happens.
+
+Site setup UI is a genuine missing config layer that unblocks both forks. `config/site.json` should never be a hand-edited JSON file for a real user.
+
+Fork 2's three artifacts (manifest editor, scaffold generator, registration validator) form a contained sub-system — a "Component Setup" flow that makes the import path viable end-to-end.
+
+Onboarding status is the last piece and only makes sense once the steps it tracks actually exist.
+
 ---
 
 ## Unresolved: expression intensity layer
