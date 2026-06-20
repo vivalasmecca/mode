@@ -272,15 +272,28 @@ Archetype mode is a **different routing paradigm** — the visitor's identity ty
 
 ### Up next
 
+#### Now
+
 | Item | Notes |
 |------|-------|
-| **Lock funnel-mode site building** | Validate the end-to-end site build → activate → deploy flow using funnel methodology. Confirm routing, `/pricing` stability, and nav injection across a full Vercel deployment before expanding further. |
-| Archetype-mode site building | **Deferred until funnel-mode site building is locked.** Archetype mode uses a different routing paradigm (3 variants: Mover/Validator/Explorer) and a different variant dimension — it doesn't map cleanly onto the funnel site structure. The two modes need to be validated and understood as separate before a unified site config tries to handle both. |
-| External design system integration | Document the component registration contract for buyers with existing component libraries. Variant swapping is the universal primitive; slot visibility is MODE-first-party only. |
-| Dashboard cookie threshold control | `STAGE_ADVANCE_THRESHOLD` is currently hardcoded in `ui/proxy.ts`. Should be configurable from the dashboard without a code edit. |
-| Page zones (longer horizon) | IA planner generates zone map first, then section fill per zone. Funnel stage controls zone weight; archetype controls density within zones. Requires manifest zone affinity per component. |
-| CMS as revision layer | After content schema is stable. LLM authors → CMS is the human exception-handling surface. Payload or Sanity. |
-| Product catalog (`config/products.json`) | Current checkout setup in `product-context.json` is a single-product structure (`checkout.primary_url`, one pricing tier block). Multi-product or multi-SKU scenarios need a catalog — a manifest of products each with their own checkout URL, named link token, pricing, and tier config. The content generator and slot editor would resolve against the catalog instead of the flat `checkout` block. Same pattern as `config/pages.json`. Not needed until there's more than one product to sell. |
+| **End-user validation** | Use the live site as a v1 end user. Navigate the full funnel journey — home through pricing — and identify where the experience breaks, feels thin, or doesn't hold the semantic thread. Home + pricing is a skeleton; this is how you find out what's missing before building more. |
+| **Brand brief + color tuning** | User content tasks, not engineering. Write `context/brand-brief.md` (tone, pillars, claim territory — immediately improves copy register on the next build). Tune `tokens/theme.json` colors via Studio → Canvas token panel. Both take effect without a rebuild. |
+
+#### Next
+
+| Item | Notes |
+|------|-------|
+| **Archetype-mode site building** | Needs to be validated as a first-class path before funnel-only assumptions calcify in the codebase. Archetype mode is a different routing paradigm (3 variants: Mover/Validator/Explorer) with a different variant dimension. The site builder currently only handles funnel-stage variant dimensions. Getting this working closes the gap and prevents future development from papering around it. |
+| **Additional site page — Solutions or Product** | A third page type fits between homepage (broad entry) and pricing (conversion close). Likely consideration → decision register. This is a real content need but also a config design question: how does `config/site.json` declare intermediate funnel pages — what route, what variant dimension, what funnel stages? And the nav needs to link to it from every page. Warrants thinking through the config shape before building. |
+| **Component ingestion — external design system on-ramp** | Before the editing tools make sense for buyers with existing component libraries, there needs to be a structured way to register external components: declare them in `manifest/components.json` with beat + funnel stage + variant metadata, implement the `ModuleComponent` interface, and add them to the registry. This is earlier in the adoption sequence than it looks — it's what makes the rest of the system usable with a real design system instead of MODE's demo components. |
+
+#### Later
+
+| Item | Notes |
+|------|-------|
+| Page zones | IA planner generates a zone map first, then fills sections per zone. Funnel stage controls zone weight; archetype controls density within zones. Requires manifest zone affinity per component. Longer horizon — the current flat section list is sufficient until there's a real multi-section grouping need. |
+| CMS as revision layer | LLM authors → CMS is the human exception-handling surface. Content schema is stable enough to consider. Payload (TypeScript-native, local) or Sanity (managed, better editing UX). Not until there's a real publishing workflow that needs it. |
+| Product catalog (`config/products.json`) | Current structure is single-product. Multi-SKU needs a catalog — products with their own checkout URLs, named link tokens, pricing, and tier configs. Same flat-file pattern as `config/pages.json`. Not needed until there's more than one product. |
 
 ---
 

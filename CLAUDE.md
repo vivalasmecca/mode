@@ -341,57 +341,49 @@ When dropping back in after time away, start here:
 
 ## What's next (as of June 2026)
 
-The Studio is the primary editing surface. The variant sub-editor is built. The next layer is making the component contract clear for external design systems.
+### Now
 
-### 1. External design system integration contract
-The Studio now has three editing gestures: component swap (IA candidates), variant swap (manifest variants), and slot visibility (first-party only). For an external design system to plug in fully, the buyer needs to:
-1. Register their components in `manifest/components.json` with their available variants
-2. Map semantic moments to variants in their manifest entry (e.g. `"hero-centered"` = conversion-stage Hero)
-3. Implement the `ModuleComponent` interface in their component registry
+**End-user validation.** Use the live site as a v1 end user before building more. Home + pricing is a skeleton. Navigate the funnel as a real visitor would — home through pricing — and find where the experience breaks, feels thin, or doesn't hold the semantic thread across pages.
 
-Slot visibility toggles are MODE-only. Variant swapping is universal. The integration guide should document this contract explicitly.
+**Brand brief + color tuning.** Not engineering tasks. Write `context/brand-brief.md` (tone, pillars, claim territory) — immediately improves copy register on the next build. Tune color and semantic token assignments via Studio → Canvas token panel and Design System mode. Both take effect without a rebuild.
 
-### 2. Component anatomy editor (longer horizon — the Figma replacement vision)
-Beyond variant selection: letting users define which visual zones of a component (page bleed bg, container bg, keylines, SVG fills, text) are bound to which semantic token. The anatomy binding layer: zone-level CSS custom properties per component, making the connection between semantic tokens and visual expression configurable rather than hardcoded in JSX. This is the "kill Figma" direction — a code-native component design surface that understands semantic intent, not just visual properties.
+### Next
 
-### 2. Brand palette tuning
-`color-scale.json` now ships with the full Radix Colors vocabulary. The next step is replacing individual hues with real brand colors — open Studio → Design System, click any swatch, pick your brand hex, save. Then retune `theme.json` semantic assignments in the Canvas token panel. No file editing required.
+**Archetype-mode site building.** The site builder currently only handles funnel-stage variant dimensions. Archetype mode (Mover/Validator/Explorer) is a different routing paradigm that needs to be validated as a first-class path before funnel-only assumptions calcify further. Getting this working closes the gap and prevents future development from papering around it.
 
-### 3. CMS integration — persistent content layer
-The inline slot editor proves the editing workflow. When ready to add multi-session persistence, versioning, and multi-user editing, connect to a headless CMS. **Payload CMS** is the right fit: TypeScript-native, runs locally alongside Next.js, self-hosted, schema defined in code. Content types map directly to the slot schema already defined in `lib/types.ts`. **Sanity** is an alternative: managed, excellent editing UX, free tier — better if local service overhead is unwanted.
+**Additional site page — Solutions or Product.** A third page type fits between homepage (broad entry) and pricing (conversion close), likely in consideration → decision register. Before building it, the config design question needs an answer: how does `config/site.json` declare intermediate funnel pages — what variant dimension, what funnel stages, how does the nav link to it from every other page? Worth thinking through before touching the site builder.
 
-The CMS integration waits until the content schema is stable. Every component slot addition currently requires no migration; a CMS would require one. Schema is stable enough now to consider starting.
+**Component ingestion — external design system on-ramp.** Before the editing tools make sense for buyers with existing component libraries, there needs to be a structured way to register external components: declare them in `manifest/components.json` with beat + funnel stage + variant metadata, implement the `ModuleComponent` interface, and add them to the registry. This is earlier in the adoption sequence than it looks — it's the prerequisite for using MODE with a real design system.
 
----
+### Later
 
-### Level 1 — demo readiness
-- **LemonSqueezy setup** — add checkout URL via the Edit tab Links panel (`checkout` token). CTAs point to real checkout automatically on next build. No code change needed.
-- **Analytics attribution** ✓ — local event log at `output/events.jsonl`; Run tab shows routing decisions with signal source chips. Wire PostHog when ready for production observability.
+**Page zones.** IA planner generates zone map first, then fills sections per zone. Requires manifest zone affinity per component. Longer horizon — the current flat section list is sufficient until there's a real multi-section grouping need.
 
-### Level 2 — output quality
-- **Brand brief** — write `context/brand-brief.md` (tone, pillars, claim territory). Immediately improves copy register. Brand tab has the editor.
-- **Colors** — tune `tokens/theme.json` for visual brand expression. No rebuild required.
+**CMS as revision layer.** LLM authors → CMS is the human exception-handling surface. Content schema is stable enough to consider. Payload (TypeScript-native, local) or Sanity (managed). Not until there's a real publishing workflow that needs it.
 
-**Done:**
-- Four-page Validator funnel journey ✓
-- Runtime signal routing (UTM, cookies, UA → variant serving) ✓
-- Page beats (7-beat narrative taxonomy, IA planning, section naming) ✓
-- Expressive hero variants (editorial layout for awareness stage) ✓
-- Component library tab in admin dashboard ✓
-- Mover contrast build ✓ (tested; ongoing — run any preset/archetype combination as needed)
-- Analytics attribution ✓ (local JSONL log + Run tab activity view; PostHog additive later)
-- theme.json / CSS variables layer ✓ (palette-vars.ts → html style → static palette.ts)
-- Inline slot editor / Edit tab ✓
-- Named links panel ✓
-- Wordmark ✓
-- Build tab foundational warning ✓
-- Run / Deploy panel ✓
-- Palette tab hex fix ✓ (resolved colors via color-scale.json server-side; accurate after Studio edits)
-- Studio ✓ (birds-eye canvas + expanded view + live token remapping + component swapper + Design System mode)
-- Full Radix Colors v3.0.0 palette ✓ (31 hues × 12 steps; theme.json updated to Radix notation)
-- Overview cleanup ✓ (Token Resolution table removed; Design Tokens CTA card added)
-- Clear routing history ✓ (Run tab button truncates events.jsonl without page reload)
-- Hero on every page ✓ (HeroPrimary extended to conversion stage; text-only variant for slim title; null guard fixed in HeroPrimary.tsx)
+**Product catalog.** Current structure is single-product. Multi-SKU needs a catalog config. Not needed until there's more than one product.
+
+### Done
+
+- Full agent pipeline ✓ (brief → IA → component selection → token resolution → content generation)
+- Multi-variant builds ✓ (4 funnel-driven or 3 archetype-driven variants per run; site manifest)
+- Site build ✓ (`config/site.json` → all pages × variants in one run; nav injection; `config/pages.json`)
+- Pricing page stability ✓ (reads explicit filename from `config/pages.json`; survives archetype builds)
+- Three palette presets ✓ (funnel-driven, feature-emphasis, archetype-driven; selectable per build)
+- CSS variables layer ✓ (`color-scale.json` vocabulary + `theme.json` semantic assignment; resolves at request time)
+- Edit tab ✓ (slot editor, named links panel, beat group dividers, add-section picker with Generate option)
+- Edit/Studio source sync ✓ (Edit defaults to active build manifest; same files as Studio)
+- Beat visibility in Edit tab ✓ (beat headers in section list; beat label in slot editor header)
+- Studio ✓ (birds-eye + expanded canvas; live token remapping; component swapper + variant row; Design System mode)
+- Named variant registry ✓ (`tokens/variant-overrides.json`; SlotEditor creates named variants)
+- Runtime signal routing ✓ (UTM, cookies, UA → funnel stage + archetype headers; `config/routing.json`)
+- Brand context ✓ (`product-context.json` + `brand-brief.md`; Brand tab URL extractor + editors)
+- LemonSqueezy checkout ✓ (checkout URL set in named links; CTAs resolved on build)
+- Analytics attribution ✓ (local JSONL log + Run tab routing activity view)
+- ContentSection + HeroStatement components ✓ (previously manifest-only; now built and registered)
+- Decision stage IA improvements ✓ (Value beat in beat sequence; with-price hero rule in component selector)
+- Deploy panel ✓ (Run tab commits output/ + config/ and pushes; content-lane separate from code push)
+- Full Radix Colors v3.0.0 palette ✓ (31 hues × 12 steps; theme.json in Radix notation)
 
 ---
 
