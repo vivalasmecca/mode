@@ -9,7 +9,7 @@
  */
 
 import { useState } from "react";
-import type { PageOutput, PageSection } from "@/lib/types";
+import type { PageOutput, PageSection, VariantOverrideMap } from "@/lib/types";
 import { MODULE_REGISTRY } from "@/components/modules";
 import { SectionLabel } from "./SectionLabel";
 
@@ -25,9 +25,10 @@ function UnknownComponent({ name }: { name: string }) {
 
 interface PreviewClientProps {
   output: PageOutput;
+  variantOverrides?: VariantOverrideMap;
 }
 
-export function PreviewClient({ output }: PreviewClientProps) {
+export function PreviewClient({ output, variantOverrides = {} }: PreviewClientProps) {
   const [labelsOn, setLabelsOn] = useState(false);
 
   // Index IA rationale and beat by section name for O(1) lookup
@@ -43,6 +44,9 @@ export function PreviewClient({ output }: PreviewClientProps) {
       <main className="min-h-screen bg-white">
         {output.page.map((section: PageSection, i: number) => {
           const Component = MODULE_REGISTRY[section.component];
+          const variantDef = section.custom_variant
+            ? variantOverrides[`${section.component}.${section.custom_variant}`]
+            : null;
 
           return (
             <div key={i}>
@@ -59,7 +63,13 @@ export function PreviewClient({ output }: PreviewClientProps) {
                 />
               )}
               {Component ? (
-                <Component slots={section.slots} variant={section.variant} palette={section.palette} />
+                <Component
+                  slots={section.slots}
+                  variant={section.variant}
+                  palette={section.palette}
+                  slotVisibility={variantDef?.slot_visibility}
+                  layout={variantDef?.layout}
+                />
               ) : (
                 <UnknownComponent name={section.component} />
               )}

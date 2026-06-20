@@ -5,30 +5,73 @@
       "name": "HeroPrimary",
       "purpose": "Page-opening statement. Establishes context and intent above the fold.",
       "tier": "module",
-      "beats": ["Orientation"],
-      "archetypes": ["Mover", "Validator"],
-      "funnel_stages": ["awareness", "consideration", "decision", "conversion"],
-      "variants": ["editorial", "with-media", "text-only", "with-social-proof"],
+      "beats": [
+        "Orientation"
+      ],
+      "archetypes": [
+        "Mover",
+        "Validator",
+        "Explorer"
+      ],
+      "funnel_stages": [
+        "awareness",
+        "consideration",
+        "decision",
+        "conversion"
+      ],
+      "variants": [
+        "editorial",
+        "with-media",
+        "text-only",
+        "with-social-proof"
+      ],
+      "variant_slots": {
+        "editorial": ["eyebrow", "headline", "subhead", "cta_primary", "cta_secondary", "trust_signal"],
+        "with-media": ["eyebrow", "headline", "subhead", "cta_primary", "cta_secondary", "trust_signal", "media"],
+        "text-only": ["headline", "subhead", "cta_primary", "cta_secondary", "trust_signal"],
+        "with-social-proof": ["eyebrow", "headline", "subhead", "cta_primary", "cta_secondary", "trust_signal", "logos"]
+      },
+      "properties": {
+        "align": ["left", "center"]
+      },
       "slots": {
         "eyebrow": "string | null",
         "headline": "string",
         "subhead": "string | null",
-        "cta_primary": "CTAButton",
+        "cta_primary": "CTAButton | null",
         "cta_secondary": "CTAButton | null",
         "media": "image | video | null",
-        "trust_signal": "string | null"
+        "trust_signal": "string | null",
+        "logos": "image[] | null"
       },
-      "micro_blocks": ["HeadlineSubheadLockup", "CTACluster", "MediaFrame", "TrustSignal"],
-      "notes": "Every page requires a Hero — including conversion. editorial variant is the high-expression awareness layout: centered, full-width, dominant headline, eyebrow context label — no media. For conversion stage use text-only: slim title and subhead only, no media, no secondary CTA — orients the visitor without competing with the decision moment below. Validator variant always includes trust_signal. Mover variant suppresses subhead and cta_secondary — one message, one action. with-social-proof variant places LogoStrip immediately below CTACluster."
+      "micro_blocks": [
+        "HeadlineSubheadLockup",
+        "CTACluster",
+        "MediaFrame",
+        "TrustSignal"
+      ],
+      "notes": "Every page requires a Hero \u2014 including conversion. editorial variant is the high-expression awareness layout: centered, full-width, dominant headline, eyebrow context label \u2014 no media. For conversion stage use text-only: slim title and subhead only, no media, no secondary CTA \u2014 orients the visitor without competing with the decision moment below. Validator variant always includes trust_signal. Mover variant suppresses subhead and cta_secondary \u2014 one message, one action. Explorer variant prefers editorial or with-social-proof \u2014 discovery tone, breathing room, no pressure toward conversion. with-social-proof variant places LogoStrip immediately below CTACluster."
     },
     {
       "name": "HeroStatement",
       "purpose": "Text-heavy opening for pages where the argument is the product. No media distraction.",
       "tier": "module",
-      "beats": ["Orientation"],
-      "archetypes": ["Validator", "Explorer"],
-      "funnel_stages": ["awareness", "consideration"],
-      "variants": ["centered", "left-aligned", "with-eyebrow"],
+      "beats": [
+        "Orientation"
+      ],
+      "archetypes": [
+        "Validator",
+        "Explorer"
+      ],
+      "funnel_stages": [
+        "awareness",
+        "consideration"
+      ],
+      "variants": [
+        "centered",
+        "left-aligned",
+        "with-eyebrow"
+      ],
       "slots": {
         "eyebrow": "string | null",
         "headline": "string",
@@ -37,17 +80,36 @@
         "cta_primary": "CTAButton",
         "cta_secondary": "CTAButton | null"
       },
-      "micro_blocks": ["HeadlineSubheadLockup", "CTACluster", "BodyCopy"],
+      "micro_blocks": [
+        "HeadlineSubheadLockup",
+        "CTACluster",
+        "BodyCopy"
+      ],
       "notes": "Best for thought leadership, product philosophy, and narrative-led pages. Explorer variant uses longer body copy and suppresses primary CTA pressure. Validator variant uses with-eyebrow to anchor credibility before headline lands."
     },
     {
       "name": "FeatureGrid",
       "purpose": "Structured articulation of product capabilities. Three-column icon + copy layout.",
       "tier": "module",
-      "beats": ["Value"],
-      "archetypes": ["Validator", "Explorer"],
-      "funnel_stages": ["consideration", "decision"],
-      "variants": ["3-col-icon", "2-col-heavy", "list-style"],
+      "beats": [
+        "Value"
+      ],
+      "archetypes": [
+        "Validator",
+        "Explorer"
+      ],
+      "funnel_stages": [
+        "consideration",
+        "decision"
+      ],
+      "variants": [
+        "3-col-icon",
+        "2-col-heavy",
+        "list-style"
+      ],
+      "properties": {
+        "align": ["left", "center"]
+      },
       "slots": {
         "headline": "string | null",
         "subhead": "string | null",
@@ -59,35 +121,76 @@
           }
         ]
       },
-      "micro_blocks": ["HeadlineSubheadLockup", "FeatureCard", "GridLayout"],
-      "notes": "Validator benefits from specific, outcome-oriented descriptions — not feature names, benefit statements. Explorer variant uses 2-col-heavy with longer copy per feature. 3-col-icon is the default; use for 6 or 9 features. list-style for 4–5 features with uneven copy length."
+      "micro_blocks": [
+        "HeadlineSubheadLockup",
+        "FeatureCard",
+        "GridLayout"
+      ],
+      "notes": "Validator benefits from specific, outcome-oriented descriptions \u2014 not feature names, benefit statements. Explorer variant uses 2-col-heavy with longer copy per feature. 3-col-icon is the default; use for 6 or 9 features. list-style for 4\u20135 features with uneven copy length."
     },
     {
       "name": "SocialProofBar",
       "purpose": "Establishes credibility through recognizable brand logos or a featured quote.",
       "tier": "module",
-      "beats": ["Credibility"],
-      "archetypes": ["Validator", "Mover"],
-      "funnel_stages": ["awareness", "consideration", "decision"],
-      "variants": ["logos-only", "single-quote", "quote-with-logos"],
+      "beats": [
+        "Credibility"
+      ],
+      "archetypes": [
+        "Validator",
+        "Mover"
+      ],
+      "funnel_stages": [
+        "awareness",
+        "consideration",
+        "decision"
+      ],
+      "variants": [
+        "logos-only",
+        "single-quote",
+        "quote-with-logos"
+      ],
+      "variant_slots": {
+        "logos-only": ["headline"],
+        "single-quote": ["headline", "quote", "attribution"],
+        "quote-with-logos": ["headline", "quote", "attribution"]
+      },
       "slots": {
         "headline": "string | null",
-        "logos": ["image"],
+        "logos": "image[] | null",
         "quote": "string | null",
         "attribution": "string | null",
         "attribution_logo": "image | null"
       },
-      "micro_blocks": ["LogoStrip", "QuoteBlock", "AuthorLockup"],
-      "notes": "Mover variant is logos-only, no headline — silent credibility. Validator variant leads with quote, logos below. logos-only is the highest-frequency placement; drop directly below HeroPrimary on awareness pages."
+      "micro_blocks": [
+        "LogoStrip",
+        "QuoteBlock",
+        "AuthorLockup"
+      ],
+      "notes": "Mover variant is logos-only, no headline \u2014 silent credibility. Validator variant leads with quote, logos below. logos-only is the highest-frequency placement; drop directly below HeroPrimary on awareness pages."
     },
     {
       "name": "StatBlock",
       "purpose": "High-impact metric clusters that establish scale, outcome, or momentum.",
       "tier": "module",
-      "beats": ["Evidence"],
-      "archetypes": ["Mover", "Validator"],
-      "funnel_stages": ["consideration", "decision"],
-      "variants": ["3-stat", "4-stat", "with-source"],
+      "beats": [
+        "Evidence"
+      ],
+      "archetypes": [
+        "Mover",
+        "Validator"
+      ],
+      "funnel_stages": [
+        "consideration",
+        "decision"
+      ],
+      "variants": [
+        "3-stat",
+        "4-stat",
+        "with-source"
+      ],
+      "properties": {
+        "align": ["center", "left"]
+      },
       "slots": {
         "headline": "string | null",
         "stats": [
@@ -98,37 +201,70 @@
           }
         ]
       },
-      "micro_blocks": ["StatUnit", "StatGrid"],
-      "notes": "Always pair stats with source attribution in Validator contexts — unsourced stats reduce trust. Mover variant suppresses sources and headline; pure metric impact. 3-stat is the preferred default. 4-stat requires strong visual balance."
+      "micro_blocks": [
+        "StatUnit",
+        "StatGrid"
+      ],
+      "notes": "Always pair stats with source attribution in Validator contexts \u2014 unsourced stats reduce trust. Mover variant suppresses sources and headline; pure metric impact. 3-stat is the preferred default. 4-stat requires strong visual balance."
     },
     {
       "name": "PricingCard",
       "purpose": "Conversion-optimized pricing display. One plan per card.",
       "tier": "module",
-      "beats": ["Decision"],
-      "archetypes": ["Mover", "Validator"],
-      "funnel_stages": ["decision", "conversion"],
-      "variants": ["highlighted", "standard", "with-comparison"],
+      "beats": [
+        "Decision"
+      ],
+      "archetypes": [
+        "Mover",
+        "Validator"
+      ],
+      "funnel_stages": [
+        "decision",
+        "conversion"
+      ],
+      "variants": [
+        "highlighted",
+        "standard",
+        "with-comparison"
+      ],
       "slots": {
         "plan_name": "string",
         "badge": "string | null",
         "price": "string",
         "billing_period": "string",
         "description": "string | null",
-        "features": ["string"],
+        "features": [
+          "string"
+        ],
         "cta": "CTAButton"
       },
-      "micro_blocks": ["PriceDisplay", "FeatureList", "CTAButton"],
-      "notes": "highlighted variant for recommended plan — use sparingly (one per pricing section). Validator variant includes description and longer feature list. Mover variant strips description; price and CTA only. with-comparison for enterprise tiers where feature differentiation drives upgrade."
+      "micro_blocks": [
+        "PriceDisplay",
+        "FeatureList",
+        "CTAButton"
+      ],
+      "notes": "highlighted variant for recommended plan \u2014 use sparingly (one per pricing section). Validator variant includes description and longer feature list. Mover variant strips description; price and CTA only. with-comparison for enterprise tiers where feature differentiation drives upgrade."
     },
     {
       "name": "TestimonialSingle",
       "purpose": "Single featured testimonial with attribution. Primary trust signal for Validator archetype.",
       "tier": "module",
-      "beats": ["Credibility", "Evidence"],
-      "archetypes": ["Validator"],
-      "funnel_stages": ["consideration", "decision"],
-      "variants": ["quote-only", "with-photo", "with-company-logo"],
+      "beats": [
+        "Credibility",
+        "Evidence"
+      ],
+      "archetypes": [
+        "Validator"
+      ],
+      "funnel_stages": [
+        "consideration",
+        "decision"
+      ],
+      "variants": [
+        "quote-only",
+        "with-photo",
+        "with-company-logo"
+      ],
       "slots": {
         "quote": "string",
         "author_name": "string",
@@ -137,17 +273,35 @@
         "photo": "image | null",
         "company_logo": "image | null"
       },
-      "micro_blocks": ["QuoteBlock", "AuthorLockup"],
-      "notes": "Always include role and company for Validator credibility — anonymous quotes carry no weight. with-photo increases engagement and perceived authenticity. with-company-logo for enterprise social proof. Place near a CTA — testimonials convert when positioned at a decision moment."
+      "micro_blocks": [
+        "QuoteBlock",
+        "AuthorLockup"
+      ],
+      "notes": "Always include role and company for Validator credibility \u2014 anonymous quotes carry no weight. with-photo increases engagement and perceived authenticity. with-company-logo for enterprise social proof. Place near a CTA \u2014 testimonials convert when positioned at a decision moment."
     },
     {
       "name": "CTABanner",
       "purpose": "Full-width conversion prompt. Terminal action for a section or page.",
       "tier": "module",
-      "beats": ["Conversion"],
-      "archetypes": ["Mover", "Validator"],
-      "funnel_stages": ["decision", "conversion"],
-      "variants": ["centered", "split", "minimal"],
+      "beats": [
+        "Conversion"
+      ],
+      "archetypes": [
+        "Mover",
+        "Validator"
+      ],
+      "funnel_stages": [
+        "decision",
+        "conversion"
+      ],
+      "variants": [
+        "centered",
+        "split",
+        "minimal"
+      ],
+      "properties": {
+        "align": ["center", "left"]
+      },
       "slots": {
         "headline": "string",
         "subhead": "string | null",
@@ -155,17 +309,32 @@
         "cta_secondary": "CTAButton | null",
         "trust_signal": "string | null"
       },
-      "micro_blocks": ["HeadlineSubheadLockup", "CTACluster", "TrustSignal"],
-      "notes": "Mover variant: strong headline, single CTA, no subhead. Validator variant: include subhead and trust_signal (e.g., 'No credit card required'). minimal for high-frequency use — above footer, between sections. split for section-end with directional copy on left, CTA on right."
+      "micro_blocks": [
+        "HeadlineSubheadLockup",
+        "CTACluster",
+        "TrustSignal"
+      ],
+      "notes": "Mover variant: strong headline, single CTA, no subhead. Validator variant: include subhead and trust_signal (e.g., 'No credit card required'). minimal for high-frequency use \u2014 above footer, between sections. split for section-end with directional copy on left, CTA on right."
     },
     {
       "name": "ContentSection",
       "purpose": "Long-form body content for Validator-optimized pages. Structured argument.",
       "tier": "module",
-      "beats": ["Value"],
-      "archetypes": ["Validator", "Explorer"],
-      "funnel_stages": ["consideration"],
-      "variants": ["standard", "with-sidebar", "with-callout"],
+      "beats": [
+        "Value"
+      ],
+      "archetypes": [
+        "Validator",
+        "Explorer"
+      ],
+      "funnel_stages": [
+        "consideration"
+      ],
+      "variants": [
+        "standard",
+        "with-sidebar",
+        "with-callout"
+      ],
       "slots": {
         "headline": "string",
         "body": "string",
@@ -173,17 +342,36 @@
         "media": "image | null",
         "cta": "CTAButton | null"
       },
-      "micro_blocks": ["HeadlineSubheadLockup", "BodyCopy", "MediaFrame"],
+      "micro_blocks": [
+        "HeadlineSubheadLockup",
+        "BodyCopy",
+        "MediaFrame"
+      ],
       "notes": "Designed for depth and argument. Explorer variant uses with-sidebar with related links. Validator benefits from structured subheadings within body. with-callout for key proof points that deserve visual separation. Don't use on Mover pages."
     },
     {
       "name": "NavigationHeader",
       "purpose": "Global navigation. Sets wayfinding context and primary conversion action for the session.",
       "tier": "module",
-      "beats": ["Orientation"],
-      "archetypes": ["Mover", "Validator", "Explorer"],
-      "funnel_stages": ["awareness", "consideration", "decision", "conversion"],
-      "variants": ["full", "minimal", "transparent"],
+      "beats": [
+        "Orientation"
+      ],
+      "archetypes": [
+        "Mover",
+        "Validator",
+        "Explorer"
+      ],
+      "funnel_stages": [
+        "awareness",
+        "consideration",
+        "decision",
+        "conversion"
+      ],
+      "variants": [
+        "full",
+        "minimal",
+        "transparent"
+      ],
       "slots": {
         "logo": "image",
         "nav_links": [
@@ -196,17 +384,36 @@
         "cta_primary": "CTAButton",
         "cta_secondary": "CTAButton | null"
       },
-      "micro_blocks": ["LogoMark", "NavLinks", "CTAButton"],
-      "notes": "minimal variant for conversion-focused pages — strip nav_links, keep logo and single CTA only. transparent for hero sections with media background. full for exploration and top-funnel pages. The persistent CTA in nav is the most converted element on most SaaS pages — never suppress it."
+      "micro_blocks": [
+        "LogoMark",
+        "NavLinks",
+        "CTAButton"
+      ],
+      "notes": "minimal variant for conversion-focused pages \u2014 strip nav_links, keep logo and single CTA only. transparent for hero sections with media background. full for exploration and top-funnel pages. The persistent CTA in nav is the most converted element on most SaaS pages \u2014 never suppress it."
     },
     {
       "name": "FooterMinimal",
       "purpose": "Page close. Brand mark, minimal navigation, legal, and optional recovery CTA.",
       "tier": "module",
-      "beats": ["Recovery"],
-      "archetypes": ["Mover", "Validator", "Explorer"],
-      "funnel_stages": ["awareness", "consideration", "decision", "conversion"],
-      "variants": ["standard", "minimal", "with-cta"],
+      "beats": [
+        "Recovery"
+      ],
+      "archetypes": [
+        "Mover",
+        "Validator",
+        "Explorer"
+      ],
+      "funnel_stages": [
+        "awareness",
+        "consideration",
+        "decision",
+        "conversion"
+      ],
+      "variants": [
+        "standard",
+        "minimal",
+        "with-cta"
+      ],
       "slots": {
         "logo": "image",
         "nav_columns": [
@@ -229,8 +436,12 @@
         ],
         "cta": "CTAButton | null"
       },
-      "micro_blocks": ["LogoMark", "NavLinks", "LegalCopy"],
-      "notes": "with-cta variant recaptures departing users on key conversion pages — use on pricing and signup flows. minimal strips nav_columns and social_links; logo + legal only. standard is the default. Keep legal_text concise."
+      "micro_blocks": [
+        "LogoMark",
+        "NavLinks",
+        "LegalCopy"
+      ],
+      "notes": "with-cta variant recaptures departing users on key conversion pages \u2014 use on pricing and signup flows. minimal strips nav_columns and social_links; logo + legal only. standard is the default. Keep legal_text concise."
     }
   ]
 }

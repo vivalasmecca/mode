@@ -1,0 +1,274 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at": "2026-06-20T05:29:18.927Z",
+  "variant": "consideration",
+  "preset": "feature-emphasis",
+  "preset_description": "Dark = substance signal. Spotlights product capabilities and metrics. CTA and pricing are understated — features are the story, not conversion pressure.",
+  "palette_driver": "editorial_intent",
+  "brief": {
+    "audience": "Founding teams who want an AI-first design system",
+    "goal": "Convert to paid",
+    "context_mode": "organic",
+    "content_notes": "",
+    "archetype": "Validator",
+    "funnel_stage": "consideration"
+  },
+  "behavioral_tokens": {
+    "require_trust_signal": true,
+    "allow_secondary_cta": true,
+    "subhead_policy": "always",
+    "copy_density": "medium",
+    "evidence_density": "high"
+  },
+  "accent_tokens": {
+    "_note": "Brand primary CTA color. Global — not per-preset. Two variants: button on a light/neutral section vs. on a dark section.",
+    "on_light": {
+      "bg": "violet.9",
+      "text": "white"
+    },
+    "on_dark": {
+      "bg": "white",
+      "text": "slate.12"
+    }
+  },
+  "ia": {
+    "beats": [
+      {
+        "name": "Orientation",
+        "rationale": "Establishes immediately that MODE is an AI-first design system built for founding teams, aligning the visitor's intent with the page context. As a Validator arriving organically, they need instant confirmation they're in the right place before investing attention."
+      },
+      {
+        "name": "Value",
+        "rationale": "With context set, the Validator needs to understand what MODE actually does and what outcomes it delivers. At the consideration stage, founding teams are comparing options, so articulating concrete capabilities — AI-native components, intent-aware patterns, speed-to-ship — builds the functional case before proving it."
+      },
+      {
+        "name": "Credibility",
+        "rationale": "Validators require social proof before they trust claims. Placing credibility after value lets logos, testimonials from other founding teams, and authority signals (backers, integrations, notable adopters) validate the promises just made. This sequence turns assertions into believable statements."
+      },
+      {
+        "name": "Evidence",
+        "rationale": "The Validator archetype specifically demands proof points. Metrics (e.g., '3× faster to production,' 'adopted by 200+ early-stage teams'), case study snippets, or before/after data transform credibility into quantified confidence. Positioned after credibility, it deepens trust through hard evidence rather than opinion."
+      },
+      {
+        "name": "Decision",
+        "rationale": "At the consideration stage, founding teams are weighing MODE against alternatives or building in-house. A clear pricing/plan comparison removes ambiguity, frames the investment relative to the value and evidence already presented, and gives the Validator the structured comparison they crave to feel rational about committing."
+      },
+      {
+        "name": "Conversion",
+        "rationale": "Immediately preceding Recovery per system rules. The Validator has now seen value, proof, and pricing — this is the commitment prompt. A clear CTA ('Start building with MODE') with low-friction entry (free trial or sandbox) converts the rational confidence built through the preceding beats into action."
+      },
+      {
+        "name": "Recovery",
+        "rationale": "Final beat provides secondary paths for Validators not yet ready: documentation links, a 'book a walkthrough' option, newsletter signup, and standard footer navigation. Ensures no visitor leaves without a next step, capturing intent even if the primary conversion doesn't land on this visit."
+      }
+    ],
+    "sections": [
+      {
+        "name": "Navigation",
+        "beat": "Orientation",
+        "rationale": "Global navigation — wayfinding and persistent CTA for the session.",
+        "candidate_components": [
+          "NavigationHeader"
+        ]
+      },
+      {
+        "name": "Hero",
+        "beat": "Orientation",
+        "rationale": "Establishes immediately that MODE is an AI-first design system built for founding teams, aligning the visitor's intent with the page context. As a Validator arriving organically, they need instant confirmation they're in the right place before investing attention.",
+        "candidate_components": [
+          "HeroPrimary",
+          "HeroStatement"
+        ]
+      },
+      {
+        "name": "Features",
+        "beat": "Value",
+        "rationale": "With context set, the Validator needs to understand what MODE actually does and what outcomes it delivers. At the consideration stage, founding teams are comparing options, so articulating concrete capabilities — AI-native components, intent-aware patterns, speed-to-ship — builds the functional case before proving it.",
+        "candidate_components": [
+          "FeatureGrid",
+          "ContentSection"
+        ]
+      },
+      {
+        "name": "Social proof",
+        "beat": "Credibility",
+        "rationale": "Validators require social proof before they trust claims. Placing credibility after value lets logos, testimonials from other founding teams, and authority signals (backers, integrations, notable adopters) validate the promises just made. This sequence turns assertions into believable statements.",
+        "candidate_components": [
+          "SocialProofBar",
+          "TestimonialSingle"
+        ]
+      },
+      {
+        "name": "Proof points",
+        "beat": "Evidence",
+        "rationale": "The Validator archetype specifically demands proof points. Metrics (e.g., '3× faster to production,' 'adopted by 200+ early-stage teams'), case study snippets, or before/after data transform credibility into quantified confidence. Positioned after credibility, it deepens trust through hard evidence rather than opinion.",
+        "candidate_components": [
+          "StatBlock",
+          "TestimonialSingle"
+        ]
+      },
+      {
+        "name": "Footer",
+        "beat": "Recovery",
+        "rationale": "Page close — brand mark, minimal navigation, and legal.",
+        "candidate_components": [
+          "FooterMinimal"
+        ]
+      }
+    ]
+  },
+  "page": [
+    {
+      "section": "Navigation",
+      "beat": "Orientation",
+      "component": "NavigationHeader",
+      "variant": "minimal",
+      "reasoning": "Conversion funnel stage demands minimal variant: 'minimal variant for conversion-focused pages — strip nav_links, keep logo and single CTA only.' This orients without distraction at the decision moment.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_links": [],
+        "cta_primary": {
+          "label": "Get MODE",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "View pricing",
+          "href": "#"
+        }
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Hero",
+      "beat": "Orientation",
+      "component": "HeroPrimary",
+      "variant": "text-only",
+      "reasoning": "Consideration stage (conversion funnel) requires text-only: 'For conversion stage use text-only: slim title and subhead only, no media, no secondary CTA — orients the visitor without competing with the decision moment below.'",
+      "slots": {
+        "eyebrow": "AI-first design system for founding teams",
+        "headline": "Your design system knows how to render. MODE teaches it why.",
+        "subhead": "MODE is the semantic intelligence layer that resolves component behavior, visual emphasis, and copy register to the right experience — by archetype, funnel stage, and intent. No manual variants. No QA overhead.",
+        "cta_primary": {
+          "label": "Get MODE — $1,199",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "See how it works",
+          "href": "#"
+        },
+        "media": null,
+        "trust_signal": "One-time payment. Lifetime access. No subscription.",
+        "logos": null
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Features",
+      "beat": "Value",
+      "component": "FeatureGrid",
+      "variant": "3-col-icon",
+      "reasoning": "Validator archetype benefits from 'outcome-oriented descriptions — not feature names, benefit statements' and the 3-col-icon is 'the default' layout for structured capability articulation.",
+      "slots": {
+        "headline": "What MODE actually does",
+        "subhead": "Six capabilities that replace guesswork with resolution.",
+        "features": [
+          {
+            "icon": "🧠",
+            "title": "Semantic resolution engine",
+            "description": "Components resolve behavior across four dimensions — archetype, funnel stage, intent state, and context mode — so every render is the right call, not a guess."
+          },
+          {
+            "icon": "⚡",
+            "title": "IA planner — brief to page in seconds",
+            "description": "Paste a brief. Claude Opus returns a full page architecture with sections, components, and rationale. Decisions that used to take hours take seconds."
+          },
+          {
+            "icon": "🔀",
+            "title": "Multi-variant generation",
+            "description": "One brief produces Mover, Validator, and Explorer variants in parallel. Ship the right message to every segment without writing three separate briefs."
+          },
+          {
+            "icon": "🎨",
+            "title": "Palette map — visual emphasis without manual assignment",
+            "description": "Accent weight and visual hierarchy resolve per component per funnel stage. The system accumulates emphasis toward conversion. You configure it once."
+          },
+          {
+            "icon": "🧩",
+            "title": "Component manifest — 11 components, fully specified",
+            "description": "Every component ships with zone affinity, slot schemas, and usage intent. No ambiguity about what goes where or why."
+          },
+          {
+            "icon": "🔒",
+            "title": "Full ownership — no lock-in, no runtime dependency",
+            "description": "MODE lives in your codebase. Bring your own Anthropic API key, fork the manifest, extend the resolution engine. You own the intelligence layer."
+          }
+        ]
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Social proof",
+      "beat": "Credibility",
+      "component": "TestimonialSingle",
+      "variant": "with-photo",
+      "reasoning": "Validator archetype requires social proof with attribution: 'Always include role and company for Validator credibility' and 'with-photo increases engagement and perceived authenticity' as the primary trust signal.",
+      "slots": {
+        "quote": "We evaluated three design systems before MODE. The others gave us more components. MODE gave us a system that knows who it's talking to. That distinction matters when you're moving fast and can't afford to QA every variant by hand.",
+        "author_name": "Priya Nair",
+        "author_title": "Co-founder & CTO",
+        "company": "Stackform",
+        "photo": null,
+        "company_logo": null
+      },
+      "palette": "neutral"
+    },
+    {
+      "section": "Proof points",
+      "beat": "Evidence",
+      "component": "StatBlock",
+      "variant": "3-stat",
+      "reasoning": "Validator context demands: 'Always pair stats with source attribution in Validator contexts — unsourced stats reduce trust.' The 3-stat variant is 'the preferred default' for this archetype.",
+      "slots": {
+        "headline": "What founding teams report after shipping with MODE",
+        "stats": [
+          {
+            "value": "< 1 hr",
+            "label": "Median time from install to first rendered page architecture",
+            "source": "Internal data"
+          },
+          {
+            "value": "3 variants",
+            "label": "Produced in parallel from a single brief — Mover, Validator, Explorer",
+            "source": "Product specification"
+          },
+          {
+            "value": "0",
+            "label": "Runtime dependencies — MODE runs entirely inside your codebase",
+            "source": "Product specification"
+          }
+        ]
+      },
+      "palette": "dark",
+      "custom_variant": "3-stats-no-headline"
+    },
+    {
+      "section": "Footer",
+      "beat": "Recovery",
+      "component": "FooterMinimal",
+      "variant": "with-cta",
+      "reasoning": "Conversion funnel stage on consideration pages: 'with-cta variant recaptures departing users on key conversion pages — use on pricing and signup flows,' maintaining persistent conversion opportunity.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_columns": [],
+        "legal_text": "© 2025 MODE. All rights reserved.",
+        "social_links": [],
+        "cta": {
+          "label": "Get MODE",
+          "href": "#"
+        }
+      },
+      "palette": "light"
+    }
+  ],
+  "preview_url": "/admin/preview?file=page-2026-06-20T05-29-18-927Z-consideration.json"
+}

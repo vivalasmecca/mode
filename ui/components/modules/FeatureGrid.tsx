@@ -13,6 +13,8 @@ interface FeatureGridProps {
   slots: ComponentSlots;
   variant: string | null;
   palette?: PaletteMode;
+  slotVisibility?: Record<string, boolean>;
+  layout?: { align?: "left" | "center" };
 }
 
 const PLACEHOLDER_FEATURES: Feature[] = Array.from({ length: 6 }, (_, i) => ({
@@ -21,8 +23,10 @@ const PLACEHOLDER_FEATURES: Feature[] = Array.from({ length: 6 }, (_, i) => ({
   description: "Feature description placeholder",
 }));
 
-export function FeatureGrid({ slots, variant, palette }: FeatureGridProps) {
+export function FeatureGrid({ slots, variant, palette, slotVisibility, layout }: FeatureGridProps) {
   const p = getPalette(palette);
+  const isVisible = (name: string) => slotVisibility?.[name] !== false;
+  const alignClass = layout?.align === "center" ? "text-center items-center" : "";
   const features: Feature[] =
     Array.isArray(slots.features) && slots.features.length > 0
       ? (slots.features as Feature[])
@@ -38,20 +42,24 @@ export function FeatureGrid({ slots, variant, palette }: FeatureGridProps) {
   return (
     <section className={`${p.bg} py-20`}>
       <div className="mx-auto max-w-6xl px-6">
-        <div className="mb-12">
-          <PlaceholderSlot name="headline" value={slots.headline}>
-            <h2 className={`text-3xl font-bold tracking-tight ${p.text}`}>
-              {slots.headline as string}
-            </h2>
-          </PlaceholderSlot>
-          {slots.subhead !== undefined && (
-            <div className="mt-4">
-              <PlaceholderSlot name="subhead" value={slots.subhead}>
-                <p className={`text-lg ${p.subtext}`}>{slots.subhead as string}</p>
+        {(isVisible("headline") || isVisible("subhead")) && (
+          <div className={`mb-12 ${alignClass}`}>
+            {isVisible("headline") && (
+              <PlaceholderSlot name="headline" value={slots.headline}>
+                <h2 className={`text-3xl font-bold tracking-tight ${p.text}`}>
+                  {slots.headline as string}
+                </h2>
               </PlaceholderSlot>
-            </div>
-          )}
-        </div>
+            )}
+            {isVisible("subhead") && (
+              <div className="mt-4">
+                <PlaceholderSlot name="subhead" value={slots.subhead}>
+                  <p className={`text-lg ${p.subtext}`}>{slots.subhead as string}</p>
+                </PlaceholderSlot>
+              </div>
+            )}
+          </div>
+        )}
 
         <div className={`grid gap-8 ${gridClass}`}>
           {features.map((f, i) => (

@@ -1,0 +1,211 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at": "2026-06-20T15:32:41.841Z",
+  "variant": "conversion",
+  "preset": "feature-emphasis",
+  "preset_description": "Dark = substance signal. Spotlights product capabilities and metrics. CTA and pricing are understated — features are the story, not conversion pressure.",
+  "palette_driver": "editorial_intent",
+  "brief": {
+    "audience": "AI-first, intent-aware design system for founding teams",
+    "goal": "Convert to paid",
+    "context_mode": "organic",
+    "content_notes": "",
+    "archetype": "Validator",
+    "funnel_stage": "conversion"
+  },
+  "behavioral_tokens": {
+    "require_trust_signal": true,
+    "allow_secondary_cta": true,
+    "subhead_policy": "always",
+    "copy_density": "medium",
+    "evidence_density": "high"
+  },
+  "accent_tokens": {
+    "_note": "Brand primary CTA color. Global — not per-preset. Two variants: button on a light/neutral section vs. on a dark section.",
+    "on_light": {
+      "bg": "violet.9",
+      "text": "white"
+    },
+    "on_dark": {
+      "bg": "white",
+      "text": "slate.12"
+    }
+  },
+  "ia": {
+    "beats": [
+      {
+        "name": "Orientation",
+        "rationale": "Slim hero providing immediate page context: confirms the visitor is in the right place (MODE for founding teams), establishes a concise page title and one-line value anchor before moving straight to the decision moment. Kept minimal per conversion-stage rules."
+      },
+      {
+        "name": "Evidence",
+        "rationale": "Validator archetype demands proof before committing. Inserting a focused proof-point block (key metrics, adoption numbers, or a compact case-study stat) satisfies the archetype's need for rational justification without expanding into a full consideration-depth layout."
+      },
+      {
+        "name": "Decision",
+        "rationale": "Plan comparison and pricing framing positioned after evidence so the Validator can weigh options with proof still fresh. Clear tier differentiation reduces cognitive load and moves the visitor toward a confident choice."
+      },
+      {
+        "name": "Conversion",
+        "rationale": "Immediate CTA and commitment prompt following the decision beat. Captures action at peak intent — the Validator has seen proof and pricing and is ready to commit."
+      },
+      {
+        "name": "Recovery",
+        "rationale": "Final safety net: secondary paths (contact sales, explore docs, return to homepage) and footer. Catches any remaining hesitation and ensures no visitor exits without an alternative route."
+      }
+    ],
+    "sections": [
+      {
+        "name": "Navigation",
+        "beat": "Orientation",
+        "rationale": "Global navigation — wayfinding and persistent CTA for the session.",
+        "candidate_components": [
+          "NavigationHeader"
+        ]
+      },
+      {
+        "name": "Hero",
+        "beat": "Orientation",
+        "rationale": "Slim hero providing immediate page context: confirms the visitor is in the right place (MODE for founding teams), establishes a concise page title and one-line value anchor before moving straight to the decision moment. Kept minimal per conversion-stage rules.",
+        "candidate_components": [
+          "HeroPrimary"
+        ]
+      },
+      {
+        "name": "Pricing",
+        "beat": "Decision",
+        "rationale": "Plan comparison and pricing framing positioned after evidence so the Validator can weigh options with proof still fresh. Clear tier differentiation reduces cognitive load and moves the visitor toward a confident choice.",
+        "candidate_components": [
+          "PricingCard"
+        ]
+      },
+      {
+        "name": "CTA",
+        "beat": "Conversion",
+        "rationale": "Immediate CTA and commitment prompt following the decision beat. Captures action at peak intent — the Validator has seen proof and pricing and is ready to commit.",
+        "candidate_components": [
+          "CTABanner"
+        ]
+      },
+      {
+        "name": "Footer",
+        "beat": "Recovery",
+        "rationale": "Page close — brand mark, minimal navigation, and legal.",
+        "candidate_components": [
+          "FooterMinimal"
+        ]
+      }
+    ]
+  },
+  "page": [
+    {
+      "section": "Navigation",
+      "beat": "Orientation",
+      "component": "NavigationHeader",
+      "variant": "minimal",
+      "reasoning": "minimal variant for conversion-focused pages — strip nav_links, keep logo and single CTA only. The persistent CTA in nav is the most converted element on most SaaS pages — never suppress it.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_links": [],
+        "cta_primary": {
+          "label": "Get MODE",
+          "href": "#"
+        },
+        "cta_secondary": null
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Hero",
+      "beat": "Orientation",
+      "component": "HeroPrimary",
+      "variant": "text-only",
+      "reasoning": "For conversion stage use text-only: slim title and subhead only, no media, no secondary CTA — orients the visitor without competing with the decision moment below.",
+      "slots": {
+        "eyebrow": "MODE Kit — one-time purchase",
+        "headline": "The intelligence layer your design system was missing.",
+        "subhead": "Components that resolve behavior, emphasis, and copy register to the right experience — by archetype, funnel stage, and context. No manual variants.",
+        "cta_primary": {
+          "label": "Get MODE — $1,199",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "See how it works",
+          "href": "#"
+        },
+        "media": null,
+        "trust_signal": "Lifetime access. No subscription. No runtime dependency.",
+        "logos": null
+      },
+      "palette": "light",
+      "custom_variant": "hero-slim---title-only"
+    },
+    {
+      "section": "Pricing",
+      "beat": "Decision",
+      "component": "PricingCard",
+      "variant": "highlighted",
+      "reasoning": "Validator variant includes description and longer feature list. highlighted variant for recommended plan — use sparingly (one per pricing section).",
+      "slots": {
+        "plan_name": "MODE Kit",
+        "badge": "Available now",
+        "price": "$1,199",
+        "billing_period": "one-time",
+        "description": "The full intelligence layer. Resolution engine, component manifest, token config, palette map, IA planner, multi-variant generation, and Next.js preview UI. Yours forever.",
+        "features": [
+          "Semantic resolution engine — four-dimension model",
+          "Component manifest — 11 components, fully specified",
+          "IA planner + multi-variant generation agent",
+          "Three palette presets, editable token dashboard",
+          "Next.js preview UI — renders agent output instantly",
+          "Lifetime access, no subscription, no lock-in"
+        ],
+        "cta": {
+          "label": "Get MODE",
+          "href": "#"
+        }
+      },
+      "palette": "light"
+    },
+    {
+      "section": "CTA",
+      "beat": "Conversion",
+      "component": "CTABanner",
+      "variant": "centered",
+      "reasoning": "Validator variant: include subhead and trust_signal (e.g., 'No credit card required').",
+      "slots": {
+        "headline": "One purchase. Permanent capability.",
+        "subhead": "MODE is running in under an hour. Configure once, own the intelligence layer forever.",
+        "cta_primary": {
+          "label": "Get MODE — $1,199",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "Join Studio waitlist",
+          "href": "#"
+        },
+        "trust_signal": "Lifetime access. No subscription. No credit card stored after purchase."
+      },
+      "palette": "neutral"
+    },
+    {
+      "section": "Footer",
+      "beat": "Recovery",
+      "component": "FooterMinimal",
+      "variant": "with-cta",
+      "reasoning": "with-cta variant recaptures departing users on key conversion pages — use on pricing and signup flows.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_columns": [],
+        "legal_text": "© 2025 MODE. All rights reserved.",
+        "social_links": [],
+        "cta": {
+          "label": "Get MODE",
+          "href": "#"
+        }
+      },
+      "palette": "light"
+    }
+  ],
+  "preview_url": "/admin/preview?file=page-2026-06-20T15-32-41-841Z-conversion.json"
+}

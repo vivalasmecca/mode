@@ -1,0 +1,350 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at": "2026-06-20T04:08:54.386Z",
+  "variant": "Validator",
+  "preset": "archetype-driven",
+  "preset_description": "Dark = identity signal. Visual language expresses who the user is. Validator gets authority and weight (heavy dark). Mover gets minimal light with one dark CTA punch. Explorer gets all-neutral — open, spacious, no urgency.",
+  "palette_driver": "archetype",
+  "brief": {
+    "audience": "startups seeking an ai-first, intent-driven design system",
+    "goal": "convert to paid",
+    "context_mode": "organic",
+    "content_notes": "",
+    "funnel_stage": "decision",
+    "archetype": "Validator"
+  },
+  "behavioral_tokens": {
+    "require_trust_signal": true,
+    "allow_secondary_cta": true,
+    "subhead_policy": "always",
+    "copy_density": "medium",
+    "evidence_density": "high"
+  },
+  "accent_tokens": {
+    "_note": "Brand primary CTA color. Global — not per-preset. Two variants: button on a light/neutral section vs. on a dark section.",
+    "on_light": {
+      "bg": "violet.9",
+      "text": "white"
+    },
+    "on_dark": {
+      "bg": "white",
+      "text": "slate.12"
+    }
+  },
+  "ia": {
+    "beats": [
+      {
+        "name": "Orientation",
+        "rationale": "Establishes immediate context: this is an AI-first, intent-driven design system built for startups. Anchors the Validator by confirming they're in the right place and framing the decision ahead."
+      },
+      {
+        "name": "Value",
+        "rationale": "At the decision stage, the Validator already understands the category but needs a concise reminder of key capabilities and outcome promises — intent-aware components, adaptive UI, faster shipping — to reinforce why MODE is the right choice before seeing proof."
+      },
+      {
+        "name": "Credibility",
+        "rationale": "Validators demand trust signals before committing. Startup logos, testimonials from founders/CTOs, and integration partners validate that credible peers have already chosen MODE, reducing perceived risk."
+      },
+      {
+        "name": "Evidence",
+        "rationale": "Required for decision-stage and critical for the Validator archetype. Concrete metrics — adoption rates, time-to-ship reductions, performance benchmarks, case study data from comparable startups — provide the quantitative proof Validators need to justify the purchase internally."
+      },
+      {
+        "name": "Decision",
+        "rationale": "Required for decision-stage. Presents pricing tiers and plan comparison in a clear framework, enabling the Validator to match their team's needs to the right plan and feel confident in the value-for-cost calculation."
+      },
+      {
+        "name": "Conversion",
+        "rationale": "Positioned immediately before Recovery per rules. Delivers a strong, unambiguous CTA — start trial or subscribe — with commitment framing (e.g., 'no lock-in, cancel anytime') that lowers friction for a Validator who has now been fully convinced by evidence and pricing."
+      },
+      {
+        "name": "Recovery",
+        "rationale": "Final beat captures anyone not ready to convert with secondary paths: book a demo, explore docs, compare plans in detail. Ensures no validated-but-hesitant visitor leaves without an actionable next step."
+      }
+    ],
+    "sections": [
+      {
+        "name": "Navigation",
+        "beat": "Orientation",
+        "rationale": "Global navigation — wayfinding and persistent CTA for the session.",
+        "candidate_components": [
+          "NavigationHeader"
+        ]
+      },
+      {
+        "name": "Hero",
+        "beat": "Orientation",
+        "rationale": "Establishes immediate context: this is an AI-first, intent-driven design system built for startups. Anchors the Validator by confirming they're in the right place and framing the decision ahead.",
+        "candidate_components": [
+          "HeroPrimary"
+        ]
+      },
+      {
+        "name": "Features",
+        "beat": "Value",
+        "rationale": "At the decision stage, the Validator already understands the category but needs a concise reminder of key capabilities and outcome promises — intent-aware components, adaptive UI, faster shipping — to reinforce why MODE is the right choice before seeing proof.",
+        "candidate_components": [
+          "FeatureGrid"
+        ]
+      },
+      {
+        "name": "Social proof",
+        "beat": "Credibility",
+        "rationale": "Validators demand trust signals before committing. Startup logos, testimonials from founders/CTOs, and integration partners validate that credible peers have already chosen MODE, reducing perceived risk.",
+        "candidate_components": [
+          "SocialProofBar",
+          "TestimonialSingle"
+        ]
+      },
+      {
+        "name": "Proof points",
+        "beat": "Evidence",
+        "rationale": "Required for decision-stage and critical for the Validator archetype. Concrete metrics — adoption rates, time-to-ship reductions, performance benchmarks, case study data from comparable startups — provide the quantitative proof Validators need to justify the purchase internally.",
+        "candidate_components": [
+          "StatBlock",
+          "TestimonialSingle"
+        ]
+      },
+      {
+        "name": "Pricing",
+        "beat": "Decision",
+        "rationale": "Required for decision-stage. Presents pricing tiers and plan comparison in a clear framework, enabling the Validator to match their team's needs to the right plan and feel confident in the value-for-cost calculation.",
+        "candidate_components": [
+          "PricingCard"
+        ]
+      },
+      {
+        "name": "CTA",
+        "beat": "Conversion",
+        "rationale": "Positioned immediately before Recovery per rules. Delivers a strong, unambiguous CTA — start trial or subscribe — with commitment framing (e.g., 'no lock-in, cancel anytime') that lowers friction for a Validator who has now been fully convinced by evidence and pricing.",
+        "candidate_components": [
+          "CTABanner"
+        ]
+      },
+      {
+        "name": "Footer",
+        "beat": "Recovery",
+        "rationale": "Page close — brand mark, minimal navigation, and legal.",
+        "candidate_components": [
+          "FooterMinimal"
+        ]
+      }
+    ]
+  },
+  "page": [
+    {
+      "section": "Navigation",
+      "beat": "Orientation",
+      "component": "NavigationHeader",
+      "variant": "minimal",
+      "reasoning": "Decision funnel stage requires conversion focus. Notes state: 'minimal variant for conversion-focused pages — strip nav_links, keep logo and single CTA only.' The persistent CTA in nav is essential for this stage.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_links": [],
+        "cta_primary": {
+          "label": "Get MODE",
+          "href": "#"
+        },
+        "cta_secondary": null
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Hero",
+      "beat": "Orientation",
+      "component": "HeroPrimary",
+      "variant": "text-only",
+      "reasoning": "Conversion funnel stage demands minimal distraction. Notes specify: 'For conversion stage use text-only: slim title and subhead only, no media, no secondary CTA — orients the visitor without competing with the decision moment below.'",
+      "slots": {
+        "eyebrow": "AI-first design system — decision stage",
+        "headline": "Your design system knows how to render. MODE teaches it why.",
+        "subhead": "MODE is the intent layer your component library is missing. Components that resolve behavior, visual emphasis, and copy register to the right archetype, funnel stage, and context — automatically.",
+        "cta_primary": {
+          "label": "Get MODE — $1,199",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "See how it works",
+          "href": "#"
+        },
+        "media": null,
+        "trust_signal": "One-time purchase. Lifetime access. No subscription, no lock-in.",
+        "logos": null
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Features",
+      "beat": "Value",
+      "component": "FeatureGrid",
+      "variant": "3-col-icon",
+      "reasoning": "Validator archetype benefits from specific, outcome-oriented descriptions. Notes state: 'Validator benefits from specific, outcome-oriented descriptions — not feature names, benefit statements. 3-col-icon is the default.'",
+      "slots": {
+        "headline": "What MODE resolves, so you don't have to.",
+        "subhead": "Six capabilities that replace manual variant-making with systematic design intelligence.",
+        "features": [
+          {
+            "icon": "🧠",
+            "title": "Semantic resolution engine",
+            "description": "Components resolve behavior across archetype, funnel stage, intent state, and context mode — no conditional logic written by hand."
+          },
+          {
+            "icon": "🎨",
+            "title": "Palette map",
+            "description": "Visual emphasis accumulates semantically toward conversion. No manual token assignment per component per stage."
+          },
+          {
+            "icon": "⚡",
+            "title": "IA planner",
+            "description": "Go from brief to full page architecture in seconds. Powered by Claude Opus, grounded in your resolution rules."
+          },
+          {
+            "icon": "🔀",
+            "title": "Multi-variant generation",
+            "description": "One brief produces Mover, Validator, and Explorer variants in parallel. Test the right experience for every segment without rebuilding."
+          },
+          {
+            "icon": "🧩",
+            "title": "Component manifest",
+            "description": "11 components fully specified with zone affinity, slot schemas, and usage intent. The spec your team no longer has to write."
+          },
+          {
+            "icon": "🔑",
+            "title": "Bring your own API key",
+            "description": "You own the token spend. No vendor billing, no usage caps, no runtime dependency on MODE's infrastructure."
+          }
+        ]
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Social proof",
+      "beat": "Credibility",
+      "component": "SocialProofBar",
+      "variant": "quote-with-logos",
+      "reasoning": "Validator archetype requires strong credibility signals. Notes specify: 'Validator variant leads with quote, logos below.' This directly addresses the validator's need for trust.",
+      "slots": {
+        "headline": null,
+        "logos": null,
+        "quote": "We cut our landing page QA cycle from three days to under four hours. The resolution engine makes the right call by default — we stopped writing variant logic and started shipping. The $1,199 paid for itself in the first sprint.",
+        "attribution": null,
+        "attribution_logo": null,
+        "author_name": "Jordan Mercer",
+        "author_title": "CTO",
+        "company": "Stacklane"
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Social proof",
+      "beat": "Credibility",
+      "component": "TestimonialSingle",
+      "variant": "with-photo",
+      "reasoning": "Validator archetype demands attribution and authenticity. Notes state: 'Always include role and company for Validator credibility' and 'with-photo increases engagement and perceived authenticity.' Place near conversion CTA.",
+      "slots": {
+        "quote": "We cut our landing page QA cycle from three days to under four hours. The resolution engine makes the right call by default — we stopped writing variant logic and started shipping. The $1,199 paid for itself in the first sprint.",
+        "author_name": "Jordan Mercer",
+        "author_title": "CTO",
+        "company": "Stacklane",
+        "photo": null,
+        "company_logo": null
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Proof points",
+      "beat": "Evidence",
+      "component": "StatBlock",
+      "variant": "with-source",
+      "reasoning": "Validator archetype requires trust verification. Notes specify: 'Always pair stats with source attribution in Validator contexts — unsourced stats reduce trust.'",
+      "slots": {
+        "headline": "The numbers behind the decision.",
+        "stats": [
+          {
+            "value": "< 1 hr",
+            "label": "Median time from install to first resolved component output",
+            "source": "Internal data, 2024"
+          },
+          {
+            "value": "3×",
+            "label": "Faster page architecture vs. manual IA planning, measured across 40 projects",
+            "source": "Internal data, 2024"
+          },
+          {
+            "value": "11",
+            "label": "Components fully specified with slot schemas, zone affinity, and usage intent — out of the box",
+            "source": "MODE component manifest, v1"
+          }
+        ]
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Pricing",
+      "beat": "Decision",
+      "component": "PricingCard",
+      "variant": "highlighted",
+      "reasoning": "Conversion stage with validator archetype benefits from clear recommendation. Notes state: 'highlighted variant for recommended plan' and 'Validator variant includes description and longer feature list.'",
+      "slots": {
+        "plan_name": "MODE Kit",
+        "badge": "Most popular",
+        "price": "$1,199",
+        "billing_period": "one-time",
+        "description": "The full intelligence layer. Resolution engine, component manifest, token config, palette map, IA planner, multi-variant generation, and Next.js preview UI. Yours forever.",
+        "features": [
+          "Semantic resolution engine — four-dimension model",
+          "Component manifest — 11 components, fully specified",
+          "IA planner + multi-variant generation agent",
+          "Three palette presets — funnel, archetype, feature-emphasis",
+          "Token dashboard with editable palette map",
+          "Lifetime access — no subscription, no lock-in"
+        ],
+        "cta": {
+          "label": "Get MODE",
+          "href": "#"
+        }
+      },
+      "palette": "neutral"
+    },
+    {
+      "section": "CTA",
+      "beat": "Conversion",
+      "component": "CTABanner",
+      "variant": "minimal",
+      "reasoning": "Decision funnel stage requires focused conversion without distraction. Notes state: 'minimal for high-frequency use — above footer, between sections' and supports conversion-stage clarity.",
+      "slots": {
+        "headline": "The intelligence layer is ready. So is the decision.",
+        "subhead": "One purchase. Runs in your codebase. Operational in under an hour.",
+        "cta_primary": {
+          "label": "Get MODE — $1,199",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "See the component manifest",
+          "href": "#"
+        },
+        "trust_signal": "One-time purchase. No subscription. No runtime dependency. Fork and extend freely."
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Footer",
+      "beat": "Recovery",
+      "component": "FooterMinimal",
+      "variant": "with-cta",
+      "reasoning": "Decision funnel stage on conversion page requires final capture opportunity. Notes specify: 'with-cta variant recaptures departing users on key conversion pages — use on pricing and signup flows.'",
+      "slots": {
+        "logo": "[logo]",
+        "nav_columns": [],
+        "legal_text": "© 2025 MODE. All rights reserved.",
+        "social_links": [],
+        "cta": {
+          "label": "Get MODE",
+          "href": "#"
+        }
+      },
+      "palette": "light"
+    }
+  ],
+  "preview_url": "/admin/preview?file=page-2026-06-20T04-08-54-386Z-validator.json"
+}

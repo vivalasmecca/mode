@@ -139,7 +139,7 @@
       "section": "Hero",
       "beat": "Orientation",
       "component": "HeroPrimary",
-      "variant": "text-only",
+      "variant": "editorial",
       "reasoning": "Consideration/conversion funnel stage requires text-only variant: slim title and subhead only, no media, no secondary CTA — orients the visitor without competing with the decision moment below",
       "slots": {
         "eyebrow": "Intent-aware design system",
@@ -156,7 +156,8 @@
         "media": null,
         "trust_signal": "One-time purchase. Lifetime access. No subscription."
       },
-      "palette": "light"
+      "palette": "light",
+      "custom_variant": null
     },
     {
       "section": "Features",
@@ -254,7 +255,7 @@
       "section": "Social proof",
       "beat": "Credibility",
       "component": "SocialProofBar",
-      "variant": "quote-with-logos",
+      "variant": "logos-only",
       "reasoning": "Validator variant leads with quote, logos below — establishing credibility through both attributed narrative and brand recognition",
       "slots": {
         "headline": "Built for teams evaluating what comes after component libraries.",
@@ -263,7 +264,8 @@
         "attribution": "Head of Growth Engineering, early-access customer",
         "attribution_logo": null
       },
-      "palette": "dark"
+      "palette": "dark",
+      "custom_variant": "slim-no-headline"
     },
     {
       "section": "Social proof",
@@ -287,7 +289,7 @@
       "section": "Proof points",
       "beat": "Evidence",
       "component": "StatBlock",
-      "variant": "with-source",
+      "variant": "3-stat",
       "reasoning": "Validator contexts require with-source attribution — unsourced stats reduce trust, making source-attributed metrics essential for this archetype",
       "slots": {
         "headline": "What teams measure after adopting MODE.",

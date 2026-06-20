@@ -13,6 +13,8 @@ export type ModuleComponent = React.ComponentType<{
   slots: ComponentSlots;
   variant: string | null;
   palette?: PaletteMode;
+  slotVisibility?: Record<string, boolean>;
+  layout?: { align?: "left" | "center" };
 }>;
 
 export const MODULE_REGISTRY: Record<string, ModuleComponent> = {

@@ -1,0 +1,178 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at": "2026-06-20T15:43:56.674Z",
+  "variant": "awareness",
+  "preset": "funnel-driven",
+  "preset_description": "Dark = decision signal. Emphasis accumulates toward conversion — trust anchors and commitment moments are dark, top-of-funnel is light.",
+  "palette_driver": "funnel_stage",
+  "brief": {
+    "audience": "Startups seeking an AI-first, intent-driven design system",
+    "goal": "Convert trial to paid",
+    "context_mode": "organic",
+    "content_notes": "",
+    "archetype": "Validator",
+    "funnel_stage": "awareness"
+  },
+  "behavioral_tokens": {
+    "require_trust_signal": true,
+    "allow_secondary_cta": true,
+    "subhead_policy": "always",
+    "copy_density": "medium",
+    "evidence_density": "high"
+  },
+  "accent_tokens": {
+    "_note": "Brand primary CTA color. Global — not per-preset. Two variants: button on a light/neutral section vs. on a dark section.",
+    "on_light": {
+      "bg": "violet.9",
+      "text": "white"
+    },
+    "on_dark": {
+      "bg": "white",
+      "text": "slate.12"
+    }
+  },
+  "ia": {
+    "beats": [
+      {
+        "name": "Orientation",
+        "rationale": "Establishes immediately what MODE is — an AI-first, intent-driven design system — and who it's for (startups). Sets the context so Validator-archetype visitors can quickly confirm relevance before investing attention."
+      },
+      {
+        "name": "Credibility",
+        "rationale": "Validators need early trust signals before they'll engage deeper. Placing social proof, customer logos, or endorsements from recognizable startups right after orientation satisfies their instinct to verify legitimacy and reduces skepticism."
+      },
+      {
+        "name": "Value",
+        "rationale": "With credibility established, this beat unpacks MODE's core capabilities — intent-aware components, adaptive layouts, AI-driven workflows — translating features into tangible outcomes for resource-constrained startups. Gives Validators substantive material to evaluate."
+      },
+      {
+        "name": "Evidence",
+        "rationale": "Critical for the Validator archetype. Concrete metrics, case study data, and proof points (e.g., time saved, conversion lifts, adoption stats) provide the hard evidence Validators require before any commitment, even a soft one at the awareness stage."
+      },
+      {
+        "name": "Conversion",
+        "rationale": "Awareness-stage conversion is kept soft — a free trial prompt, newsletter signup, or 'explore the sandbox' CTA rather than a purchase commitment. Positioned after Evidence so Validators feel sufficiently informed to take a low-risk next step. No Decision beat per awareness-stage rules."
+      },
+      {
+        "name": "Recovery",
+        "rationale": "Provides secondary navigation paths — documentation, blog, community links — for visitors not yet ready to convert. Captures remaining intent and ensures no visitor leaves without an alternative route back into the funnel."
+      }
+    ],
+    "sections": [
+      {
+        "name": "Navigation",
+        "beat": "Orientation",
+        "rationale": "Global navigation — wayfinding and persistent CTA for the session.",
+        "candidate_components": [
+          "NavigationHeader"
+        ]
+      },
+      {
+        "name": "Hero",
+        "beat": "Orientation",
+        "rationale": "Establishes immediately what MODE is — an AI-first, intent-driven design system — and who it's for (startups). Sets the context so Validator-archetype visitors can quickly confirm relevance before investing attention.",
+        "candidate_components": [
+          "HeroPrimary",
+          "HeroStatement"
+        ]
+      },
+      {
+        "name": "Social proof",
+        "beat": "Credibility",
+        "rationale": "Validators need early trust signals before they'll engage deeper. Placing social proof, customer logos, or endorsements from recognizable startups right after orientation satisfies their instinct to verify legitimacy and reduces skepticism.",
+        "candidate_components": [
+          "SocialProofBar"
+        ]
+      },
+      {
+        "name": "Footer",
+        "beat": "Recovery",
+        "rationale": "Page close — brand mark, minimal navigation, and legal.",
+        "candidate_components": [
+          "FooterMinimal"
+        ]
+      }
+    ]
+  },
+  "page": [
+    {
+      "section": "Navigation",
+      "beat": "Orientation",
+      "component": "NavigationHeader",
+      "variant": "full",
+      "reasoning": "Awareness funnel stage requires 'full for exploration and top-funnel pages.' The persistent CTA in nav must be maintained as 'the most converted element on most SaaS pages.'",
+      "slots": {
+        "logo": "[logo]",
+        "nav_links": [],
+        "cta_primary": {
+          "label": "Get MODE",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "See how it works",
+          "href": "#"
+        }
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Hero",
+      "beat": "Orientation",
+      "component": "HeroPrimary",
+      "variant": "editorial",
+      "reasoning": "Awareness stage prefers 'editorial variant is the high-expression awareness layout' and Validator archetype 'always includes trust_signal.' with-social-proof variant places 'LogoStrip immediately below CTACluster,' delivering both expression and credibility.",
+      "slots": {
+        "eyebrow": "Intent-aware design system",
+        "headline": "Your design system knows how to render. MODE teaches it why.",
+        "subhead": "MODE resolves component behavior, visual emphasis, and copy register to the right experience for every user archetype and funnel stage — without manual variants.",
+        "cta_primary": {
+          "label": "Get MODE",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "See how it works",
+          "href": "#"
+        },
+        "media": null,
+        "trust_signal": "One-time purchase. Lifetime access. Lives in your codebase.",
+        "logos": null
+      },
+      "palette": "light",
+      "custom_variant": "hero---no-eyebrow"
+    },
+    {
+      "section": "Social proof",
+      "beat": "Credibility",
+      "component": "SocialProofBar",
+      "variant": "quote-with-logos",
+      "reasoning": "Validator archetype requires social-proof variants; 'Validator variant leads with quote, logos below' for credibility-anchored messaging appropriate to trial conversion context.",
+      "slots": {
+        "headline": "Built for teams that move in code",
+        "logos": null,
+        "quote": "We had three variant systems held together by Notion docs and good intentions. MODE replaced all of it with a single resolution layer that just makes the right call.",
+        "attribution": "Early access customer, seed-stage SaaS startup",
+        "attribution_logo": null
+      },
+      "palette": "neutral"
+    },
+    {
+      "section": "Footer",
+      "beat": "Recovery",
+      "component": "FooterMinimal",
+      "variant": "standard",
+      "reasoning": "Awareness stage does not yet require conversion recovery; standard variant is 'the default' for exploratory pages where visitors are building intent rather than making a purchase decision.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_columns": [],
+        "legal_text": "© 2025 MODE. All rights reserved.",
+        "social_links": [],
+        "cta": {
+          "label": "Get MODE",
+          "href": "#"
+        }
+      },
+      "palette": "light"
+    }
+  ],
+  "preview_url": "/admin/preview?file=page-2026-06-20T15-43-56-674Z-awareness.json"
+}

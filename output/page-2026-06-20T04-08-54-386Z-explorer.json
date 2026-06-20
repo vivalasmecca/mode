@@ -1,0 +1,177 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at": "2026-06-20T04:08:54.386Z",
+  "variant": "Explorer",
+  "preset": "archetype-driven",
+  "preset_description": "Dark = identity signal. Visual language expresses who the user is. Validator gets authority and weight (heavy dark). Mover gets minimal light with one dark CTA punch. Explorer gets all-neutral — open, spacious, no urgency.",
+  "palette_driver": "archetype",
+  "brief": {
+    "audience": "startups seeking an ai-first, intent-driven design system",
+    "goal": "convert to paid",
+    "context_mode": "organic",
+    "content_notes": "",
+    "funnel_stage": "decision",
+    "archetype": "Explorer"
+  },
+  "behavioral_tokens": {
+    "require_trust_signal": false,
+    "allow_secondary_cta": true,
+    "subhead_policy": "always",
+    "copy_density": "high",
+    "evidence_density": "medium"
+  },
+  "accent_tokens": {
+    "_note": "Brand primary CTA color. Global — not per-preset. Two variants: button on a light/neutral section vs. on a dark section.",
+    "on_light": {
+      "bg": "violet.9",
+      "text": "white"
+    },
+    "on_dark": {
+      "bg": "white",
+      "text": "slate.12"
+    }
+  },
+  "ia": {
+    "beats": [
+      {
+        "name": "Orientation",
+        "rationale": "Always first. Establishes context for Explorer-archetype startup founders: frames MODE as the AI-first, intent-driven design system they've been searching for, setting the discovery tone."
+      },
+      {
+        "name": "Value",
+        "rationale": "Archetype guidance requires Value for Explorer. After orientation, Explorers want to understand capabilities and outcomes before seeing hard proof — this satisfies their discovery mindset by showcasing what MODE can do."
+      },
+      {
+        "name": "Credibility",
+        "rationale": "Archetype guidance requires Credibility for Explorer. Trust signals and social proof from peer startups validate the value claims just made, building confidence without feeling pushy."
+      },
+      {
+        "name": "Evidence",
+        "rationale": "Decision-stage funnel requires Evidence before Conversion. Concrete metrics, case study data, and proof points give the Explorer the substantive depth they need to feel informed rather than sold to."
+      },
+      {
+        "name": "Decision",
+        "rationale": "Decision-stage funnel requires Decision before Conversion. Presents pricing and plan comparison in a clear, low-pressure frame — letting the Explorer weigh options on their own terms."
+      },
+      {
+        "name": "Conversion",
+        "rationale": "Must appear immediately before Recovery. A clear but non-aggressive CTA aligned with Explorer archetype — inviting action as a natural next step in their discovery journey rather than a hard close."
+      },
+      {
+        "name": "Recovery",
+        "rationale": "Always last. Provides secondary paths (docs, community, demo booking) for Explorers who aren't ready to commit yet, ensuring no visitor hits a dead end."
+      }
+    ],
+    "sections": [
+      {
+        "name": "Navigation",
+        "beat": "Orientation",
+        "rationale": "Global navigation — wayfinding and persistent CTA for the session.",
+        "candidate_components": [
+          "NavigationHeader"
+        ]
+      },
+      {
+        "name": "Features",
+        "beat": "Value",
+        "rationale": "Archetype guidance requires Value for Explorer. After orientation, Explorers want to understand capabilities and outcomes before seeing hard proof — this satisfies their discovery mindset by showcasing what MODE can do.",
+        "candidate_components": [
+          "FeatureGrid"
+        ]
+      },
+      {
+        "name": "Footer",
+        "beat": "Recovery",
+        "rationale": "Page close — brand mark, minimal navigation, and legal.",
+        "candidate_components": [
+          "FooterMinimal"
+        ]
+      }
+    ]
+  },
+  "page": [
+    {
+      "section": "Navigation",
+      "beat": "Orientation",
+      "component": "NavigationHeader",
+      "variant": "minimal",
+      "reasoning": "Decision-stage funnel requires conversion focus. Per notes: 'minimal variant for conversion-focused pages — strip nav_links, keep logo and single CTA only.' This removes friction at the critical conversion moment.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_links": [],
+        "cta_primary": {
+          "label": "Get MODE",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "See how it works",
+          "href": "#"
+        }
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Features",
+      "beat": "Value",
+      "component": "FeatureGrid",
+      "variant": "2-col-heavy",
+      "reasoning": "Explorer archetype paired with decision stage demands deeper engagement. Notes specify: 'Explorer variant uses 2-col-heavy with longer copy per feature,' enabling explorers to understand intent-driven capabilities through extended narrative before converting.",
+      "slots": {
+        "headline": "Every dimension of intent. Resolved automatically.",
+        "subhead": "MODE's resolution engine reads archetype, funnel stage, intent state, and context mode — then makes the right call on behavior, emphasis, and copy register without manual intervention.",
+        "features": [
+          {
+            "icon": "🧠",
+            "title": "Semantic resolution engine",
+            "description": "Components don't just render — they reason. The four-dimension model resolves behavior across archetype, funnel stage, intent state, and context mode simultaneously, so the right experience surfaces by default rather than by configuration."
+          },
+          {
+            "icon": "🗺️",
+            "title": "IA planner",
+            "description": "Go from a one-paragraph brief to a full page architecture in seconds. Powered by Claude Opus, the planner maps the right section sequence, component selection, and zone affinity for your specific funnel stage and audience — before you write a single line."
+          },
+          {
+            "icon": "⚡",
+            "title": "Multi-variant generation",
+            "description": "One brief produces Mover, Validator, and Explorer variants in parallel. No separate prompts, no duplicated effort — the resolution engine handles the divergence and the output is immediately renderable in the Next.js preview UI."
+          },
+          {
+            "icon": "🎨",
+            "title": "Palette map",
+            "description": "Visual emphasis isn't assigned manually — it accumulates semantically. The palette map resolves per component per funnel stage, so the right elements carry weight at the right moments on the path to conversion, without a designer touching every instance."
+          },
+          {
+            "icon": "🧩",
+            "title": "Component manifest",
+            "description": "Eleven components fully specified with zone affinity, slot schemas, and usage intent. Built on Radix UI primitives, which means zero new mental models — just a richer intelligence layer on top of foundations your team already knows."
+          },
+          {
+            "icon": "🔧",
+            "title": "Token dashboard",
+            "description": "Editable palette map, accent configuration, and preset switching in one place. Three presets ship out of the box — funnel-driven, archetype-driven, and feature-emphasis — and the configuration lives in your codebase, not a vendor dashboard."
+          }
+        ]
+      },
+      "palette": "neutral"
+    },
+    {
+      "section": "Footer",
+      "beat": "Recovery",
+      "component": "FooterMinimal",
+      "variant": "with-cta",
+      "reasoning": "Decision-stage conversion page requires footer recovery mechanism. Per notes: 'with-cta variant recaptures departing users on key conversion pages — use on pricing and signup flows.' This captures users about to leave before converting.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_columns": [],
+        "legal_text": "© 2025 MODE. All rights reserved.",
+        "social_links": [],
+        "cta": {
+          "label": "Get MODE",
+          "href": "#"
+        }
+      },
+      "palette": "light"
+    }
+  ],
+  "preview_url": "/admin/preview?file=page-2026-06-20T04-08-54-386Z-explorer.json"
+}

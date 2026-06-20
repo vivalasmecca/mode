@@ -155,13 +155,14 @@
         "media": null,
         "trust_signal": "One-time purchase. Lifetime access. No subscription."
       },
-      "palette": "dark"
+      "palette": "dark",
+      "custom_variant": "hero-slim---left"
     },
     {
       "section": "Social proof",
       "beat": "Credibility",
-      "component": "TestimonialSingle",
-      "variant": "with-photo",
+      "component": "SocialProofBar",
+      "variant": "logos-only",
       "reasoning": "Validator archetype requires trust signals; with-photo variant 'increases engagement and perceived authenticity' and should be placed 'near a CTA — testimonials convert when positioned at a decision moment.'",
       "slots": {
         "quote": "We were building four variants of every landing section by hand — hero for paid, hero for organic, hero for trial. MODE collapsed that into a single brief. We shipped the full funnel in a day instead of a sprint.",
@@ -171,13 +172,14 @@
         "photo": null,
         "company_logo": null
       },
-      "palette": "dark"
+      "palette": "dark",
+      "custom_variant": "slim-no-headline"
     },
     {
       "section": "Proof points",
       "beat": "Evidence",
       "component": "StatBlock",
-      "variant": "with-source",
+      "variant": "3-stat",
       "reasoning": "Validator archetype demands credibility; 'Always pair stats with source attribution in Validator contexts — unsourced stats reduce trust.'",
       "slots": {
         "headline": "What teams measure after MODE.",
@@ -199,7 +201,8 @@
           }
         ]
       },
-      "palette": "dark"
+      "palette": "dark",
+      "custom_variant": "stat-block-slim"
     },
     {
       "section": "Pricing",
@@ -232,7 +235,7 @@
       "section": "CTA",
       "beat": "Conversion",
       "component": "CTABanner",
-      "variant": "centered",
+      "variant": "minimal",
       "reasoning": "Validator variant should 'include subhead and trust_signal (e.g., 'No credit card required')' — centered positioning works for terminal conversion actions at decision stage.",
       "slots": {
         "headline": "The decision is already made. Now make it official.",

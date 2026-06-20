@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0.0",
+  "built_at": "2026-06-20T04:27:01.871Z",
+  "ts": "2026-06-20T04-27-01-871Z",
+  "preset": "archetype-driven",
+  "palette_driver": "archetype",
+  "brief": {
+    "audience": "Startups seeking an ai-first, intent-driven design system",
+    "goal": "convert to paid",
+    "context_mode": "organic",
+    "content_notes": "",
+    "funnel_stage": "decision",
+    "archetype": "Mover"
+  },
+  "pages": [
+    {
+      "label": "mover",
+      "filename": "page-2026-06-20T04-27-01-871Z-mover.json",
+      "previewUrl": "/admin/preview?file=page-2026-06-20T04-27-01-871Z-mover.json",
+      "siteUrl": "/admin/site?ts=2026-06-20T04-27-01-871Z&page=mover"
+    },
+    {
+      "label": "validator",
+      "filename": "page-2026-06-20T04-27-01-871Z-validator.json",
+      "previewUrl": "/admin/preview?file=page-2026-06-20T04-27-01-871Z-validator.json",
+      "siteUrl": "/admin/site?ts=2026-06-20T04-27-01-871Z&page=validator"
+    },
+    {
+      "label": "explorer",
+      "filename": "page-2026-06-20T04-27-01-871Z-explorer.json",
+      "previewUrl": "/admin/preview?file=page-2026-06-20T04-27-01-871Z-explorer.json",
+      "siteUrl": "/admin/site?ts=2026-06-20T04-27-01-871Z&page=explorer"
+    }
+  ]
+}

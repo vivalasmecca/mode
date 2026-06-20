@@ -1,0 +1,112 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at": "2026-06-20T03:54:06.935Z",
+  "variant": "Explorer",
+  "preset": "archetype-driven",
+  "preset_description": "Dark = identity signal. Visual language expresses who the user is. Validator gets authority and weight (heavy dark). Mover gets minimal light with one dark CTA punch. Explorer gets all-neutral — open, spacious, no urgency.",
+  "palette_driver": "archetype",
+  "brief": {
+    "audience": "Startups needing an AI-first, intent-driven design system",
+    "goal": "convert to paid",
+    "context_mode": "organic",
+    "content_notes": "",
+    "funnel_stage": "decision",
+    "archetype": "Explorer"
+  },
+  "behavioral_tokens": {
+    "require_trust_signal": false,
+    "allow_secondary_cta": true,
+    "subhead_policy": "always",
+    "copy_density": "high",
+    "evidence_density": "medium"
+  },
+  "accent_tokens": {
+    "_note": "Brand primary CTA color. Global — not per-preset. Two variants: button on a light/neutral section vs. on a dark section.",
+    "on_light": {
+      "bg": "violet.9",
+      "text": "white"
+    },
+    "on_dark": {
+      "bg": "white",
+      "text": "slate.12"
+    }
+  },
+  "ia": {
+    "beats": [
+      {
+        "name": "Orientation",
+        "rationale": "Orientation — Explorer archetype at decision stage"
+      },
+      {
+        "name": "Credibility",
+        "rationale": "Credibility — Explorer archetype at decision stage"
+      },
+      {
+        "name": "Evidence",
+        "rationale": "Evidence — Explorer archetype at decision stage"
+      },
+      {
+        "name": "Decision",
+        "rationale": "Decision — Explorer archetype at decision stage"
+      },
+      {
+        "name": "Conversion",
+        "rationale": "Conversion — Explorer archetype at decision stage"
+      },
+      {
+        "name": "Recovery",
+        "rationale": "Recovery — Explorer archetype at decision stage"
+      }
+    ],
+    "sections": [
+      {
+        "name": "Navigation",
+        "beat": "Orientation",
+        "rationale": "Global navigation — wayfinding and persistent CTA for the session.",
+        "candidate_components": [
+          "NavigationHeader"
+        ]
+      },
+      {
+        "name": "Footer",
+        "beat": "Recovery",
+        "rationale": "Page close — brand mark, minimal navigation, and legal.",
+        "candidate_components": [
+          "FooterMinimal"
+        ]
+      }
+    ]
+  },
+  "page": [
+    {
+      "section": "Navigation",
+      "beat": "Orientation",
+      "component": "NavigationHeader",
+      "variant": "full",
+      "reasoning": null,
+      "slots": {
+        "logo": "[logo]",
+        "nav_links": [],
+        "cta_primary": "[cta_primary]",
+        "cta_secondary": null
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Footer",
+      "beat": "Recovery",
+      "component": "FooterMinimal",
+      "variant": "standard",
+      "reasoning": null,
+      "slots": {
+        "logo": "[logo]",
+        "nav_columns": [],
+        "legal_text": "[legal_text]",
+        "social_links": [],
+        "cta": null
+      },
+      "palette": "light"
+    }
+  ],
+  "preview_url": "/admin/preview?file=page-2026-06-20T03-54-06-935Z-explorer.json"
+}

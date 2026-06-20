@@ -1,0 +1,229 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at": "2026-06-20T03:54:06.935Z",
+  "variant": "Mover",
+  "preset": "archetype-driven",
+  "preset_description": "Dark = identity signal. Visual language expresses who the user is. Validator gets authority and weight (heavy dark). Mover gets minimal light with one dark CTA punch. Explorer gets all-neutral — open, spacious, no urgency.",
+  "palette_driver": "archetype",
+  "brief": {
+    "audience": "Startups needing an AI-first, intent-driven design system",
+    "goal": "convert to paid",
+    "context_mode": "organic",
+    "content_notes": "",
+    "funnel_stage": "decision",
+    "archetype": "Mover"
+  },
+  "behavioral_tokens": {
+    "require_trust_signal": false,
+    "allow_secondary_cta": false,
+    "subhead_policy": "optional",
+    "copy_density": "low",
+    "evidence_density": "low"
+  },
+  "accent_tokens": {
+    "_note": "Brand primary CTA color. Global — not per-preset. Two variants: button on a light/neutral section vs. on a dark section.",
+    "on_light": {
+      "bg": "violet.9",
+      "text": "white"
+    },
+    "on_dark": {
+      "bg": "white",
+      "text": "slate.12"
+    }
+  },
+  "ia": {
+    "beats": [
+      {
+        "name": "Orientation",
+        "rationale": "Orientation — Mover archetype at decision stage"
+      },
+      {
+        "name": "Credibility",
+        "rationale": "Credibility — Mover archetype at decision stage"
+      },
+      {
+        "name": "Evidence",
+        "rationale": "Evidence — Mover archetype at decision stage"
+      },
+      {
+        "name": "Decision",
+        "rationale": "Decision — Mover archetype at decision stage"
+      },
+      {
+        "name": "Conversion",
+        "rationale": "Conversion — Mover archetype at decision stage"
+      },
+      {
+        "name": "Recovery",
+        "rationale": "Recovery — Mover archetype at decision stage"
+      }
+    ],
+    "sections": [
+      {
+        "name": "Navigation",
+        "beat": "Orientation",
+        "rationale": "Global navigation — wayfinding and persistent CTA for the session.",
+        "candidate_components": [
+          "NavigationHeader"
+        ]
+      },
+      {
+        "name": "Hero",
+        "beat": "Orientation",
+        "rationale": "Orientation — Mover archetype at decision stage",
+        "candidate_components": [
+          "HeroPrimary"
+        ]
+      },
+      {
+        "name": "Social proof",
+        "beat": "Credibility",
+        "rationale": "Credibility — Mover archetype at decision stage",
+        "candidate_components": [
+          "SocialProofBar"
+        ]
+      },
+      {
+        "name": "Proof points",
+        "beat": "Evidence",
+        "rationale": "Evidence — Mover archetype at decision stage",
+        "candidate_components": [
+          "StatBlock"
+        ]
+      },
+      {
+        "name": "Pricing",
+        "beat": "Decision",
+        "rationale": "Decision — Mover archetype at decision stage",
+        "candidate_components": [
+          "PricingCard"
+        ]
+      },
+      {
+        "name": "CTA",
+        "beat": "Conversion",
+        "rationale": "Conversion — Mover archetype at decision stage",
+        "candidate_components": [
+          "CTABanner"
+        ]
+      },
+      {
+        "name": "Footer",
+        "beat": "Recovery",
+        "rationale": "Page close — brand mark, minimal navigation, and legal.",
+        "candidate_components": [
+          "FooterMinimal"
+        ]
+      }
+    ]
+  },
+  "page": [
+    {
+      "section": "Navigation",
+      "beat": "Orientation",
+      "component": "NavigationHeader",
+      "variant": "minimal",
+      "reasoning": null,
+      "slots": {
+        "logo": "[logo]",
+        "nav_links": [],
+        "cta_primary": "[cta_primary]",
+        "cta_secondary": null
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Hero",
+      "beat": "Orientation",
+      "component": "HeroPrimary",
+      "variant": "text-only",
+      "reasoning": null,
+      "slots": {
+        "eyebrow": null,
+        "headline": "[headline]",
+        "subhead": null,
+        "cta_primary": null,
+        "cta_secondary": null,
+        "media": null,
+        "trust_signal": null,
+        "logos": null
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Social proof",
+      "beat": "Credibility",
+      "component": "SocialProofBar",
+      "variant": "logos-only",
+      "reasoning": null,
+      "slots": {
+        "headline": null,
+        "logos": null,
+        "quote": null,
+        "attribution": null,
+        "attribution_logo": null
+      },
+      "palette": "neutral"
+    },
+    {
+      "section": "Proof points",
+      "beat": "Evidence",
+      "component": "StatBlock",
+      "variant": "3-stat",
+      "reasoning": null,
+      "slots": {
+        "headline": null,
+        "stats": []
+      },
+      "palette": "neutral"
+    },
+    {
+      "section": "Pricing",
+      "beat": "Decision",
+      "component": "PricingCard",
+      "variant": "highlighted",
+      "reasoning": null,
+      "slots": {
+        "plan_name": "[plan_name]",
+        "badge": null,
+        "price": "[price]",
+        "billing_period": "[billing_period]",
+        "description": null,
+        "features": [],
+        "cta": "[cta]"
+      },
+      "palette": "neutral"
+    },
+    {
+      "section": "CTA",
+      "beat": "Conversion",
+      "component": "CTABanner",
+      "variant": "minimal",
+      "reasoning": null,
+      "slots": {
+        "headline": "[headline]",
+        "subhead": null,
+        "cta_primary": "[cta_primary]",
+        "cta_secondary": null,
+        "trust_signal": null
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Footer",
+      "beat": "Recovery",
+      "component": "FooterMinimal",
+      "variant": "minimal",
+      "reasoning": null,
+      "slots": {
+        "logo": "[logo]",
+        "nav_columns": [],
+        "legal_text": "[legal_text]",
+        "social_links": [],
+        "cta": null
+      },
+      "palette": "light"
+    }
+  ],
+  "preview_url": "/admin/preview?file=page-2026-06-20T03-54-06-935Z-mover.json"
+}

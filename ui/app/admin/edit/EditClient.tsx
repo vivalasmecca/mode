@@ -104,6 +104,9 @@ type SlotType = "string" | "nullable-string" | "cta" | "array" | "object" | "ski
 function inferSlotType(key: string, value: unknown): SlotType {
   if (SKIP_KEYS.has(key)) return "skip";
   if (value === null || value === undefined) return "nullable-string";
+  // CTA slots are keyed "cta" or "cta_*" — detect by key name regardless of
+  // whether the value is an object or a plain string (LLM can corrupt them)
+  if (key === "cta" || key.startsWith("cta_")) return "cta";
   if (typeof value === "string") return "string";
   if (Array.isArray(value)) return "array";
   if (
@@ -369,14 +372,20 @@ function SlotField({
           placeholder="(empty = null)"
         />
       );
-    case "cta":
+    case "cta": {
+      // Normalize string → CTAValue in case the LLM wrote a plain string
+      const ctaValue: CTAValue =
+        typeof value === "string"
+          ? { label: value, href: "#" }
+          : (value as CTAValue);
       return (
         <CTASlotEditor
-          value={value as CTAValue}
+          value={ctaValue}
           onChange={(v) => onChange(v)}
           namedLinks={namedLinks}
         />
       );
+    }
     case "array":
       return (
         <ArraySlotEditor
@@ -858,14 +867,17 @@ export function EditClient({ variants, preset, namedLinksRaw = {} }: EditClientP
                       </span>
                       <PaletteChip mode={section.palette} />
                     </div>
-                    <div className="mt-1 flex flex-wrap gap-1">
+                    <div className="mt-1 flex flex-wrap items-center gap-1">
                       <span className="inline-flex items-center rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-600">
                         {section.component}
                       </span>
                       {section.variant && (
-                        <span className="inline-flex items-center rounded bg-blue-50 px-1.5 py-0.5 text-xs text-blue-600">
-                          {section.variant}
-                        </span>
+                        <>
+                          <span className="text-xs text-gray-400">›</span>
+                          <span className="inline-flex items-center rounded bg-blue-50 px-1.5 py-0.5 text-xs text-blue-600">
+                            {section.variant}
+                          </span>
+                        </>
                       )}
                     </div>
                   </button>

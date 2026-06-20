@@ -18,10 +18,14 @@ interface PricingCardProps {
   slots: ComponentSlots;
   variant: string | null;
   palette?: PaletteMode;
+  slotVisibility?: Record<string, boolean>;
+  layout?: { align?: "left" | "center" };
 }
 
-export function PricingCard({ slots, variant, palette }: PricingCardProps) {
+export function PricingCard({ slots, variant, palette, slotVisibility, layout }: PricingCardProps) {
   const p = getPalette(palette);
+  const isVisible = (name: string) => slotVisibility?.[name] !== false;
+  const alignClass = layout?.align === "center" ? "text-center items-center" : "";
   const isHighlighted = variant === "highlighted";
   const features = Array.isArray(slots.features) ? (slots.features as string[]) : [];
 
@@ -36,14 +40,14 @@ export function PricingCard({ slots, variant, palette }: PricingCardProps) {
 
   return (
     <section className={`${p.bg} py-20`}>
-      <div className="mx-auto max-w-6xl px-6">
+      <div className={`mx-auto max-w-6xl px-6 ${alignClass}`}>
         <div className={`mx-auto max-w-sm rounded-2xl p-8 shadow-sm ${cardClass}`}>
           {/* Plan name + badge */}
           <div className="flex items-center justify-between">
             <PlaceholderSlot name="plan_name" value={slots.plan_name} inline>
               <p className={`font-semibold ${textBody}`}>{slots.plan_name as string}</p>
             </PlaceholderSlot>
-            {!!(slots.badge) && (
+            {isVisible("badge") && (
               <PlaceholderSlot name="badge" value={slots.badge} inline>
                 <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${isHighlighted ? "bg-white text-gray-900" : "bg-gray-900 text-white"}`}>
                   {slots.badge as string}
@@ -64,7 +68,7 @@ export function PricingCard({ slots, variant, palette }: PricingCardProps) {
           </div>
 
           {/* Description */}
-          {slots.description !== undefined && (
+          {isVisible("description") && (
             <div className="mt-3">
               <PlaceholderSlot name="description" value={slots.description}>
                 <p className={`text-sm leading-relaxed ${textMuted}`}>{slots.description as string}</p>

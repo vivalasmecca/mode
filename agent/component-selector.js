@@ -97,30 +97,29 @@ async function llmSelectComponents(ia, brief, componentMap) {
     messages: [
       {
         role: "user",
-        content: `You are a component selection expert for MODE, an intent-aware SaaS design system.
-
-BRIEF:
-${JSON.stringify(brief, null, 2)}
-
-SECTIONS AND CANDIDATES:
-${JSON.stringify(sectionsPayload, null, 2)}
-
-SELECTION RULES:
-- For awareness funnel stage: prefer "editorial" variant on hero components — it is the high-expression layout appropriate for the attention-earning moment
-- For conversion funnel stage hero components: prefer "text-only" variant — slim page title and subhead only, no media, no secondary CTA, so it orients without competing with the decision moment below
-- For Validator archetype: prefer variants containing "social-proof", "with-photo", or "with-source"
-- For Mover archetype: prefer variants containing "minimal" or "text-only"
-- Your reasoning MUST cite a specific phrase from that component's notes field
-
-Return ONLY a valid JSON array — no markdown, no explanation:
-[
-  {
-    "section": "exact section name from input",
-    "component": "ComponentName",
-    "variant": "variant-name",
-    "reasoning": "specific reasoning citing the notes"
-  }
-]`,
+        content: [
+          {
+            type: "text",
+            text:
+              `You are a component selection expert for MODE, an intent-aware SaaS design system.\n\n` +
+              `SELECTION RULES:\n` +
+              `- For awareness funnel stage: prefer "editorial" variant on hero components — it is the high-expression layout appropriate for the attention-earning moment\n` +
+              `- For conversion funnel stage hero components: prefer "text-only" variant — slim page title and subhead only, no media, no secondary CTA, so it orients without competing with the decision moment below\n` +
+              `- For Validator archetype: prefer variants containing "social-proof", "with-photo", or "with-source"\n` +
+              `- For Mover archetype: prefer variants containing "minimal" or "text-only"\n` +
+              `- For Explorer archetype: prefer variants containing "editorial" or "with-social-proof" on hero components — discovery tone, breathing room, low conversion pressure\n` +
+              `- Your reasoning MUST cite a specific phrase from that component's notes field`,
+            cache_control: { type: "ephemeral" },
+          },
+          {
+            type: "text",
+            text:
+              `\n\nBRIEF:\n${JSON.stringify(brief, null, 2)}\n\n` +
+              `SECTIONS AND CANDIDATES:\n${JSON.stringify(sectionsPayload, null, 2)}\n\n` +
+              `Return ONLY a valid JSON array — no markdown, no explanation:\n` +
+              `[\n  {\n    "section": "exact section name from input",\n    "component": "ComponentName",\n    "variant": "variant-name",\n    "reasoning": "specific reasoning citing the notes"\n  }\n]`,
+          },
+        ],
       },
     ],
   });
@@ -176,6 +175,13 @@ function pickVariant(component, brief) {
   if (brief.archetype === "Mover") {
     const pref = component.variants.find(
       (v) => v.includes("minimal") || v.includes("text-only")
+    );
+    if (pref) return pref;
+  }
+
+  if (brief.archetype === "Explorer") {
+    const pref = component.variants.find(
+      (v) => v.includes("editorial") || v.includes("with-social-proof")
     );
     if (pref) return pref;
   }

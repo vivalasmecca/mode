@@ -69,7 +69,18 @@ export interface PageSection {
   reasoning: string | null;
   slots: ComponentSlots;
   palette?: PaletteMode;
+  custom_variant?: string | null;
 }
+
+export interface VariantOverrideDef {
+  base_component: string;
+  label: string;
+  slot_visibility: Record<string, boolean>;
+  layout: { align?: "left" | "center" };
+}
+
+export type VariantOverrideMap = Record<string, VariantOverrideDef>;
+// Key format: "ComponentName.variant-slug"
 
 export interface BehavioralTokens {
   require_trust_signal: boolean;

@@ -1,9 +1,10 @@
 import { headers } from "next/headers";
 import * as fs from "fs";
 import * as path from "path";
-import { getOutputByFile, getSiteManifest } from "@/lib/get-output";
+import { DATA_ROOT, getOutputByFile, getSiteManifest } from "@/lib/get-output";
 import { logRoutingEvent } from "@/lib/log-event";
 import { PreviewClient } from "@/components/preview/PreviewClient";
+import type { VariantOverrideMap } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -55,11 +56,21 @@ export default async function Home() {
   // Pick the routing dimension based on what drove this build's palette
   const variantLabel = manifest.palette_driver === "archetype" ? archetype : funnelStage;
   const page =
-    manifest.pages.find((p) => p.label === variantLabel) ?? manifest.pages[0];
+    manifest.pages.find((p) => p.label.toLowerCase() === variantLabel.toLowerCase()) ?? manifest.pages[0];
   if (!page) return <NoActiveBuild />;
 
   const output = getOutputByFile(page.filename);
   if (!output) return <NoActiveBuild />;
+
+  let variantOverrides: VariantOverrideMap = {};
+  try {
+    const overridesPath = path.join(DATA_ROOT, "tokens", "variant-overrides.json");
+    if (fs.existsSync(overridesPath)) {
+      variantOverrides = JSON.parse(fs.readFileSync(overridesPath, "utf8")) as VariantOverrideMap;
+    }
+  } catch {
+    variantOverrides = {};
+  }
 
   logRoutingEvent({
     ts:               new Date().toISOString(),
@@ -72,5 +83,5 @@ export default async function Home() {
     build_ts:         routing.ts,
   });
 
-  return <PreviewClient output={output} />;
+  return <PreviewClient output={output} variantOverrides={variantOverrides} />;
 }

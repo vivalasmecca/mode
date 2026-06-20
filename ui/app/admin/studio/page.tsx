@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import { DATA_ROOT, getOutputByFile, getSiteManifest } from "@/lib/get-output";
-import type { PageOutput } from "@/lib/types";
+import type { PageOutput, VariantOverrideMap } from "@/lib/types";
 import { StudioClient } from "./StudioClient";
 
 export const dynamic = "force-dynamic";
@@ -49,6 +49,33 @@ export default function StudioPage() {
   const initialPaletteModes = themeRaw?.palette_modes ?? {};
   const initialAccent = themeRaw?.accent ?? {};
 
+  // Build componentSlots map from manifest
+  const componentManifestRaw = readJson(path.join(DATA_ROOT, "manifest", "components.json")) as {
+    components?: Array<{
+      name: string;
+      slots: Record<string, string>;
+      variants?: string[];
+      variant_slots?: Record<string, string[]>;
+      properties?: Record<string, string[]>;
+    }>;
+  } | null;
+  const componentSlots: Record<string, Record<string, string>> = {};
+  const componentVariants: Record<string, string[]> = {};
+  const componentVariantSlots: Record<string, Record<string, string[]>> = {};
+  const componentProperties: Record<string, Record<string, string[]>> = {};
+  if (componentManifestRaw?.components) {
+    for (const c of componentManifestRaw.components) {
+      componentSlots[c.name] = c.slots ?? {};
+      componentVariants[c.name] = c.variants ?? [];
+      if (c.variant_slots) componentVariantSlots[c.name] = c.variant_slots;
+      if (c.properties) componentProperties[c.name] = c.properties;
+    }
+  }
+
+  const variantOverrides = (readJson(
+    path.join(DATA_ROOT, "tokens", "variant-overrides.json")
+  ) ?? {}) as VariantOverrideMap;
+
   return (
     <StudioClient
       variants={variants}
@@ -56,6 +83,11 @@ export default function StudioPage() {
       initialPaletteModes={initialPaletteModes}
       initialAccent={initialAccent}
       buildTs={buildTs}
+      componentSlots={componentSlots}
+      componentVariants={componentVariants}
+      componentVariantSlots={componentVariantSlots}
+      componentProperties={componentProperties}
+      initialVariantOverrides={variantOverrides}
     />
   );
 }

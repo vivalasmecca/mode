@@ -1,4 +1,7 @@
-import { getLatestOutput, getOutputByFile } from "@/lib/get-output";
+import * as fs from "fs";
+import * as path from "path";
+import { DATA_ROOT, getLatestOutput, getOutputByFile } from "@/lib/get-output";
+import type { VariantOverrideMap } from "@/lib/types";
 import { PreviewClient } from "@/components/preview/PreviewClient";
 
 function EmptyState() {
@@ -28,5 +31,15 @@ export default async function PreviewPage({
 
   if (!output) return <EmptyState />;
 
-  return <PreviewClient output={output} />;
+  let variantOverrides: VariantOverrideMap = {};
+  try {
+    const overridesPath = path.join(DATA_ROOT, "tokens", "variant-overrides.json");
+    if (fs.existsSync(overridesPath)) {
+      variantOverrides = JSON.parse(fs.readFileSync(overridesPath, "utf8")) as VariantOverrideMap;
+    }
+  } catch {
+    variantOverrides = {};
+  }
+
+  return <PreviewClient output={output} variantOverrides={variantOverrides} />;
 }

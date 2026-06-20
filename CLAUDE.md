@@ -173,7 +173,25 @@ The integration contract for a buyer: bring `color-scale.json` (your vocabulary)
 
 **Component swapping constraint:** The Studio's hover overlay draws candidates from `output.ia.sections[].candidate_components` — the set the IA evaluated as semantically appropriate for that section's beat and funnel context. Only candidates that exist in `MODULE_REGISTRY` are shown. This prevents swapping a hero for a social card and prevents inserting editorial variants where the semantic mapping doesn't support them. The constraint is structural, not enforced by runtime rules.
 
-**`PUT /api/output/save` extension:** Now accepts optional `component` (string) and `variant` (string | null) fields alongside the existing `slots` object. At least one of `slots` or `component` must be present. The slot editor continues to pass only `slots`; the Studio passes only `component`. Both paths write through the same route.
+**`PUT /api/output/save` extension:** Accepts optional `component` (string), `variant` (string | null), and `custom_variant` (string | null) fields alongside the existing `slots` object. At least one field must be present. The slot editor passes `slots`; the component swapper passes `component`; the manifest variant row passes `variant`; the named variant linker passes `custom_variant`. All paths write through the same route.
+
+**Variant row in hover overlay:** The `ComponentSelectorBar` (two-row dark overlay on hover) now shows manifest variants in a second row below the component-selection chips. Clicking a variant chip patches the section's `variant` field in-memory immediately (no dirty/Save flow) and saves to disk via `PUT /api/output/save`. This uses `componentVariants: Record<string, string[]>` read from `manifest/components.json` at `studio/page.tsx` server time. The variant row is hidden when `manifestVariants.length <= 1`.
+
+**Variant swapping is the universal primitive.** Component swap = different component entirely. Variant swap = same component, different configuration. Variant swapping works for ANY registered component regardless of internal implementation — including components from external design systems. The Studio exposes both swaps in the hover overlay.
+
+**Slot visibility toggles are a first-party convention.** Toggling works only for MODE's own components that implement the `isVisible(name) = slotVisibility?.[name] !== false` gate. External components may not implement this pattern. This is not a universal primitive — it is a first-party editing affordance. External design systems plug in via variant swapping, not slot toggles.
+
+**Alignment toggle removed from SlotEditor.** Alignment as a freeform override requires every component to implement `layout.align` through all nested divs. External components never will. Alignment belongs as a variant attribute — use variant swapping to select a left-aligned vs. centered variant; don't add a freeform toggle that silently fails on external components.
+
+**Content-based slot derivation in SlotEditor.** Slot panels are derived from `currentSlots` (the actual section content on disk for this specific variant), not from the component manifest's slot list (which covers all possible slots for the component family). This means a quote-style `SocialProofBar` and a logo-strip `SocialProofBar` show different panels. CTA values (objects with a `label` key) are always-on/required; all other populated, non-array, non-media slots are toggleable.
+
+**Named variant registry:** `tokens/variant-overrides.json` is the central store for user-created named variants. Each entry is keyed `ComponentName.slug` and stores `{ base_component, label, slot_visibility, layout }`. Named variants are created in the SlotEditor (right panel), appear in a dropdown on the ComponentSelectorBar, and are linked to sections via `custom_variant` in the section output JSON. The manifest `variant` field stays untouched — custom variants layer on top.
+
+**Cross-variant slot content merge:** The Studio canvas merges slot content across all funnel-stage variant files for each section index (where all variants agree on the component). A slot that is null in the current funnel stage but populated in another stage is filled by the other stage's value. Computed in `useMemo` in `ExpandedView`; applied per section as `effectiveSlots` in `InteractiveSection`. Display-only — deployment files are not affected.
+
+**`variant_slots` in the manifest eliminates ghost slots in SlotEditor.** The content generator populates all possible slots for a component regardless of which manifest variant is active — a `logos-only` `SocialProofBar` section has `quote` and `attribution` keys on disk even though the component never renders them. Without a filter, SlotEditor shows all populated slots, so the user sees toggles for content that has no visual effect. `variant_slots` in `manifest/components.json` declares exactly which slots each variant uses (e.g. `logos-only: ["headline", "logos"]`). SlotEditor reads `variant_slots[activeVariant]` to build an `allowedSlots` set and silently excludes any populated slot not in that set. Ghost slots disappear; only structurally relevant slots are shown. Add `variant_slots` to any component whose variants use meaningfully different slot subsets.
+
+**Null-suppressor in InteractiveSection prevents PlaceholderSlot dashed boxes on the canvas.** Before the slot visibility system existed, components used `{slots.x && <p>}` — null rendered nothing. After wrapping nullable slots with `isVisible() + PlaceholderSlot`, null slots rendered `[slot_name]` dashed boxes on the Studio canvas even though they render nothing in real preview. The fix is an `autoSuppressNull` dict computed in `InteractiveSection`: for every slot in `section.slots` that is null or an empty array, `autoSuppressNull[name] = false`. This is merged with the resolved named-variant visibility (named variant wins), and the result is passed as `slotVisibility` to the Component. Canvas now matches real preview output exactly. The slot visibility editor is still live — users can re-enable a suppressed slot to populate it.
 
 ---
 
@@ -197,7 +215,8 @@ mode/
 ├── tokens/
 │   ├── mode-tokens.json             ← palette maps + behavioral tokens per preset + global accent
 │   ├── color-scale.json             ← color vocabulary: full Radix Colors v3.0.0 (31 hues × 12 steps). Replace with your brand scale or edit in Studio → Design System.
-│   └── theme.json                   ← semantic assignment: maps palette tokens to color-scale.json entries via dot notation ("slate.12", "violet.9"). Changes take effect on next request (no rebuild).
+│   ├── theme.json                   ← semantic assignment: maps palette tokens to color-scale.json entries via dot notation ("slate.12", "violet.9"). Changes take effect on next request (no rebuild).
+│   └── variant-overrides.json       ← named variant registry. Keys are "ComponentName.slug"; values are { base_component, label, slot_visibility, layout }. Written by SlotEditor; read by studio/page.tsx and PreviewClient.
 ├── context/
 │   ├── product-context.json         ← structured product facts (name, features, pricing, named_links)
 │   └── brand-brief.md               ← tone, messaging pillars, claim territory (markdown)
@@ -244,8 +263,9 @@ mode/
     │       │   ├── route.ts         ← GET: list output files
     │       │   └── save/route.ts    ← PUT: write slots, component, and/or variant to output file (slot editor + Studio)
     │       ├── tokens/
-    │       │   ├── theme/route.ts       ← PUT: merge palette_modes + accent into theme.json (Studio token panel save)
-    │       │   └── color-scale/route.ts ← PUT: merge hue entries into color-scale.json (Studio Design System save)
+    │       │   ├── theme/route.ts           ← PUT: merge palette_modes + accent into theme.json (Studio token panel save)
+    │       │   ├── color-scale/route.ts     ← PUT: merge hue entries into color-scale.json (Studio Design System save)
+    │       │   └── variant-overrides/route.ts ← PUT: merge one named variant def into tokens/variant-overrides.json (SlotEditor save)
     │       ├── admin/
     │       │   ├── deploy/route.ts  ← POST: commit output/ + config/, push to trigger Vercel deploy
     │       │   └── events/route.ts  ← DELETE: truncate output/events.jsonl (clear routing history)
@@ -311,7 +331,7 @@ When dropping back in after time away, start here:
 - **Build tab foundational warning** ✓ — red "Foundational" chip at top of Build tab reminds that a build overwrites all slot edits.
 - **Run / Deploy panel** ✓ — shows active build timestamp + variant labels, last deploy time, and a Deploy button that commits `output/` + `config/` and pushes (content-lane deploy separate from code git push).
 - **Palette tab hex fix** ✓ — Accent preview and palette map cell backgrounds now resolve `color-scale.json` references to hex server-side (`ResolvedColors` prop), so Studio token changes are accurately reflected without Tailwind class interpolation.
-- **Studio** ✓ — `/admin/studio`. Canvas mode: birds-eye + expanded view, live token remapping, component swapper. Design System mode: full-width `color-scale.json` editor — hue group cards with color ramp + native color picker per step; changes apply live across all rendered variants via `reapplyAllVars()`; saves via `PUT /api/tokens/color-scale`.
+- **Studio** ✓ — `/admin/studio`. Canvas mode: birds-eye + expanded view, live token remapping, component swapper + variant row + slot visibility editor. Design System mode: full-width `color-scale.json` editor — hue group cards with color ramp + native color picker per step; changes apply live across all rendered variants via `reapplyAllVars()`; saves via `PUT /api/tokens/color-scale`.
 - **Full Radix Colors palette** ✓ — `color-scale.json` ships with all 31 Radix Colors v3.0.0 light-mode sRGB scales (gray family + full chromatic spectrum, 12 steps each). `theme.json` updated to Radix dot-notation (`slate.12`, `violet.9`). Studio Design System view now shows the complete vocabulary.
 - **Overview cleanup** ✓ — Token Resolution table removed from Overview; replaced with a Design Tokens CTA card that links directly to Studio with a description of the two editing surfaces (Design System for vocabulary, Canvas token panel for semantic remapping).
 - **Clear routing history** ✓ — Run tab Routing Activity has a "Clear history" button that calls `DELETE /api/admin/events`, truncates `output/events.jsonl`, and empties the table immediately without a page reload.
@@ -321,10 +341,18 @@ When dropping back in after time away, start here:
 
 ## What's next (as of June 2026)
 
-The Studio is the primary editing surface. The next lift is making the component layer configurable at a deeper level.
+The Studio is the primary editing surface. The variant sub-editor is built. The next layer is making the component contract clear for external design systems.
 
-### 1. Component editor (future — the Figma replacement vision)
-The Studio currently lets you swap between IA-vetted candidates for each section. The next layer is letting users duplicate, edit, or create components entirely within the Studio — defining which visual zones of a component (page bleed bg, container bg, keylines, SVG fills, text) are bound to which semantic token. This is the anatomy binding layer: zone-level CSS custom properties per component, making the connection between semantic tokens and visual expression configurable rather than hardcoded in JSX. This is the "kill Figma" direction — a code-native component design surface that understands semantic intent, not just visual properties.
+### 1. External design system integration contract
+The Studio now has three editing gestures: component swap (IA candidates), variant swap (manifest variants), and slot visibility (first-party only). For an external design system to plug in fully, the buyer needs to:
+1. Register their components in `manifest/components.json` with their available variants
+2. Map semantic moments to variants in their manifest entry (e.g. `"hero-centered"` = conversion-stage Hero)
+3. Implement the `ModuleComponent` interface in their component registry
+
+Slot visibility toggles are MODE-only. Variant swapping is universal. The integration guide should document this contract explicitly.
+
+### 2. Component anatomy editor (longer horizon — the Figma replacement vision)
+Beyond variant selection: letting users define which visual zones of a component (page bleed bg, container bg, keylines, SVG fills, text) are bound to which semantic token. The anatomy binding layer: zone-level CSS custom properties per component, making the connection between semantic tokens and visual expression configurable rather than hardcoded in JSX. This is the "kill Figma" direction — a code-native component design surface that understands semantic intent, not just visual properties.
 
 ### 2. Brand palette tuning
 `color-scale.json` now ships with the full Radix Colors vocabulary. The next step is replacing individual hues with real brand colors — open Studio → Design System, click any swatch, pick your brand hex, save. Then retune `theme.json` semantic assignments in the Canvas token panel. No file editing required.

@@ -1,0 +1,248 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at": "2026-06-20T04:27:01.871Z",
+  "variant": "Mover",
+  "preset": "archetype-driven",
+  "preset_description": "Dark = identity signal. Visual language expresses who the user is. Validator gets authority and weight (heavy dark). Mover gets minimal light with one dark CTA punch. Explorer gets all-neutral — open, spacious, no urgency.",
+  "palette_driver": "archetype",
+  "brief": {
+    "audience": "Startups seeking an ai-first, intent-driven design system",
+    "goal": "convert to paid",
+    "context_mode": "organic",
+    "content_notes": "",
+    "funnel_stage": "decision",
+    "archetype": "Mover"
+  },
+  "behavioral_tokens": {
+    "require_trust_signal": false,
+    "allow_secondary_cta": false,
+    "subhead_policy": "optional",
+    "copy_density": "low",
+    "evidence_density": "low"
+  },
+  "accent_tokens": {
+    "_note": "Brand primary CTA color. Global — not per-preset. Two variants: button on a light/neutral section vs. on a dark section.",
+    "on_light": {
+      "bg": "violet.9",
+      "text": "white"
+    },
+    "on_dark": {
+      "bg": "white",
+      "text": "slate.12"
+    }
+  },
+  "ia": {
+    "beats": [
+      {
+        "name": "Orientation",
+        "rationale": "Opens with a sharp, direct hero statement that frames MODE as the AI-first, intent-driven design system built for startups — gives the Mover immediate context and confirms they're in the right place without lingering."
+      },
+      {
+        "name": "Evidence",
+        "rationale": "Decision-stage requirement. For a Mover archetype, this is kept lean — a tight set of metrics or a single compelling case study data point that eliminates doubt fast and justifies the conversion ahead."
+      },
+      {
+        "name": "Decision",
+        "rationale": "Decision-stage requirement. Presents pricing and plan comparison clearly so the Mover can self-select quickly — no ambiguity, just the information needed to commit."
+      },
+      {
+        "name": "Conversion",
+        "rationale": "Placed immediately before Recovery per rules. Direct CTA with a clear commitment prompt — sign up or start a trial. Mover archetype demands a frictionless, confident action moment with no hedging."
+      },
+      {
+        "name": "Recovery",
+        "rationale": "Final beat as required. Provides secondary paths — contact sales, explore docs, or revisit feature details — catching anyone who didn't convert on the primary CTA without cluttering the main flow."
+      }
+    ],
+    "sections": [
+      {
+        "name": "Navigation",
+        "beat": "Orientation",
+        "rationale": "Global navigation — wayfinding and persistent CTA for the session.",
+        "candidate_components": [
+          "NavigationHeader"
+        ]
+      },
+      {
+        "name": "Hero",
+        "beat": "Orientation",
+        "rationale": "Opens with a sharp, direct hero statement that frames MODE as the AI-first, intent-driven design system built for startups — gives the Mover immediate context and confirms they're in the right place without lingering.",
+        "candidate_components": [
+          "HeroPrimary"
+        ]
+      },
+      {
+        "name": "Proof points",
+        "beat": "Evidence",
+        "rationale": "Decision-stage requirement. For a Mover archetype, this is kept lean — a tight set of metrics or a single compelling case study data point that eliminates doubt fast and justifies the conversion ahead.",
+        "candidate_components": [
+          "StatBlock"
+        ]
+      },
+      {
+        "name": "Pricing",
+        "beat": "Decision",
+        "rationale": "Decision-stage requirement. Presents pricing and plan comparison clearly so the Mover can self-select quickly — no ambiguity, just the information needed to commit.",
+        "candidate_components": [
+          "PricingCard"
+        ]
+      },
+      {
+        "name": "CTA",
+        "beat": "Conversion",
+        "rationale": "Placed immediately before Recovery per rules. Direct CTA with a clear commitment prompt — sign up or start a trial. Mover archetype demands a frictionless, confident action moment with no hedging.",
+        "candidate_components": [
+          "CTABanner"
+        ]
+      },
+      {
+        "name": "Footer",
+        "beat": "Recovery",
+        "rationale": "Page close — brand mark, minimal navigation, and legal.",
+        "candidate_components": [
+          "FooterMinimal"
+        ]
+      }
+    ]
+  },
+  "page": [
+    {
+      "section": "Navigation",
+      "beat": "Orientation",
+      "component": "NavigationHeader",
+      "variant": "minimal",
+      "reasoning": "Decision stage conversion page requires minimal variant to 'strip nav_links, keep logo and single CTA only' — the persistent CTA in nav is the most converted element and must remain focused.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_links": [],
+        "cta_primary": {
+          "label": "Get MODE",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "Click there",
+          "href": "#"
+        }
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Hero",
+      "beat": "Orientation",
+      "component": "HeroPrimary",
+      "variant": "editorial",
+      "reasoning": "Conversion funnel stage demands text-only variant: 'slim title and subhead only, no media, no secondary CTA — orients the visitor without competing with the decision moment below.' Mover archetype reinforces suppression of secondary elements.",
+      "slots": {
+        "eyebrow": "AI-first design system",
+        "headline": "Your design system finally knows why.",
+        "subhead": "MODE resolves component behavior, copy, and visual emphasis to intent — no manual variants.",
+        "cta_primary": {
+          "label": "Get MODE",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "Click here",
+          "href": "#"
+        },
+        "media": null,
+        "trust_signal": "One-time purchase. Lifetime access. Runs in your codebase.",
+        "logos": null
+      },
+      "palette": "light",
+      "custom_variant": "hero---no-eyebrow"
+    },
+    {
+      "section": "Proof points",
+      "beat": "Evidence",
+      "component": "StatBlock",
+      "variant": "3-stat",
+      "reasoning": "Mover archetype with decision-stage context requires suppression of sources and headlines per variant notes: 'Mover variant suppresses sources and headline; pure metric impact.' The 3-stat default is preferred for clean, decisive presentation.",
+      "slots": {
+        "headline": "Proof point headline",
+        "stats": [
+          {
+            "value": "< 1 hr",
+            "label": "From install to first brief",
+            "source": null
+          },
+          {
+            "value": "4 dims",
+            "label": "Archetype, stage, intent, context — resolved per component",
+            "source": null
+          },
+          {
+            "value": "3×",
+            "label": "Variants generated from a single brief",
+            "source": null
+          }
+        ]
+      },
+      "palette": "neutral",
+      "custom_variant": "stat-block-slim"
+    },
+    {
+      "section": "Pricing",
+      "beat": "Decision",
+      "component": "PricingCard",
+      "variant": "highlighted",
+      "reasoning": "Decision stage conversion requires clarity on recommended plan. Mover variant 'strips description; price and CTA only' — the highlighted variant with stripped detail creates decisive conversion focus.",
+      "slots": {
+        "plan_name": "MODE Kit",
+        "badge": "One-time",
+        "price": "$1,199",
+        "billing_period": "one-time purchase",
+        "description": "The full intelligence layer. Yours forever — no subscription, no lock-in.",
+        "features": [
+          "Semantic resolution engine — 4-dimension model",
+          "Component manifest — 11 fully specified components",
+          "IA planner + multi-variant generation",
+          "Palette map with 3 presets",
+          "Next.js preview UI",
+          "Bring your own Anthropic API key"
+        ],
+        "cta": {
+          "label": "Get MODE",
+          "href": "#"
+        }
+      },
+      "palette": "neutral"
+    },
+    {
+      "section": "CTA",
+      "beat": "Conversion",
+      "component": "CTABanner",
+      "variant": "minimal",
+      "reasoning": "Mover archetype at decision stage demands 'strong headline, single CTA, no subhead' — minimal variant avoids friction and secondary messaging that competes with the conversion action.",
+      "slots": {
+        "headline": "Stop configuring. Start shipping.",
+        "subhead": "Subhead",
+        "cta_primary": {
+          "label": "Get MODE for $1,199",
+          "href": "#"
+        },
+        "cta_secondary": null,
+        "trust_signal": "Lifetime access. No subscription. Running in under an hour."
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Footer",
+      "beat": "Recovery",
+      "component": "FooterMinimal",
+      "variant": "with-cta",
+      "reasoning": "Conversion page footer should 'recapture departing users on key conversion pages — use on pricing and signup flows' via the with-cta variant, optimizing the final moment before exit.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_columns": [],
+        "legal_text": "© 2025 MODE. All rights reserved.",
+        "social_links": [],
+        "cta": {
+          "label": "Get MODE",
+          "href": "#"
+        }
+      },
+      "palette": "light"
+    }
+  ],
+  "preview_url": "/admin/preview?file=page-2026-06-20T04-27-01-871Z-mover.json"
+}

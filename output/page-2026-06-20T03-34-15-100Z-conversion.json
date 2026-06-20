@@ -1,0 +1,178 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at": "2026-06-20T03:34:15.100Z",
+  "variant": "conversion",
+  "preset": "funnel-driven",
+  "preset_description": "Dark = decision signal. Emphasis accumulates toward conversion — trust anchors and commitment moments are dark, top-of-funnel is light.",
+  "palette_driver": "funnel_stage",
+  "brief": {
+    "audience": "Startups needing an AI-first, intent-driven design system",
+    "goal": "Convert to paid",
+    "context_mode": "organic",
+    "content_notes": "",
+    "archetype": "Validator",
+    "funnel_stage": "conversion"
+  },
+  "behavioral_tokens": {
+    "require_trust_signal": true,
+    "allow_secondary_cta": true,
+    "subhead_policy": "always",
+    "copy_density": "medium",
+    "evidence_density": "high"
+  },
+  "accent_tokens": {
+    "_note": "Brand primary CTA color. Global — not per-preset. Two variants: button on a light/neutral section vs. on a dark section.",
+    "on_light": {
+      "bg": "violet.9",
+      "text": "white"
+    },
+    "on_dark": {
+      "bg": "white",
+      "text": "slate.12"
+    }
+  },
+  "ia": {
+    "beats": [
+      {
+        "name": "Orientation",
+        "rationale": "Orientation — Validator archetype at conversion stage"
+      },
+      {
+        "name": "Decision",
+        "rationale": "Decision — Validator archetype at conversion stage"
+      },
+      {
+        "name": "Conversion",
+        "rationale": "Conversion — Validator archetype at conversion stage"
+      },
+      {
+        "name": "Recovery",
+        "rationale": "Recovery — Validator archetype at conversion stage"
+      }
+    ],
+    "sections": [
+      {
+        "name": "Navigation",
+        "beat": "Orientation",
+        "rationale": "Global navigation — wayfinding and persistent CTA for the session.",
+        "candidate_components": [
+          "NavigationHeader"
+        ]
+      },
+      {
+        "name": "Hero",
+        "beat": "Orientation",
+        "rationale": "Orientation — Validator archetype at conversion stage",
+        "candidate_components": [
+          "HeroPrimary"
+        ]
+      },
+      {
+        "name": "Pricing",
+        "beat": "Decision",
+        "rationale": "Decision — Validator archetype at conversion stage",
+        "candidate_components": [
+          "PricingCard"
+        ]
+      },
+      {
+        "name": "CTA",
+        "beat": "Conversion",
+        "rationale": "Conversion — Validator archetype at conversion stage",
+        "candidate_components": [
+          "CTABanner"
+        ]
+      },
+      {
+        "name": "Footer",
+        "beat": "Recovery",
+        "rationale": "Page close — brand mark, minimal navigation, and legal.",
+        "candidate_components": [
+          "FooterMinimal"
+        ]
+      }
+    ]
+  },
+  "page": [
+    {
+      "section": "Navigation",
+      "beat": "Orientation",
+      "component": "NavigationHeader",
+      "variant": "full",
+      "reasoning": null,
+      "slots": {
+        "logo": "[logo]",
+        "nav_links": [],
+        "cta_primary": "[cta_primary]",
+        "cta_secondary": null
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Hero",
+      "beat": "Orientation",
+      "component": "HeroPrimary",
+      "variant": "text-only",
+      "reasoning": null,
+      "slots": {
+        "eyebrow": null,
+        "headline": "[headline]",
+        "subhead": null,
+        "cta_primary": null,
+        "cta_secondary": null,
+        "media": null,
+        "trust_signal": null,
+        "logos": null
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Pricing",
+      "beat": "Decision",
+      "component": "PricingCard",
+      "variant": "highlighted",
+      "reasoning": null,
+      "slots": {
+        "plan_name": "[plan_name]",
+        "badge": null,
+        "price": "[price]",
+        "billing_period": "[billing_period]",
+        "description": null,
+        "features": [],
+        "cta": "[cta]"
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "CTA",
+      "beat": "Conversion",
+      "component": "CTABanner",
+      "variant": "centered",
+      "reasoning": null,
+      "slots": {
+        "headline": "[headline]",
+        "subhead": null,
+        "cta_primary": "[cta_primary]",
+        "cta_secondary": null,
+        "trust_signal": null
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Footer",
+      "beat": "Recovery",
+      "component": "FooterMinimal",
+      "variant": "standard",
+      "reasoning": null,
+      "slots": {
+        "logo": "[logo]",
+        "nav_columns": [],
+        "legal_text": "[legal_text]",
+        "social_links": [],
+        "cta": null
+      },
+      "palette": "light"
+    }
+  ],
+  "preview_url": "/admin/preview?file=page-2026-06-20T03-34-15-100Z-conversion.json"
+}

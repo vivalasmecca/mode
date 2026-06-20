@@ -1,0 +1,210 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at": "2026-06-20T04:27:01.871Z",
+  "variant": "Explorer",
+  "preset": "archetype-driven",
+  "preset_description": "Dark = identity signal. Visual language expresses who the user is. Validator gets authority and weight (heavy dark). Mover gets minimal light with one dark CTA punch. Explorer gets all-neutral — open, spacious, no urgency.",
+  "palette_driver": "archetype",
+  "brief": {
+    "audience": "Startups seeking an ai-first, intent-driven design system",
+    "goal": "convert to paid",
+    "context_mode": "organic",
+    "content_notes": "",
+    "funnel_stage": "decision",
+    "archetype": "Explorer"
+  },
+  "behavioral_tokens": {
+    "require_trust_signal": false,
+    "allow_secondary_cta": true,
+    "subhead_policy": "always",
+    "copy_density": "high",
+    "evidence_density": "medium"
+  },
+  "accent_tokens": {
+    "_note": "Brand primary CTA color. Global — not per-preset. Two variants: button on a light/neutral section vs. on a dark section.",
+    "on_light": {
+      "bg": "violet.9",
+      "text": "white"
+    },
+    "on_dark": {
+      "bg": "white",
+      "text": "slate.12"
+    }
+  },
+  "ia": {
+    "beats": [
+      {
+        "name": "Orientation",
+        "rationale": "Establishes immediate context for startup founders exploring an AI-first, intent-driven design system. Sets the frame for what MODE is and who it serves, anchoring the Explorer archetype's need to understand before engaging further."
+      },
+      {
+        "name": "Value",
+        "rationale": "Explorer archetype requires a Value beat to satisfy their discovery mindset. At the decision funnel stage, visitors already have awareness — they need to see MODE's core capabilities and outcome promises articulated clearly to reinforce their leaning toward commitment."
+      },
+      {
+        "name": "Credibility",
+        "rationale": "Explorer archetype guidance requires Credibility. For startups at the decision stage, trust signals — customer logos, testimonials, authority markers — reduce perceived risk and validate that other innovative teams have chosen MODE."
+      },
+      {
+        "name": "Evidence",
+        "rationale": "Decision funnel stage requires Evidence before Conversion. Concrete metrics, case study data, and proof points give the Explorer the substantive validation they need — converting curiosity into confidence without feeling pressured."
+      },
+      {
+        "name": "Decision",
+        "rationale": "Decision funnel stage requires a Decision beat before Conversion. Pricing and plan comparison give the Explorer clarity on commitment options, framing the choice in a low-pressure way that respects their discovery-oriented mindset."
+      },
+      {
+        "name": "Conversion",
+        "rationale": "Placed immediately before Recovery per rules. For an Explorer archetype, this should be an inviting CTA — start a trial, explore a sandbox — rather than hard-sell language, honoring their no-pressure disposition while still enabling the convert-to-paid goal."
+      },
+      {
+        "name": "Recovery",
+        "rationale": "Always last. Provides secondary paths — documentation, community, contact — for Explorers who aren't ready to commit yet, ensuring no visitor hits a dead end and every exit point offers a softer re-engagement opportunity."
+      }
+    ],
+    "sections": [
+      {
+        "name": "Navigation",
+        "beat": "Orientation",
+        "rationale": "Global navigation — wayfinding and persistent CTA for the session.",
+        "candidate_components": [
+          "NavigationHeader"
+        ]
+      },
+      {
+        "name": "Hero",
+        "beat": "Orientation",
+        "rationale": "Establishes immediate context for startup founders exploring an AI-first, intent-driven design system. Sets the frame for what MODE is and who it serves, anchoring the Explorer archetype's need to understand before engaging further.",
+        "candidate_components": [
+          "HeroPrimary"
+        ]
+      },
+      {
+        "name": "Features",
+        "beat": "Value",
+        "rationale": "Explorer archetype requires a Value beat to satisfy their discovery mindset. At the decision funnel stage, visitors already have awareness — they need to see MODE's core capabilities and outcome promises articulated clearly to reinforce their leaning toward commitment.",
+        "candidate_components": [
+          "FeatureGrid"
+        ]
+      },
+      {
+        "name": "Footer",
+        "beat": "Recovery",
+        "rationale": "Page close — brand mark, minimal navigation, and legal.",
+        "candidate_components": [
+          "FooterMinimal"
+        ]
+      }
+    ]
+  },
+  "page": [
+    {
+      "section": "Navigation",
+      "beat": "Orientation",
+      "component": "NavigationHeader",
+      "variant": "minimal",
+      "reasoning": "Decision-stage conversion pages require minimal variant to 'strip nav_links, keep logo and single CTA only' — the persistent CTA is 'the most converted element on most SaaS pages.'",
+      "slots": {
+        "logo": "[logo]",
+        "nav_links": [],
+        "cta_primary": {
+          "label": "Get MODE",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "Click there",
+          "href": "#"
+        }
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Hero",
+      "beat": "Orientation",
+      "component": "HeroPrimary",
+      "variant": "with-media",
+      "reasoning": "Explorer archetype 'prefers editorial or with-social-proof — discovery tone, breathing room, no pressure toward conversion' and with-social-proof variant places LogoStrip immediately below CTACluster for organic discovery context.",
+      "slots": {
+        "eyebrow": "AI-first design system intelligence",
+        "headline": "Your design system knows how to render. MODE teaches it why.",
+        "subhead": "MODE is the semantic layer above your component library — resolving behavior, visual expression, and content register to the right experience for every archetype, funnel stage, and context. No manual variants. No QA overhead. No Figma handoff cycles.",
+        "cta_primary": {
+          "label": "Get MODE",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "Explore the docs",
+          "href": "#"
+        },
+        "media": null,
+        "trust_signal": "One-time purchase. Lifetime access. Runs in your codebase — not a vendor dashboard.",
+        "logos": null
+      },
+      "palette": "neutral",
+      "custom_variant": "hero-slim---left"
+    },
+    {
+      "section": "Features",
+      "beat": "Value",
+      "component": "FeatureGrid",
+      "variant": "3-col-icon",
+      "reasoning": "Explorer variant 'uses 2-col-heavy with longer copy per feature' to support the discovery-focused narrative and deeper engagement appropriate for organic, intent-aware audiences.",
+      "slots": {
+        "headline": "Everything the resolution layer needs to ship.",
+        "subhead": "MODE gives your design system a decision model — not more configuration. Here is what that looks like in practice.",
+        "features": [
+          {
+            "icon": "🧠",
+            "title": "Semantic resolution engine",
+            "description": "Components resolve behavior across four dimensions simultaneously — archetype, funnel stage, intent state, and context mode. The system makes the right call by default, so your team stops making it manually on every build."
+          },
+          {
+            "icon": "📐",
+            "title": "IA planner + multi-variant generation",
+            "description": "Feed the agent a brief and receive a full page architecture in seconds, with Mover, Validator, and Explorer variants produced in parallel. Powered by Claude Opus via your own Anthropic API key — you own the token spend entirely."
+          },
+          {
+            "icon": "🎨",
+            "title": "Palette map",
+            "description": "Visual emphasis resolves per component per funnel stage without a single manual assignment. Accent weight, hierarchy, and contrast accumulate semantically toward conversion — the system holds the logic so your palette stays coherent at scale."
+          },
+          {
+            "icon": "🔖",
+            "title": "Behavioral tokens",
+            "description": "Copy density, evidence requirements, and CTA rules are all driven by archetype tokens, not gut feel. The Explorer gets depth and optionality; the Mover gets directness and momentum. The token layer enforces that distinction everywhere it matters."
+          },
+          {
+            "icon": "🧩",
+            "title": "Component manifest",
+            "description": "Eleven components fully specified with zone affinity, slot schemas, and usage intent — built on Radix UI primitives, so there is nothing new to learn. Extend the manifest, swap a preset, or fork the whole thing. It is infrastructure you control."
+          },
+          {
+            "icon": "⚡",
+            "title": "Token dashboard + Next.js preview",
+            "description": "Edit your palette map, switch presets, and reconfigure accent rules from a single token dashboard. The Next.js preview UI renders agent output instantly with palette and label overlays — so you see the intelligence working before you ship a line."
+          }
+        ]
+      },
+      "palette": "neutral"
+    },
+    {
+      "section": "Footer",
+      "beat": "Recovery",
+      "component": "FooterMinimal",
+      "variant": "with-cta",
+      "reasoning": "Decision-stage conversion intent requires 'with-cta variant recaptures departing users on key conversion pages — use on pricing and signup flows.'",
+      "slots": {
+        "logo": "[logo]",
+        "nav_columns": [],
+        "legal_text": "© 2025 MODE. All rights reserved.",
+        "social_links": [],
+        "cta": {
+          "label": "Get MODE",
+          "href": "#"
+        }
+      },
+      "palette": "light"
+    }
+  ],
+  "preview_url": "/admin/preview?file=page-2026-06-20T04-27-01-871Z-explorer.json"
+}

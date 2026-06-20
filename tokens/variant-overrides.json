@@ -1,0 +1,86 @@
+{
+  "HeroPrimary.hero-slim": {
+    "base_component": "HeroPrimary",
+    "label": "Hero Slim",
+    "slot_visibility": {
+      "eyebrow": true,
+      "cta_secondary": false,
+      "trust_signal": false,
+      "cta_primary": true
+    },
+    "layout": {
+      "align": "center"
+    }
+  },
+  "HeroPrimary.hero-slim---left": {
+    "base_component": "HeroPrimary",
+    "label": "Hero Slim - Left",
+    "slot_visibility": {
+      "eyebrow": true,
+      "cta_secondary": true,
+      "trust_signal": false,
+      "cta_primary": true
+    },
+    "layout": {
+      "align": "left"
+    }
+  },
+  "StatBlock.stat-block-slim": {
+    "base_component": "StatBlock",
+    "label": "Stat Block Slim",
+    "slot_visibility": {
+      "headline": false
+    },
+    "layout": {
+      "align": "center"
+    }
+  },
+  "SocialProofBar.slim-no-headline": {
+    "base_component": "SocialProofBar",
+    "label": "Slim No Headline",
+    "slot_visibility": {
+      "headline": false,
+      "attribution": false,
+      "quote": true
+    },
+    "layout": {}
+  },
+  "HeroPrimary.hero---no-eyebrow": {
+    "base_component": "HeroPrimary",
+    "label": "Hero - No eyebrow",
+    "slot_visibility": {
+      "eyebrow": false,
+      "subhead": true
+    },
+    "layout": {}
+  },
+  "HeroPrimary.hero-ventered": {
+    "base_component": "HeroPrimary",
+    "label": "hero-ventered",
+    "slot_visibility": {},
+    "layout": {
+      "align": "center"
+    }
+  },
+  "StatBlock.3-stats-no-headline": {
+    "base_component": "StatBlock",
+    "label": "3 Stats No Headline",
+    "slot_visibility": {
+      "headline": false
+    },
+    "layout": {}
+  },
+  "HeroPrimary.hero-slim---title-only": {
+    "base_component": "HeroPrimary",
+    "label": "Hero Slim - Title Only",
+    "slot_visibility": {
+      "eyebrow": true,
+      "cta_secondary": false,
+      "trust_signal": false,
+      "cta_primary": false
+    },
+    "layout": {
+      "align": "center"
+    }
+  }
+}

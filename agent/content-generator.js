@@ -206,51 +206,50 @@ async function callLLM(spec, brief, behavioral) {
     ? `\n\nCONTENT DIRECTION — additional instructions from the author, follow these exactly:\n${brief.content_notes}`
     : "";
 
+  // The system block is stable across builds for the same product/brand config.
+  // cache_control marks it for prompt caching — cache reads cost ~10% of input token price.
+  // Caching activates only if this block exceeds the model's minimum token threshold.
+  const systemText =
+    `You are a conversion copywriter for MODE, an intent-aware SaaS design system.\n\n` +
+    `Write slot content for every section of a landing page based on the brief and sections provided.\n\n` +
+    `SLOT TYPE RULES — follow exactly:\n` +
+    `- type "string"            → write a plain string value\n` +
+    `- type "string | null"     → write a string, or null if not warranted by the variant/archetype\n` +
+    `- type "CTAButton"         → return {"label": "...", "href": "${checkoutUrl || "#"}"}\n` +
+    `- type "CTAButton | null"  → return {"label": "...", "href": "${checkoutUrl || "#"}"} or null\n` +
+    `- type "array" with object item_template → return exactly count objects matching the template shape\n` +
+    `- type "array" with string item_template → return exactly count plain strings\n\n` +
+    `COPY RULES:\n` +
+    `- No filler, no lorem ipsum. Every line of copy must earn its place.\n` +
+    `- Use the rationale field to inform the angle for each section.\n` +
+    `- Stats: use specific, credible-sounding numbers (e.g. "47%", "2.3x", "< 9 min").\n` +
+    `  Populate the source field when present (e.g. "2024 customer survey", "internal data").\n` +
+    `- Feature icons: single relevant emoji per feature (e.g. "⚡", "🔒", "📊", "🧩").\n` +
+    `- Feature descriptions (FeatureGrid): outcome-oriented benefit statements, not feature labels.\n` +
+    `- PricingCard features: short, scannable strings (e.g. "Unlimited workspaces").\n` +
+    `- legal_text (FooterMinimal): concise copyright line, e.g. "© 2025 Acme Inc. All rights reserved."\n` +
+    `- NavigationHeader cta_primary: the session's primary conversion action (e.g. "Upgrade now").\n` +
+    `- Keep headline copy under 12 words. Subheads under 25 words.` +
+    productContextSection +
+    brandBriefSection;
+
   const message = await anthropic.messages.create({
     model: "claude-sonnet-4-6",
     max_tokens: 8192,
+    system: [
+      { type: "text", text: systemText, cache_control: { type: "ephemeral" } },
+    ],
     messages: [
       {
         role: "user",
-        content: `You are a conversion copywriter for MODE, an intent-aware SaaS design system.
-
-Write slot content for every section of a landing page.
-
-BRIEF:
-${JSON.stringify(brief, null, 2)}
-
-TONE — ${brief.archetype} archetype:
-${toneGuide}${funnelSection}${productContextSection}${brandBriefSection}${contentNotesSection}
-
-SLOT TYPE RULES — follow exactly:
-- type "string"            → write a plain string value
-- type "string | null"     → write a string, or null if not warranted by the variant/archetype
-- type "CTAButton"         → return {"label": "...", "href": "${checkoutUrl || "#"}"}
-- type "CTAButton | null"  → return {"label": "...", "href": "${checkoutUrl || "#"}"} or null
-- type "array" with object item_template → return exactly count objects matching the template shape
-- type "array" with string item_template → return exactly count plain strings
-
-COPY RULES:
-- No filler, no lorem ipsum. Every line of copy must earn its place.
-- Use the rationale field to inform the angle for each section.
-- Stats: use specific, credible-sounding numbers (e.g. "47%", "2.3x", "< 9 min").
-  Populate the source field when present (e.g. "2024 customer survey", "internal data").
-- Feature icons: single relevant emoji per feature (e.g. "⚡", "🔒", "📊", "🧩").
-- Feature descriptions (FeatureGrid): outcome-oriented benefit statements, not feature labels.
-- PricingCard features: short, scannable strings (e.g. "Unlimited workspaces").
-- legal_text (FooterMinimal): concise copyright line, e.g. "© 2025 Acme Inc. All rights reserved."
-- NavigationHeader cta_primary: the session's primary conversion action (e.g. "Upgrade now").
-- Keep headline copy under 12 words. Subheads under 25 words.
-
-SECTIONS:
-${JSON.stringify(spec, null, 2)}
-
-Return ONLY valid JSON keyed by the exact section name — no markdown, no explanation:
-{
-  "<exact section name>": {
-    "<slot_key>": <value>
-  }
-}`,
+        content:
+          `BRIEF:\n${JSON.stringify(brief, null, 2)}\n\n` +
+          `TONE — ${brief.archetype} archetype:\n${toneGuide}` +
+          funnelSection +
+          contentNotesSection +
+          `\n\nSECTIONS:\n${JSON.stringify(spec, null, 2)}\n\n` +
+          `Return ONLY valid JSON keyed by the exact section name — no markdown, no explanation:\n` +
+          `{\n  "<exact section name>": {\n    "<slot_key>": <value>\n  }\n}`,
       },
     ],
   });

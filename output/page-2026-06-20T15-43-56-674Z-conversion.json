@@ -1,0 +1,208 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at": "2026-06-20T15:43:56.674Z",
+  "variant": "conversion",
+  "preset": "funnel-driven",
+  "preset_description": "Dark = decision signal. Emphasis accumulates toward conversion — trust anchors and commitment moments are dark, top-of-funnel is light.",
+  "palette_driver": "funnel_stage",
+  "brief": {
+    "audience": "Startups seeking an AI-first, intent-driven design system",
+    "goal": "Convert trial to paid",
+    "context_mode": "organic",
+    "content_notes": "",
+    "archetype": "Validator",
+    "funnel_stage": "conversion"
+  },
+  "behavioral_tokens": {
+    "require_trust_signal": true,
+    "allow_secondary_cta": true,
+    "subhead_policy": "always",
+    "copy_density": "medium",
+    "evidence_density": "high"
+  },
+  "accent_tokens": {
+    "_note": "Brand primary CTA color. Global — not per-preset. Two variants: button on a light/neutral section vs. on a dark section.",
+    "on_light": {
+      "bg": "violet.9",
+      "text": "white"
+    },
+    "on_dark": {
+      "bg": "white",
+      "text": "slate.12"
+    }
+  },
+  "ia": {
+    "beats": [
+      {
+        "name": "Orientation",
+        "rationale": "Even in a stripped conversion flow, the Validator needs a slim hero that reaffirms what MODE is and confirms they are in the right place before being asked to commit — provides page title, context, and a brief intent-driven value reminder."
+      },
+      {
+        "name": "Evidence",
+        "rationale": "Validators need proof before committing. Despite the conversion funnel calling for a stripped flow, the archetype override requires an Evidence beat — a concise set of metrics or proof points (e.g., adoption stats, performance gains) that reassures the data-minded startup founder their trial experience is backed by real results."
+      },
+      {
+        "name": "Decision",
+        "rationale": "Conversion funnel requires Decision before Conversion. Present clear plan comparison and pricing so the startup can evaluate tiers, see what they unlock by going paid, and frame the upgrade as an obvious next step from their trial."
+      },
+      {
+        "name": "Conversion",
+        "rationale": "The primary action moment — a focused CTA prompting the trial user to upgrade to a paid plan, with commitment-reducing language (e.g., cancel anytime) to lower friction for a Validator who needs to feel safe in their decision."
+      },
+      {
+        "name": "Recovery",
+        "rationale": "Always-last beat providing secondary paths — contact sales, extend trial, or revisit documentation — ensuring no visitor hits a dead end and capturing intent even from those not yet ready to convert."
+      }
+    ],
+    "sections": [
+      {
+        "name": "Navigation",
+        "beat": "Orientation",
+        "rationale": "Global navigation — wayfinding and persistent CTA for the session.",
+        "candidate_components": [
+          "NavigationHeader"
+        ]
+      },
+      {
+        "name": "Hero",
+        "beat": "Orientation",
+        "rationale": "Even in a stripped conversion flow, the Validator needs a slim hero that reaffirms what MODE is and confirms they are in the right place before being asked to commit — provides page title, context, and a brief intent-driven value reminder.",
+        "candidate_components": [
+          "HeroPrimary"
+        ]
+      },
+      {
+        "name": "Pricing",
+        "beat": "Decision",
+        "rationale": "Conversion funnel requires Decision before Conversion. Present clear plan comparison and pricing so the startup can evaluate tiers, see what they unlock by going paid, and frame the upgrade as an obvious next step from their trial.",
+        "candidate_components": [
+          "PricingCard"
+        ]
+      },
+      {
+        "name": "CTA",
+        "beat": "Conversion",
+        "rationale": "The primary action moment — a focused CTA prompting the trial user to upgrade to a paid plan, with commitment-reducing language (e.g., cancel anytime) to lower friction for a Validator who needs to feel safe in their decision.",
+        "candidate_components": [
+          "CTABanner"
+        ]
+      },
+      {
+        "name": "Footer",
+        "beat": "Recovery",
+        "rationale": "Page close — brand mark, minimal navigation, and legal.",
+        "candidate_components": [
+          "FooterMinimal"
+        ]
+      }
+    ]
+  },
+  "page": [
+    {
+      "section": "Navigation",
+      "beat": "Orientation",
+      "component": "NavigationHeader",
+      "variant": "minimal",
+      "reasoning": "minimal variant for conversion-focused pages — strip nav_links, keep logo and single CTA only. The persistent CTA in nav is the most converted element on most SaaS pages.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_links": [],
+        "cta_primary": {
+          "label": "Get MODE",
+          "href": "#"
+        },
+        "cta_secondary": null
+      },
+      "palette": "light"
+    },
+    {
+      "section": "Hero",
+      "beat": "Orientation",
+      "component": "HeroPrimary",
+      "variant": "text-only",
+      "reasoning": "For conversion stage use text-only: slim title and subhead only, no media, no secondary CTA — orients the visitor without competing with the decision moment below.",
+      "slots": {
+        "eyebrow": "You've seen what MODE can do.",
+        "headline": "Now make it yours. Permanently.",
+        "subhead": "One purchase. Full intelligence layer. No subscription, no vendor dependency — MODE lives in your codebase from day one.",
+        "cta_primary": {
+          "label": "Get MODE — $1,199",
+          "href": "#"
+        },
+        "cta_secondary": null,
+        "media": null,
+        "trust_signal": "Lifetime access. No recurring fees.",
+        "logos": null
+      },
+      "palette": "dark",
+      "custom_variant": "hero-slim---title-only"
+    },
+    {
+      "section": "Pricing",
+      "beat": "Decision",
+      "component": "PricingCard",
+      "variant": "highlighted",
+      "reasoning": "Validator variant includes description and longer feature list. highlighted variant for recommended plan drives conversion clarity.",
+      "slots": {
+        "plan_name": "MODE Kit",
+        "badge": "One-time purchase",
+        "price": "$1,199",
+        "billing_period": "one-time, yours forever",
+        "description": "The complete intelligence layer for your design system. Resolution engine, IA planner, multi-variant generation, palette map, and Next.js preview UI — installed in your codebase in under an hour.",
+        "features": [
+          "Semantic resolution engine — archetype, funnel stage, intent state, context mode",
+          "Component manifest — 11 components, fully specified with slot schemas",
+          "IA planner + multi-variant generation via Claude Opus",
+          "Three palette presets — funnel-driven, archetype-driven, feature-emphasis",
+          "Token dashboard with editable palette map and accent config",
+          "Lifetime access — no subscription, no lock-in, fork freely"
+        ],
+        "cta": {
+          "label": "Get MODE",
+          "href": "#"
+        }
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "CTA",
+      "beat": "Conversion",
+      "component": "CTABanner",
+      "variant": "centered",
+      "reasoning": "Validator variant: include subhead and trust_signal (e.g., 'No credit card required'). centered orientation supports conversion stage messaging.",
+      "slots": {
+        "headline": "One purchase. No subscriptions. No lock-in.",
+        "subhead": "MODE lives in your codebase, resolves the right experience for every user, and never charges you again. The semantic layer that was missing — now infrastructure you own.",
+        "cta_primary": {
+          "label": "Get MODE — $1,199",
+          "href": "#"
+        },
+        "cta_secondary": {
+          "label": "Join the Studio waitlist",
+          "href": "#"
+        },
+        "trust_signal": "Lifetime access. Built on Radix UI primitives. Running in under an hour."
+      },
+      "palette": "dark"
+    },
+    {
+      "section": "Footer",
+      "beat": "Recovery",
+      "component": "FooterMinimal",
+      "variant": "with-cta",
+      "reasoning": "with-cta variant recaptures departing users on key conversion pages — use on pricing and signup flows.",
+      "slots": {
+        "logo": "[logo]",
+        "nav_columns": [],
+        "legal_text": "© 2025 MODE. All rights reserved.",
+        "social_links": [],
+        "cta": {
+          "label": "Get MODE",
+          "href": "#"
+        }
+      },
+      "palette": "light"
+    }
+  ],
+  "preview_url": "/admin/preview?file=page-2026-06-20T15-43-56-674Z-conversion.json"
+}

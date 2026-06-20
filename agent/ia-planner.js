@@ -72,38 +72,39 @@ async function llmPlanBeats(brief) {
     messages: [
       {
         role: "user",
-        content: `You are a page strategy expert for MODE, an intent-aware SaaS design system.
-
-Plan the narrative beat sequence for a landing page.
-
-BRIEF:
-${JSON.stringify(brief, null, 2)}
-
-AVAILABLE BEATS (choose 4–7, in narrative order):
-- Orientation: establishes context, who this is for, what the product does (always first)
-- Credibility: trust signals, authority, social proof, customer logos
-- Value: product capabilities, features, outcome promises
-- Evidence: statistics, metrics, proof points, case study data
-- Decision: pricing, plan comparison, final choice framing
-- Conversion: CTA, commitment prompt, action capture
-- Recovery: secondary paths, footer, exit handling (always last)
-
-RULES:
-1. Orientation must be first. Recovery must be last.
-2. Conversion must appear immediately before Recovery.
-3. Funnel stage guidance:
-   - awareness: light — no Decision beat, soft Conversion
-   - consideration: full depth — include Value, Evidence, and Credibility before Conversion
-   - decision: Evidence and Decision required before Conversion
-   - conversion: stripped — Hero (slim) → Decision → Conversion → Recovery only. Hero is required on every page including conversion — it gives the visitor a page title and context before the decision moment. No Credibility, Value, or Evidence beats.
-4. Archetype guidance: ${archetypeGuidance[brief.archetype] ?? "balance depth and action"}
-
-Return ONLY valid JSON — no markdown, no explanation:
-{
-  "beats": [
-    { "name": "BeatName", "rationale": "why this beat at this position for this brief" }
-  ]
-}`,
+        content: [
+          {
+            type: "text",
+            text:
+              `You are a page strategy expert for MODE, an intent-aware SaaS design system.\n\n` +
+              `Plan the narrative beat sequence for a landing page.\n\n` +
+              `AVAILABLE BEATS (choose 4–7, in narrative order):\n` +
+              `- Orientation: establishes context, who this is for, what the product does (always first)\n` +
+              `- Credibility: trust signals, authority, social proof, customer logos\n` +
+              `- Value: product capabilities, features, outcome promises\n` +
+              `- Evidence: statistics, metrics, proof points, case study data\n` +
+              `- Decision: pricing, plan comparison, final choice framing\n` +
+              `- Conversion: CTA, commitment prompt, action capture\n` +
+              `- Recovery: secondary paths, footer, exit handling (always last)\n\n` +
+              `RULES:\n` +
+              `1. Orientation must be first. Recovery must be last.\n` +
+              `2. Conversion must appear immediately before Recovery.\n` +
+              `3. Funnel stage guidance:\n` +
+              `   - awareness: light — no Decision beat, soft Conversion\n` +
+              `   - consideration: full depth — include Value, Evidence, and Credibility before Conversion\n` +
+              `   - decision: Evidence and Decision required before Conversion\n` +
+              `   - conversion: stripped — Hero (slim) → Decision → Conversion → Recovery only. Hero is required on every page including conversion — it gives the visitor a page title and context before the decision moment. No Credibility, Value, or Evidence beats.`,
+            cache_control: { type: "ephemeral" },
+          },
+          {
+            type: "text",
+            text:
+              `\n\nBRIEF:\n${JSON.stringify(brief, null, 2)}\n\n` +
+              `Archetype guidance: ${archetypeGuidance[brief.archetype] ?? "balance depth and action"}\n\n` +
+              `Return ONLY valid JSON — no markdown, no explanation:\n` +
+              `{\n  "beats": [\n    { "name": "BeatName", "rationale": "why this beat at this position for this brief" }\n  ]\n}`,
+          },
+        ],
       },
     ],
   });

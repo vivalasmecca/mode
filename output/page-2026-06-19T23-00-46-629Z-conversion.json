@@ -140,7 +140,8 @@
         "media": null,
         "trust_signal": "One-time payment. Lifetime access. No subscription."
       },
-      "palette": "dark"
+      "palette": "dark",
+      "custom_variant": "hero-slim"
     },
     {
       "section": "Pricing",
