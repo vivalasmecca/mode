@@ -1,0 +1,31 @@
+{
+  "_comment": "Example declaration — ingesting an external HeroSection component as MODE's HeroPrimary.",
+  "_usage": "node agent/ingest.js declarations/example-hero.json",
+
+  "name": "HeroSection",
+  "source": "@acme/design-system",
+  "modeType": "HeroPrimary",
+
+  "slots": {
+    "headline":      { "prop": "title"           },
+    "subhead":       { "prop": "body",            "type": "string?"  },
+    "eyebrow":       { "prop": "label",           "type": "string?"  },
+    "cta_primary":   { "prop": "primaryAction",   "type": "cta"      },
+    "cta_secondary": { "prop": "secondaryAction", "type": "cta?"     },
+    "media":         { "prop": "image",           "type": "string?"  }
+  },
+
+  "variants": {
+    "editorial":  { "layout": "full-bleed", "size": "large"   },
+    "with-media": { "layout": "split",      "size": "default" },
+    "text-only":  { "layout": "centered",   "size": "default", "image": null },
+    "with-price": { "layout": "split",      "showPrice": true }
+  },
+
+  "palette": {
+    "_comment": "The semantic question: what does 'dark' mean in this design system?",
+    "light":   { "theme": "light"  },
+    "neutral": { "theme": "subtle" },
+    "dark":    { "theme": "dark"   }
+  }
+}

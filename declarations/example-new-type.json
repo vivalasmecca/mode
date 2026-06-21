@@ -1,0 +1,25 @@
+{
+  "_comment": "Example declaration — ingesting an external component as a NEW modeType not in the manifest.",
+  "_usage": "node agent/ingest.js declarations/example-new-type.json",
+  "_note": "When modeType is new, semantic metadata (beats, archetypes, funnel_stages) must be added manually to manifest/components.json after generation. The validator will flag this as unregistered until done.",
+
+  "name": "AnnouncementBanner",
+  "source": "@acme/design-system",
+  "modeType": "AnnouncementBar",
+
+  "slots": {
+    "headline": { "prop": "message" },
+    "cta_primary": { "prop": "action", "type": "cta?" }
+  },
+
+  "variants": {
+    "standard": { "size": "md" },
+    "compact":  { "size": "sm" }
+  },
+
+  "palette": {
+    "light":   { "variant": "default"  },
+    "neutral": { "variant": "subtle"   },
+    "dark":    { "variant": "inverted" }
+  }
+}

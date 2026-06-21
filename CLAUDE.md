@@ -215,7 +215,13 @@ mode/
 │   ├── token-resolver.js            ← palette + behavioral token resolution
 │   ├── content-generator.js         ← slot population; reads context/ files at build time
 │   ├── brand-context-builder.js     ← ingestion agent: URLs → product-context + brand-brief
-│   └── set-preset.js                ← CLI tool to switch active preset
+│   ├── set-preset.js                ← CLI tool to switch active preset
+│   ├── ingestion-schema.js          ← declaration schema + validateDeclaration()
+│   ├── ingest.js                    ← CLI + module: declaration → adapter .tsx + manifest entry
+│   └── validate-manifest.js         ← CLI: checks all manifest components are in MODULE_REGISTRY
+├── declarations/                    ← component declaration files (one JSON per ingested component)
+│   ├── example-hero.json            ← replacing HeroPrimary with an external component
+│   └── example-new-type.json        ← adding a brand-new modeType
 ├── tokens/
 │   ├── mode-tokens.json             ← palette maps + behavioral tokens per preset + global accent
 │   ├── color-scale.json             ← color vocabulary: full Radix Colors v3.0.0 (31 hues × 12 steps). Replace with your brand scale or edit in Studio → Design System.
@@ -361,7 +367,7 @@ When dropping back in after time away, start here:
 
 **Additional site page — Solutions or Product.** A third page type fits between homepage (broad entry) and pricing (conversion close), likely in consideration → decision register. Before building it, the config design question needs an answer: how does `config/site.json` declare intermediate funnel pages — what variant dimension, what funnel stages, how does the nav link to it from every other page? Worth thinking through before touching the site builder.
 
-**Component ingestion — external design system on-ramp.** Before the editing tools make sense for buyers with existing component libraries, there needs to be a structured way to register external components: declare them in `manifest/components.json` with beat + funnel stage + variant metadata, implement the `ModuleComponent` interface, and add them to the registry. This is earlier in the adoption sequence than it looks — it's the prerequisite for using MODE with a real design system.
+**Component ingestion — external design system on-ramp.** The minimum viable ingestion path is now built (steps 1–3 of the ingestion contract spec). The CLI workflow lets a buyer write a declaration JSON and generate an adapter in one command. What's still missing: validation with a real external component library, the ingestion UI (so buyers don't hand-write JSON), and token bridge scripts (Figma Variables → `color-scale.json`). Validate the CLI path end-to-end with a real component before building the UI layer.
 
 **Component coverage matrix editor (productization).** The archetype × funnel_stage availability mappings in `manifest/components.json` are currently hand-edited JSON. The productized version is a UI grid — components on rows, funnel stages (or archetypes) on columns, cells toggled on/off to declare availability. Analogous to the palette map editor in the Palette tab, but for semantic coverage rather than color weight. A buyer with a different component set would configure their own coverage matrix rather than inheriting MODE's defaults. Not urgent — the manifest is stable enough to hand-edit during early adoption — but it's a natural product surface once component ingestion is working.
 
@@ -384,6 +390,7 @@ When dropping back in after time away, start here:
 - Feature-emphasis Studio palette map panel ✓ (replaces Token panel for component_role builds; in-memory propagation to all variants; save writes to mode-tokens.json)
 - Full component palette compliance ✓ (all 11 components use getPalette(); NavigationHeader and FooterMinimal fixed; neutral mode visually distinct at slate.2)
 - Component palette readiness contract documented ✓ (CLAUDE.md; checklist for external component ingestion; scaffold generator requirement)
+- Ingestion translation contract MVP ✓ (`agent/ingestion-schema.js` schema + validator; `agent/ingest.js` adapter generator CLI; `agent/validate-manifest.js` registration validator; `declarations/` example files; three-layer contract: semantic identity + API shape + palette bridge)
 - CSS variables layer ✓ (`color-scale.json` vocabulary + `theme.json` semantic assignment; resolves at request time)
 - Edit tab ✓ (slot editor, named links panel, beat group dividers, add-section picker with Generate option)
 - Edit/Studio source sync ✓ (Edit defaults to active build manifest; same files as Studio)
@@ -669,6 +676,157 @@ This is not solved yet and should be designed before the library grows significa
 **The AI selection at scale:** Lower urgency. The current manifest is small enough that the pool is tractable. This matters when the library grows to a real buyer's component count.
 
 **Practical trigger:** Ingestion becomes blocking as soon as you want to run a real buyer through the system. The architecture contract for what ingestion produces should be defined in the next engineering session that isn't fixing something else.
+
+---
+
+## Ingestion translation contract — specification
+
+### Validation criterion
+
+A buyer should be able to: build or export a component library from Figma (or any source), declare the translation, and have MODE's full pipeline — IA planning, component selection, token resolution, content generation, Studio editing — work with their components without modification to MODE's core.
+
+### What needs to be translated
+
+Three things need bridging between an external component and MODE's pipeline:
+
+**1. Semantic identity** — which MODE beat/section type does this component serve? What funnel stages and archetypes is it valid for? This is the manifest layer. It tells the AI what to select this component *for*.
+
+**2. API shape** — what props does the external component accept? How do MODE's output slots (`headline`, `subhead`, `cta_primary`, etc.) map to the external component's prop names and shapes? This is the slot mapping layer.
+
+**3. Palette translation** — when MODE assigns `palette: "dark"` to a section, what does that mean in the external component's API? Could be a prop (`theme="dark"`), a variant (`variant="inverted"`), a class, a CSS var override, a Radix appearance value. This is the palette bridge layer — and it's the one that doesn't exist at all today.
+
+### The declaration file
+
+Each ingested component is described by a declaration. This is the contract the buyer writes (or the ingestion tool generates from Figma Code Connect):
+
+```ts
+// Example: ingesting an external HeroSection component
+{
+  name: "HeroSection",                    // code export name
+  source: "@acme/design-system",          // npm package or relative path
+  modeType: "HeroPrimary",               // which manifest type this maps to
+
+  // Slot mapping: MODE slot name → external prop + optional value transform
+  slots: {
+    headline:    { prop: "title" },
+    subhead:     { prop: "body" },
+    eyebrow:     { prop: "label" },
+    cta_primary: { prop: "primaryAction", transform: (v) => ({ label: v.label, href: v.href }) },
+    cta_secondary: { prop: "secondaryAction", transform: (v) => v ? { label: v.label, href: v.href } : null },
+    media:       { prop: "image" },
+  },
+
+  // Structural variant mapping: MODE variant string → external prop values
+  variants: {
+    "editorial":  { layout: "full-bleed", size: "large" },
+    "text-only":  { layout: "centered",   size: "default", image: null },
+    "with-price": { layout: "split",      showPrice: true },
+  },
+
+  // Palette bridge: MODE palette mode → external prop values
+  // This is the missing layer — every external component needs this declared
+  palette: {
+    light:   { theme: "light" },
+    neutral: { theme: "muted" },
+    dark:    { theme: "dark" },
+  }
+}
+```
+
+### What gets generated from the declaration
+
+The declaration drives three outputs:
+
+**Manifest entry** — a `components.json` block with beat, funnel_stages, archetypes, variants, and slot schema inferred from the declaration. Beat assignment and semantic availability require human annotation; slot names can be read from the slots map.
+
+**Adapter component** — a thin React wrapper that translates MODE's `{ slots, variant, palette }` interface to the external component's API:
+
+```tsx
+// Generated adapter: HeroPrimary_Acme.tsx
+import { HeroSection } from "@acme/design-system";
+import type { ModuleComponent } from "@/lib/types";
+
+const VARIANT_MAP: Record<string, Record<string, unknown>> = {
+  "editorial":  { layout: "full-bleed", size: "large" },
+  "text-only":  { layout: "centered", size: "default" },
+  "with-price": { layout: "split", showPrice: true },
+};
+
+const PALETTE_MAP: Record<string, Record<string, unknown>> = {
+  light:   { theme: "light" },
+  neutral: { theme: "muted" },
+  dark:    { theme: "dark" },
+};
+
+export const HeroPrimary: ModuleComponent = ({ slots, variant, palette }) => (
+  <HeroSection
+    title={slots.headline as string}
+    body={slots.subhead as string}
+    label={slots.eyebrow as string ?? undefined}
+    primaryAction={slots.cta_primary ? { label: (slots.cta_primary as any).label, href: (slots.cta_primary as any).href } : undefined}
+    {...(VARIANT_MAP[variant ?? ""] ?? {})}
+    {...(PALETTE_MAP[palette ?? "light"] ?? {})}
+  />
+);
+```
+
+**Registry entry** — adds `HeroPrimary: HeroPrimary` to MODULE_REGISTRY, pointing to the adapter. The rest of the system sees no difference.
+
+### Token bridge
+
+If the external design system exposes CSS custom properties, `theme.json` already handles the token layer — configure `dark.bg` to reference their scale entry. This is the cleanest path and what Figma Variables export produces.
+
+If the external system uses Tailwind config, a Tailwind plugin that reads `theme.json` at config time and maps MODE's semantic tokens to their utility classes can bridge the gap. Not built yet.
+
+If the external system uses design token JSON (W3C format, Style Dictionary output), an ingestion script can read it and generate `color-scale.json` + `theme.json` entries automatically. Also not built.
+
+### The Figma Code Connect path
+
+Figma Code Connect exports a mapping of Figma component name → code component + prop values per variant. This is almost exactly what the declaration needs for the structural variant mapping. An ingestion tool that reads Code Connect output and asks for:
+
+1. Which MODE manifest type this component maps to (human annotation)
+2. Which Figma variant corresponds to which MODE palette mode (human annotation — the semantic question)
+3. Slot name mapping (automatable from prop inspection or Code Connect metadata)
+
+...could generate a complete declaration file with minimal manual work. This is the "export from Figma, drop it in" path.
+
+### What needs to be built
+
+In order:
+1. **Declaration schema** (`agent/ingestion-schema.js`) — ✓ built. `validateDeclaration(decl)` checks all three translation layers are present and well-formed.
+2. **Adapter generator** (`agent/ingest.js`) — ✓ built. CLI + module. Reads a declaration JSON, validates it, outputs adapter `.tsx` + `components.json` block + registry line. `--write` flag writes the adapter file in place.
+3. **Manifest validator** (`agent/validate-manifest.js`) — ✓ built. Compares all names in `manifest/components.json` against exported keys in `MODULE_REGISTRY`. Run after any ingestion to confirm registration.
+4. **Ingestion UI** — not built. Dashboard flow for declaring components without writing JSON by hand.
+5. **Token bridge scripts** — not built. Scripts for Figma Variables → `color-scale.json` and W3C token JSON → `color-scale.json`.
+
+Steps 1–3 are the minimum viable ingestion path — **now done**. The UI and token bridge scripts come after the contract is validated with a real component library.
+
+**CLI workflow (steps 1–3 in practice):**
+```bash
+# 1. Write a declaration file describing the external component
+declarations/my-component.json
+
+# 2. Dry-run: preview adapter, manifest entry, and registry line
+node agent/ingest.js declarations/my-component.json
+
+# 3. Write the adapter file
+node agent/ingest.js declarations/my-component.json --write
+
+# 4. Follow the printed instructions:
+#    - Add import + registry line to ui/components/modules/index.ts
+#    - Add manifest entry to manifest/components.json (or confirm it was inherited)
+
+# 5. Validate registration is complete
+node agent/validate-manifest.js
+```
+
+**Declaration file location:** `declarations/` directory at the project root. One JSON file per ingested component. See `declarations/example-hero.json` (replacement) and `declarations/example-new-type.json` (new modeType) for reference.
+
+### The palette bridge is the unsolved semantic question
+
+The slot mapping and variant mapping are mechanical translation problems — they're tedious but tractable. The palette bridge is a semantic question: what does "dark" mean in this design system? A buyer's dark variant might be navy, midnight, charcoal, or brand-primary. The *declaration* (human) says what prop value maps to each MODE palette mode. The *theme.json* (human) says what CSS expression `dark.bg` resolves to. Both require human intent — they can't be inferred from component code.
+
+This is actually correct behavior. The semantic assignment is the product. MODE says "this section should be high-emphasis." The buyer says "high-emphasis means `theme='brand-dark'` in our system and `--color-bg-inverse` in our token." That handoff is the integration contract.
 
 ---
 
