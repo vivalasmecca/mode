@@ -355,6 +355,8 @@ When dropping back in after time away, start here:
 
 **Component ingestion — external design system on-ramp.** Before the editing tools make sense for buyers with existing component libraries, there needs to be a structured way to register external components: declare them in `manifest/components.json` with beat + funnel stage + variant metadata, implement the `ModuleComponent` interface, and add them to the registry. This is earlier in the adoption sequence than it looks — it's the prerequisite for using MODE with a real design system.
 
+**Component coverage matrix editor (productization).** The archetype × funnel_stage availability mappings in `manifest/components.json` are currently hand-edited JSON. The productized version is a UI grid — components on rows, funnel stages (or archetypes) on columns, cells toggled on/off to declare availability. Analogous to the palette map editor in the Palette tab, but for semantic coverage rather than color weight. A buyer with a different component set would configure their own coverage matrix rather than inheriting MODE's defaults. Not urgent — the manifest is stable enough to hand-edit during early adoption — but it's a natural product surface once component ingestion is working.
+
 ### Later
 
 **Page zones.** IA planner generates zone map first, then fills sections per zone. Requires manifest zone affinity per component. Longer horizon — the current flat section list is sufficient until there's a real multi-section grouping need.
