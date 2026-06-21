@@ -109,7 +109,8 @@ async function llmSelectComponents(ia, brief, componentMap) {
               `- For Validator archetype: prefer variants containing "social-proof", "with-photo", or "with-source"\n` +
               `- For Mover archetype: prefer variants containing "minimal" or "text-only". For SocialProofBar specifically, prefer "single-quote" over "logos-only" — logo images cannot be generated, so logos-only renders nothing\n` +
               `- For Explorer archetype: prefer variants containing "editorial" or "with-social-proof" on hero components — discovery tone, breathing room, low conversion pressure\n` +
-              `- Your reasoning MUST cite a specific phrase from that component's notes field`,
+              `- Your reasoning MUST cite a specific phrase from that component's notes field\n` +
+              `- Return EXACTLY ONE entry per section — never two entries with the same section name. Each section has a candidates list; pick the single best candidate.`,
             cache_control: { type: "ephemeral" },
           },
           {
@@ -131,7 +132,19 @@ async function llmSelectComponents(ia, brief, componentMap) {
 
   const selections = JSON.parse(jsonMatch[0]);
   if (!Array.isArray(selections)) throw new Error("LLM response is not an array");
-  return selections;
+
+  // Hard dedup: if the LLM returned two entries for the same section, keep
+  // only the first. This prevents the name-collision bug where both candidates
+  // end up in the page array and the content generator merges the wrong slots.
+  const seen = new Set();
+  return selections.filter((sel) => {
+    if (seen.has(sel.section)) {
+      console.warn(`  Component selector returned duplicate for "${sel.section}" — discarding second`);
+      return false;
+    }
+    seen.add(sel.section);
+    return true;
+  });
 }
 
 /**
