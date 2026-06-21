@@ -287,8 +287,28 @@ async function callLLM(spec, brief, behavioral) {
 }
 
 /**
+ * A section is "empty" when every fillable slot is null, an empty array,
+ * or a bracket stub. Used to decide whether a QC retry is needed.
+ * Image and navigation slots that are always skipped don't count.
+ */
+function isSectionEmpty(section) {
+  for (const v of Object.values(section.slots ?? {})) {
+    if (typeof v === "string" && v && !/^\[[^\]]+\]$/.test(v)) return false;
+    if (Array.isArray(v) && v.length > 0) return false;
+    if (v && typeof v === "object" && "label" in v) return false; // CTAButton
+  }
+  return true;
+}
+
+/**
  * Main export. Returns page with all fillable slots populated.
  * Falls back to original stubs if the LLM call fails.
+ *
+ * QC pass: after the main generation, any section with zero text content
+ * (complete LLM miss) is collected and retried in a single targeted call.
+ * This handles secondary/credibility sections (SocialProofBar, StatBlock,
+ * TestimonialSingle) that the LLM sometimes skips when the main call is
+ * focused on the hero or feature sections.
  */
 async function populateContent(ia, page, brief, manifest, behavioral = null) {
   const spec = buildSpec(ia, page, manifest);
@@ -301,24 +321,50 @@ async function populateContent(ia, page, brief, manifest, behavioral = null) {
     return page;
   }
 
-  return page.map((section) => {
+  const merged = page.map((section) => {
     const filled = generated[section.section];
     if (!filled) {
       console.warn(`  No content returned for section: ${section.section}`);
       return section;
     }
-    const merged = { ...section.slots, ...filled };
-
-    // Warn about any surviving bracket-style stubs (e.g. "[body]", "[subhead]")
-    // that the LLM omitted from its response, leaving the component-selector stub.
-    for (const [k, v] of Object.entries(merged)) {
+    const slots = { ...section.slots, ...filled };
+    for (const [k, v] of Object.entries(slots)) {
       if (typeof v === "string" && /^\[[^\]]+\]$/.test(v)) {
         console.warn(`  Unfilled stub in ${section.section}.${k}: "${v}" — LLM did not populate this slot`);
       }
     }
-
-    return { ...section, slots: merged };
+    return { ...section, slots };
   });
+
+  // QC pass — collect sections that came back completely empty.
+  const emptyIndices = merged
+    .map((s, i) => (isSectionEmpty(s) ? i : -1))
+    .filter((i) => i !== -1);
+
+  if (emptyIndices.length === 0) return merged;
+
+  const emptyNames = emptyIndices.map((i) => merged[i].section).join(", ");
+  console.warn(`  QC: ${emptyIndices.length} empty section(s), retrying: ${emptyNames}`);
+
+  // Build a targeted retry using the original stub sections so buildSpec
+  // reads clean slot types rather than the null-filled merged output.
+  const retryPage = emptyIndices.map((i) => page[i]);
+  const retryIa = { ...ia, sections: emptyIndices.map((i) => ia.sections[i] || {}) };
+  const retrySpec = buildSpec(retryIa, retryPage, manifest);
+
+  try {
+    const retryGenerated = await callLLM(retrySpec, brief, behavioral);
+    const emptySet = new Set(emptyIndices);
+    return merged.map((section, i) => {
+      if (!emptySet.has(i)) return section;
+      const filled = retryGenerated[section.section];
+      if (!filled) return section;
+      return { ...section, slots: { ...section.slots, ...filled } };
+    });
+  } catch (err) {
+    console.warn(`  QC retry failed (${err.message}), keeping empty section(s)`);
+    return merged;
+  }
 }
 
 module.exports = { populateContent };
