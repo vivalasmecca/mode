@@ -107,7 +107,7 @@ async function llmSelectComponents(ia, brief, componentMap) {
               `- For decision funnel stage hero components: prefer "with-price" variant — anchors the offer (product name + price) above the fold before proof sections so the visitor knows exactly what they are evaluating\n` +
               `- For conversion funnel stage hero components: prefer "text-only" variant — slim page title and subhead only, no media, no secondary CTA, so it orients without competing with the decision moment below\n` +
               `- For Validator archetype: prefer variants containing "social-proof", "with-photo", or "with-source"\n` +
-              `- For Mover archetype: prefer variants containing "minimal" or "text-only"\n` +
+              `- For Mover archetype: prefer variants containing "minimal" or "text-only". For SocialProofBar specifically, prefer "single-quote" over "logos-only" — logo images cannot be generated, so logos-only renders nothing\n` +
               `- For Explorer archetype: prefer variants containing "editorial" or "with-social-proof" on hero components — discovery tone, breathing room, low conversion pressure\n` +
               `- Your reasoning MUST cite a specific phrase from that component's notes field`,
             cache_control: { type: "ephemeral" },
@@ -179,8 +179,11 @@ function pickVariant(component, brief) {
   }
 
   if (brief.archetype === "Mover") {
+    // "single-quote" before "logos-only": logo images cannot be generated,
+    // so logos-only renders nothing. A concise trust quote is the right
+    // Mover credibility mode when real logo assets are unavailable.
     const pref = component.variants.find(
-      (v) => v.includes("minimal") || v.includes("text-only")
+      (v) => v.includes("minimal") || v.includes("text-only") || v === "single-quote"
     );
     if (pref) return pref;
   }
