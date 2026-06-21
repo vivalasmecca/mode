@@ -43,9 +43,11 @@ function resolveTokens(brief, presetOverride) {
   const paletteKey = brief[preset.palette_key ?? "funnel_stage"] ?? "awareness";
 
   function resolvePalette(componentName) {
-    const map = preset.palette_map[componentName];
-    if (!map) return "light";
-    return map[paletteKey] ?? "light";
+    const entry = preset.palette_map[componentName];
+    if (!entry) return "light";
+    // component_role preset: flat string value — not stage/archetype-keyed
+    if (typeof entry === "string") return entry;
+    return entry[paletteKey] ?? "light";
   }
 
   // Accent: global brand CTA color, not per-preset. Lives in theme.json.

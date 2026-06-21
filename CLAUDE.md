@@ -72,7 +72,7 @@ The palette driver determines which runtime signal remaps the visual design toke
 | Preset | Palette driver | Variant dimension | Variants generated |
 |--------|---------------|-------------------|--------------------|
 | `funnel-driven` | funnel stage | `funnel_stage` | awareness, consideration, decision, conversion |
-| `feature-emphasis` | editorial intent | `funnel_stage` | awareness, consideration, decision, conversion |
+| `feature-emphasis` | component role | `archetype` | Validator, Mover, Explorer |
 | `archetype-driven` | archetype | `archetype` | Mover, Validator, Explorer |
 | `expression-dial` *(planned)* | none — flat palette | `funnel_stage` | awareness, consideration, decision, conversion |
 
@@ -372,6 +372,7 @@ When dropping back in after time away, start here:
 - Site build ✓ (`config/site.json` → all pages × variants in one run; nav injection; `config/pages.json`)
 - Pricing page stability ✓ (reads explicit filename from `config/pages.json`; survives archetype builds)
 - Three palette presets ✓ (funnel-driven, feature-emphasis, archetype-driven; selectable per build)
+- Feature-emphasis preset correctly implemented ✓ (component-role driver; flat `{ component: mode }` palette map; `isFlat` flag in Palette tab UI; `config/site-feature.json` for site builds)
 - CSS variables layer ✓ (`color-scale.json` vocabulary + `theme.json` semantic assignment; resolves at request time)
 - Edit tab ✓ (slot editor, named links panel, beat group dividers, add-section picker with Generate option)
 - Edit/Studio source sync ✓ (Edit defaults to active build manifest; same files as Studio)
@@ -534,22 +535,6 @@ Site setup UI is a genuine missing config layer that unblocks both forks. `confi
 Fork 2's three artifacts (manifest editor, scaffold generator, registration validator) form a contained sub-system — a "Component Setup" flow that makes the import path viable end-to-end.
 
 Onboarding status is the last piece and only makes sense once the steps it tracks actually exist.
-
----
-
-## Unresolved: feature-emphasis preset is mis-mapped
-
-The `feature-emphasis` preset is listed as having "editorial intent" as its palette driver, but in practice its palette map is nearly identical to `funnel-driven`. The difference between them is invisible in the current implementation — same computation, slightly different values.
-
-**What feature-emphasis should actually be:** palette assignment driven by component *role*, not visitor funnel position. The editorial decision is "social proof sections are always dark, pricing is always dark, hero sections are always light" — a product emphasis decision that doesn't change per funnel stage.
-
-This is a structurally different intent model:
-- **funnel-driven** — which stage is the visitor in? palette reflects the emotional register of that moment
-- **feature-emphasis** — which components are we spotlighting? those always carry high emphasis, regardless of where the visitor is in the funnel
-
-**Practical consequence:** The palette map for feature-emphasis currently iterates funnel_stage × component, same as funnel-driven. For the correct implementation, the primary axis should be component role — a component either deserves emphasis or it doesn't, and that doesn't change per stage. The palette map structure itself may need to be different for this preset (component → mode, not stage × component → mode).
-
-**When to fix:** During v1 → v2 semantic architecture work. Don't patch the existing palette map — redesign the intent mapping for this preset from scratch. The current implementation gives this preset a slot it hasn't earned yet.
 
 ---
 

@@ -9,7 +9,9 @@ export interface PresetData {
   description: string;
   paletteDriver: string;
   paletteKey: string;
-  paletteMap: Record<string, Record<string, string>>;
+  /** true when palette_map values are plain strings (component_role driver) */
+  isFlat: boolean;
+  paletteMap: Record<string, string | Record<string, string>>;
 }
 
 export interface AccentData {
@@ -53,7 +55,7 @@ export default function PalettePage() {
         description: string;
         palette_driver: string;
         palette_key?: string;
-        palette_map: Record<string, Record<string, string>>;
+        palette_map: Record<string, string | Record<string, string>>;
       }
     >
   ).map(([key, preset]) => ({
@@ -61,6 +63,7 @@ export default function PalettePage() {
     description: preset.description,
     paletteDriver: preset.palette_driver,
     paletteKey: preset.palette_key ?? "funnel_stage",
+    isFlat: preset.palette_driver === "component_role",
     paletteMap: preset.palette_map,
   }));
 

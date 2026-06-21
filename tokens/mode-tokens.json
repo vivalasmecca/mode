@@ -1,5 +1,5 @@
 {
-  "_note": "MODE intent layer. Defines which palette mode (light/neutral/dark) each component gets in each context. What those modes look like visually lives in tokens/theme.json — that is the brand's responsibility. Switch presets with: node agent/set-preset.js <preset-name>",
+  "_note": "MODE intent layer. Defines which palette mode (light/neutral/dark) each component gets in each context. What those modes look like visually lives in tokens/theme.json \u2014 that is the brand's responsibility. Switch presets with: node agent/set-preset.js <preset-name>",
   "active_preset": "archetype-driven",
   "behavioral_tokens": {
     "_note": "Archetype-driven across all presets. Controls copy density, evidence level, CTA rules.",
@@ -27,7 +27,7 @@
   },
   "presets": {
     "funnel-driven": {
-      "description": "Dark = decision signal. Emphasis accumulates toward conversion — trust anchors and commitment moments are dark, top-of-funnel is light.",
+      "description": "Dark = decision signal. Emphasis accumulates toward conversion \u2014 trust anchors and commitment moments are dark, top-of-funnel is light.",
       "palette_driver": "funnel_stage",
       "palette_key": "funnel_stage",
       "palette_map": {
@@ -88,68 +88,24 @@
       }
     },
     "feature-emphasis": {
-      "description": "Dark = substance signal. Spotlights product capabilities and metrics. CTA and pricing are understated — features are the story, not conversion pressure.",
-      "palette_driver": "editorial_intent",
-      "palette_key": "funnel_stage",
+      "description": "Component role drives palette \u2014 not funnel stage. Trust and conversion components always dark; hero and nav always light; informational sections neutral. Visual emphasis is structural, not momentary.",
+      "palette_driver": "component_role",
       "palette_map": {
-        "NavigationHeader": {
-          "awareness": "light",
-          "consideration": "light",
-          "decision": "light",
-          "conversion": "light"
-        },
-        "HeroPrimary": {
-          "awareness": "light",
-          "consideration": "light",
-          "decision": "light",
-          "conversion": "light"
-        },
-        "SocialProofBar": {
-          "awareness": "neutral",
-          "consideration": "neutral",
-          "decision": "neutral",
-          "conversion": "neutral"
-        },
-        "StatBlock": {
-          "awareness": "dark",
-          "consideration": "dark",
-          "decision": "dark",
-          "conversion": "dark"
-        },
-        "FeatureGrid": {
-          "awareness": "dark",
-          "consideration": "dark",
-          "decision": "dark",
-          "conversion": "dark"
-        },
-        "TestimonialSingle": {
-          "awareness": "neutral",
-          "consideration": "neutral",
-          "decision": "neutral",
-          "conversion": "neutral"
-        },
-        "PricingCard": {
-          "awareness": "light",
-          "consideration": "light",
-          "decision": "light",
-          "conversion": "light"
-        },
-        "CTABanner": {
-          "awareness": "neutral",
-          "consideration": "neutral",
-          "decision": "neutral",
-          "conversion": "neutral"
-        },
-        "FooterMinimal": {
-          "awareness": "light",
-          "consideration": "light",
-          "decision": "light",
-          "conversion": "light"
-        }
+        "NavigationHeader": "light",
+        "HeroPrimary": "light",
+        "HeroStatement": "light",
+        "FeatureGrid": "dark",
+        "StatBlock": "dark",
+        "SocialProofBar": "dark",
+        "TestimonialSingle": "dark",
+        "PricingCard": "dark",
+        "CTABanner": "dark",
+        "ContentSection": "neutral",
+        "FooterMinimal": "neutral"
       }
     },
     "archetype-driven": {
-      "description": "Dark = identity signal. Visual language expresses who the user is. Validator gets authority and weight (heavy dark). Mover gets minimal light with one dark CTA punch. Explorer gets all-neutral — open, spacious, no urgency.",
+      "description": "Dark = identity signal. Visual language expresses who the user is. Validator gets authority and weight (heavy dark). Mover gets minimal light with one dark CTA punch. Explorer gets all-neutral \u2014 open, spacious, no urgency.",
       "palette_driver": "archetype",
       "palette_key": "archetype",
       "palette_map": {

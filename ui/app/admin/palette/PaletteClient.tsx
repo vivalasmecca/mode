@@ -17,7 +17,7 @@ const CELL: Record<string, { text: string; border: string }> = {
   dark:    { text: "text-gray-300", border: "border border-gray-700" },
 };
 
-type PaletteMap = Record<string, Record<string, string>>;
+type PaletteMap = Record<string, string | Record<string, string>>;
 type SaveState = "idle" | "saving" | "saved" | "error";
 
 function deepEqual<T>(a: T, b: T) {
@@ -76,18 +76,34 @@ export default function PaletteClient({
   const accentHasChanges = !deepEqual(accent, originalAccent);
 
   const components = Object.keys(preset.paletteMap);
-  const dimensionValues =
-    components.length > 0 ? Object.keys(preset.paletteMap[components[0]]) : [];
+  // Flat presets (component_role) have string values; nested have objects keyed by dimension.
+  const isFlat = preset.isFlat;
+  const dimensionValues = isFlat
+    ? ["mode"]
+    : components.length > 0
+    ? Object.keys(preset.paletteMap[components[0]] as Record<string, string>)
+    : [];
+
+  function getMode(component: string, val: string): string {
+    const entry = currentMap[component];
+    if (isFlat) return (entry as string) ?? "light";
+    return (entry as Record<string, string>)?.[val] ?? "light";
+  }
 
   function handleCellClick(component: string, val: string) {
-    const current = currentMap[component]?.[val] ?? "light";
-    setMaps((prev) => ({
-      ...prev,
-      [selectedKey]: {
-        ...prev[selectedKey],
-        [component]: { ...prev[selectedKey][component], [val]: CYCLE[current] ?? "light" },
-      },
-    }));
+    const current = getMode(component, val);
+    setMaps((prev) => {
+      if (isFlat) {
+        return { ...prev, [selectedKey]: { ...prev[selectedKey], [component]: CYCLE[current] ?? "light" } };
+      }
+      return {
+        ...prev,
+        [selectedKey]: {
+          ...prev[selectedKey],
+          [component]: { ...(prev[selectedKey][component] as Record<string, string>), [val]: CYCLE[current] ?? "light" },
+        },
+      };
+    });
     setMapSaveState("idle");
   }
 
