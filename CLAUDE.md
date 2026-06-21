@@ -627,6 +627,65 @@ The funnel-stage demo is complete. The next step is to look at the awareness-sta
 
 ---
 
+## Unresolved: component layer architecture — conflation and ingestion
+
+### The conflation
+
+The current system conflates four distinct things that need to be separate:
+
+1. **Component identity** — what section type this is (a hero, a social proof bar). Maps to a beat in the IA.
+2. **Structural variant** — how it's laid out (editorial, text-only, with-price). A design system decision.
+3. **Visual mode** — what palette weight it carries (light, neutral, dark). A semantic intent decision.
+4. **Content configuration** — which slots are populated (eyebrow on/off, secondary CTA on/off). A content editorial decision.
+
+These are cleanly separate in concept but meshed together in the current implementation. Structural variants live in the manifest. Visual mode is assigned by the palette map. Content configuration is done via slot visibility toggles in the Studio. They interact in ways that are hard to explain to a buyer and hard to extend to external components.
+
+### The slot visibility misplacement
+
+Slot visibility toggles ("hide the eyebrow", "hide the secondary CTA") are in the Studio — a rendering switch controlled by the human editor. This is the wrong layer. Whether an eyebrow belongs in a section is a content editorial decision that the content generator should make based on behavioral tokens (copy density, funnel stage, archetype). If the context doesn't call for an eyebrow, the generator shouldn't write one. If the slot is null, the component renders nothing.
+
+The Studio's job is component selection and structural variant selection — not content trimming. Every slot visibility toggle added to the Studio is encoding a content decision in the wrong place. This is a POC artifact. The fix is: null slots render nothing, and behavioral tokens determine whether optional slots are populated at generation time.
+
+### The ingestion translation gap
+
+Every Studio feature built so far assumes MODE's own components, which speak the CSS var palette dialect (`getPalette()`, `p.bg`, `p.text`). An external design system component might express the same concept completely differently — `variant="dark"`, `theme="brand"`, a CSS class, a Tailwind config, a Radix appearance prop. There is no translation layer.
+
+The ingestion contract needs to define: when MODE assigns `palette: "dark"` to this component, what does that mean in the external component's API? This translation is different for every external component and has to be declared at ingestion time — it can't be inferred.
+
+Until this translation layer exists, ingestion produces components that silently ignore MODE's palette assignments. The palette compliance checklist documented elsewhere covers MODE's own components; external components need a declared translation, not a coding convention.
+
+### The AI selection question at scale
+
+Right now the manifest has 11 components. The AI selects from a semantically-constrained pool (candidate_components per beat). At 50 or 100 components — including multiple structural variants per section type, multiple design patterns for the same beat — the selection problem becomes harder. The manifest needs to encode enough semantic metadata (tone, density, visual weight, contextual fit) for the AI to make good selections from a larger library without being told explicitly which to pick.
+
+This is not solved yet and should be designed before the library grows significantly.
+
+### When is this critical to fix?
+
+**The slot visibility / content configuration conflation:** Medium urgency. It's accumulating as a pattern. Every new Studio feature built on slot visibility encodes another assumption that external components can't honor. The right move is to stop adding slot visibility features and let null-slot behavior handle it going forward. The existing toggles can stay as-is but shouldn't grow.
+
+**The ingestion translation contract:** High urgency — it's the foundational gap. The moment you show this to a real buyer who has an existing component library, there's no path without it. And more importantly: every Studio feature built without knowing what the translation layer looks like encodes assumptions that will need to be unwound for external components. The architecture definition — even without building the ingestion UI — needs to happen before the next major Studio feature. You're designing to MODE's own components right now; that design will need to flex to external components. Know what that flex looks like first.
+
+**The AI selection at scale:** Lower urgency. The current manifest is small enough that the pool is tractable. This matters when the library grows to a real buyer's component count.
+
+**Practical trigger:** Ingestion becomes blocking as soon as you want to run a real buyer through the system. The architecture contract for what ingestion produces should be defined in the next engineering session that isn't fixing something else.
+
+---
+
+## Unresolved: pre-built vs. dynamic section assembly
+
+The current model: pre-build N variant page files, serve the right one based on routing signals. The swap is at the file level — a visitor in decision stage gets the whole decision-stage page file.
+
+The question is whether longer-term content sections should swap more granularly — not serving a different whole-page file but assembling a page from section-level pre-builds based on multiple signals simultaneously.
+
+**Pre-built section pools** is the middle ground: pre-generate a pool of section outputs (awareness hero, decision hero, mover hero) and at serve time assemble the page from the right pre-built sections rather than a pre-built whole-page file. Still pre-defined, not runtime AI generation — assembly is dynamic, generation is not.
+
+This solves the exponential scaling problem (N signals × M signals = too many whole-page files to pre-build) while keeping the semantic constraint intact (each pre-built section was generated by the full agent pipeline with the right brief). The "dynamic" part is the assembly, not the content.
+
+**Whether to build this** depends on how many signal dimensions you want to cross. Funnel stage × archetype = 12 combinations, manageable as whole-page files. Add context_mode = 36. Add campaign signal = more. Section-level pools become worth the complexity around there. Not a current problem — the routing model handles what's built now. Worth knowing this is the architectural next step when cross-signal combinations grow.
+
+---
+
 ## Two usage modes: semantic palette vs. expression dial
 
 These are distinct value propositions that emerged from thinking about expression intensity. Both are valid; they target different buyers.
