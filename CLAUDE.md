@@ -915,6 +915,14 @@ This changes the data model for what gets written to `output/page-{ts}-{variant}
 
 Git sync is the current integration contract. Plans exist for additional targets (Figma variables, headless CMSs, Storybook, webhooks). Decide whether to build git sync as a specific implementation or design an adapter layer now that git sync is the first adapter of. Affects how the Run tab deploy flow and dashboard "Save" actions are architected.
 
+**4. Run tab deploy flow — local shell vs. hosted API**
+
+The current `POST /api/admin/deploy` implementation runs `git add/commit/push` as local shell commands via Node's `exec`. This only works when the dashboard is running locally with git credentials configured. In a hosted SaaS context, this becomes a GitHub API call (with OAuth tokens and repo write access) — a structurally different implementation that can't be reached by extending the current one.
+
+The decision: is the dashboard local-only for the foreseeable future (in which case the shell implementation is fine), or is hosting the next significant milestone (in which case this needs to be replaced, not extended)? Don't build more deploy logic on top of the shell implementation until this is settled. The seam between "run a shell command" and "call an API with an OAuth token" needs to be named even if the API version isn't built yet.
+
+Related: authentication has no scope or sequencing in the current roadmap. A hosted dashboard requires at minimum single-user auth before it can be shared. That's a prerequisite that isn't tracked anywhere.
+
 ---
 
 ## Architecture note: Variant as an editable resolution slot
