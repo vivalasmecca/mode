@@ -151,8 +151,13 @@ function buildSpec(ia, page, manifest) {
       }
     }
 
+    // Use "section::i" as the unique key sent to the LLM.
+    // Multiple sections can share the same human name (e.g. two "Features"
+    // sections when FeatureGrid and ContentSection are both selected).
+    // Keying by position makes each key unique so the LLM generates a
+    // separate JSON entry per section and content is applied without collision.
     return {
-      section: section.section,
+      section: `${section.section}::${i}`,
       component: section.component,
       variant: section.variant,
       rationale: iaSection.rationale || "",
@@ -274,8 +279,8 @@ async function callLLM(spec, brief, behavioral) {
           funnelSection +
           contentNotesSection +
           `\n\nSECTIONS:\n${JSON.stringify(spec, null, 2)}\n\n` +
-          `Return ONLY valid JSON keyed by the exact section name — no markdown, no explanation:\n` +
-          `{\n  "<exact section name>": {\n    "<slot_key>": <value>\n  }\n}`,
+          `Return ONLY valid JSON keyed by the exact section key from the SECTIONS list above — no markdown, no explanation:\n` +
+          `{\n  "<exact section key>": {\n    "<slot_key>": <value>\n  }\n}`,
       },
     ],
   });
@@ -312,6 +317,9 @@ function isSectionEmpty(section) {
  */
 async function populateContent(ia, page, brief, manifest, behavioral = null) {
   const spec = buildSpec(ia, page, manifest);
+  // spec[i].section is now "${section.section}::${i}" — unique per position.
+  // Content is applied by matching this key, not by section name, so
+  // duplicate names ("Features", "Features") never collide.
 
   let generated;
   try {
@@ -321,22 +329,23 @@ async function populateContent(ia, page, brief, manifest, behavioral = null) {
     return page;
   }
 
-  const merged = page.map((section) => {
-    const filled = generated[section.section];
+  const merged = page.map((section, i) => {
+    const key = spec[i].section; // e.g. "Features::5"
+    const filled = generated[key];
     if (!filled) {
-      console.warn(`  No content returned for section: ${section.section}`);
+      console.warn(`  No content returned for section: ${section.section} (key: ${key})`);
       return section;
     }
     const slots = { ...section.slots, ...filled };
     for (const [k, v] of Object.entries(slots)) {
       if (typeof v === "string" && /^\[[^\]]+\]$/.test(v)) {
-        console.warn(`  Unfilled stub in ${section.section}.${k}: "${v}" — LLM did not populate this slot`);
+        console.warn(`  Unfilled stub in ${section.section}.${k}: "${v}"`);
       }
     }
     return { ...section, slots };
   });
 
-  // QC pass — collect sections that came back completely empty.
+  // QC pass — retry any section that came back completely empty.
   const emptyIndices = merged
     .map((s, i) => (isSectionEmpty(s) ? i : -1))
     .filter((i) => i !== -1);
@@ -346,18 +355,19 @@ async function populateContent(ia, page, brief, manifest, behavioral = null) {
   const emptyNames = emptyIndices.map((i) => merged[i].section).join(", ");
   console.warn(`  QC: ${emptyIndices.length} empty section(s), retrying: ${emptyNames}`);
 
-  // Build a targeted retry using the original stub sections so buildSpec
-  // reads clean slot types rather than the null-filled merged output.
   const retryPage = emptyIndices.map((i) => page[i]);
   const retryIa = { ...ia, sections: emptyIndices.map((i) => ia.sections[i] || {}) };
   const retrySpec = buildSpec(retryIa, retryPage, manifest);
+  // retrySpec[j].section is "${section.section}::${j}" (j = 0..N within retry)
 
   try {
     const retryGenerated = await callLLM(retrySpec, brief, behavioral);
     const emptySet = new Set(emptyIndices);
     return merged.map((section, i) => {
       if (!emptySet.has(i)) return section;
-      const filled = retryGenerated[section.section];
+      const retryIdx = emptyIndices.indexOf(i);
+      const key = retrySpec[retryIdx].section;
+      const filled = retryGenerated[key];
       if (!filled) return section;
       return { ...section, slots: { ...section.slots, ...filled } };
     });
