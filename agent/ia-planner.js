@@ -126,10 +126,15 @@ async function llmPlanBeats(brief) {
   if (!result.beats || !Array.isArray(result.beats)) throw new Error("Invalid beat structure");
 
   // Validate every beat name — reject hallucinated names
+  const seen = new Set();
   for (const b of result.beats) {
     if (!BEAT_NAMES.includes(b.name)) {
       throw new Error(`Unknown beat name: "${b.name}"`);
     }
+    if (seen.has(b.name)) {
+      throw new Error(`Duplicate beat name: "${b.name}" — each beat may appear only once`);
+    }
+    seen.add(b.name);
   }
 
   return result.beats;
@@ -197,13 +202,25 @@ function buildSectionsFromBeats(beats, brief, manifest) {
     candidate_components: ["NavigationHeader"],
   });
 
-  // One content section per beat (Recovery is handled by the pinned footer)
+  // One content section per beat (Recovery is handled by the pinned footer).
+  // Track used names so duplicate beats (which should be rejected above but
+  // could slip through the rule-based fallback) produce unique section keys —
+  // duplicate section names cause the content generator to merge the same LLM
+  // output onto both sections, corrupting slot content.
+  const usedNames = new Set(["Navigation", "Footer"]);
   for (const beat of beats) {
     if (beat.name === "Recovery") continue;
     const candidates = beatIndex[beat.name] ?? [];
     if (candidates.length === 0) continue;
+    let name = BEAT_SECTION_NAMES[beat.name] ?? beat.name;
+    if (usedNames.has(name)) {
+      let i = 2;
+      while (usedNames.has(`${name} ${i}`)) i++;
+      name = `${name} ${i}`;
+    }
+    usedNames.add(name);
     sections.push({
-      name: BEAT_SECTION_NAMES[beat.name] ?? beat.name,
+      name,
       beat: beat.name,
       rationale: beat.rationale,
       candidate_components: candidates,
