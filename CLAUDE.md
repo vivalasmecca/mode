@@ -72,7 +72,7 @@ The palette driver determines which runtime signal remaps the visual design toke
 | Preset | Palette driver | Variant dimension | Variants generated |
 |--------|---------------|-------------------|--------------------|
 | `funnel-driven` | funnel stage | `funnel_stage` | awareness, consideration, decision, conversion |
-| `feature-emphasis` | component role | `archetype` | Validator, Mover, Explorer |
+| `feature-emphasis` | component role | `funnel_stage` | awareness, consideration, decision, conversion |
 | `archetype-driven` | archetype | `archetype` | Mover, Validator, Explorer |
 | `expression-dial` *(planned)* | none — flat palette | `funnel_stage` | awareness, consideration, decision, conversion |
 
@@ -642,15 +642,15 @@ Not now. The insight is worth preserving because it clarifies the addressable ma
 
 The critical distinction for feature-emphasis:
 
-**Variants still exist** (Validator, Mover, Explorer). What archetype drives in this mode is **component selection, IA ordering, and content density** — not palette. A Validator homepage leads with depth and social proof; a Mover homepage collapses to a fast path. Those are structurally different pages. But both render with the same palette map: social proof sections are dark on both, content sections are neutral on both, nav is light on both.
+**Variants still exist** (awareness, consideration, decision, conversion). What funnel stage drives in this mode is **component selection and IA ordering** — not palette. An awareness homepage leads with breadth and brand; a conversion homepage collapses to proof and action. Those are structurally different pages. But all stages render with the same palette map: social proof sections are dark across all stages, content sections are neutral, nav is light.
 
-**Palette mode in feature-emphasis is not the variant axis.** It is an editorial structural decision made once by the author — "social proof components are dark, supporting content is neutral" — that holds constant across all archetypes. Changing it in the Studio or Palette tab is a brand/product decision that propagates to every variant simultaneously. It does not shift per visitor.
+**Palette mode in feature-emphasis is not the variant axis.** It is an editorial structural decision made once by the author — "social proof components are dark, supporting content is neutral" — that holds constant across all funnel stages. Changing it in the Studio or Palette tab is a brand/product decision that propagates to every variant simultaneously. It does not shift per funnel stage.
 
 The separation of concerns:
-- **Archetype → what components appear, in what order, with what density** (IA + component selector)
-- **Component role → what palette weight each component carries** (palette map, constant across variants)
+- **Funnel stage → what components appear, in what order** (IA + component selector)
+- **Component role → what palette weight each component carries** (palette map, constant across stages)
 
-In funnel-driven and archetype-driven, both axes shift per variant — a different palette map AND different IA for each stage/archetype. In feature-emphasis, only the IA shifts; the palette map is a shared editorial layer.
+In funnel-driven, both axes shift per variant — the palette map assigns different weights per funnel stage AND the IA shifts. In feature-emphasis, only the IA shifts; the palette map is a shared editorial layer that doesn't vary by stage.
 
 **Practical implication for the Studio:** the palette map panel in a feature-emphasis build is a layout/editorial tool — comparable to an art director deciding headers are always dark and supporting content is always light in a publication. It applies to all variants at once. Users who want palette to respond *differently per visitor* need funnel-driven or archetype-driven, not feature-emphasis.
 

@@ -15,16 +15,16 @@
       "label": "Homepage",
       "route": "/",
       "preset": "feature-emphasis",
-      "variant_dimension": "archetype",
-      "variant_values": ["Validator", "Mover", "Explorer"]
+      "variant_dimension": "funnel_stage",
+      "variant_values": ["awareness", "consideration", "decision", "conversion"]
     },
     {
       "label": "Pricing",
       "route": "/pricing",
       "preset": "feature-emphasis",
-      "variant_dimension": "archetype",
-      "variant_values": ["Validator", "Mover", "Explorer"],
-      "brief_overrides": { "funnel_stage": "conversion" }
+      "variant_dimension": "funnel_stage",
+      "variant_values": ["conversion"],
+      "brief_overrides": { "archetype": "Validator" }
     }
   ]
 }
