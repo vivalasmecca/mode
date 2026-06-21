@@ -252,7 +252,10 @@ async function callLLM(spec, brief, behavioral) {
     `- PricingCard features: short, scannable strings (e.g. "Unlimited workspaces").\n` +
     `- legal_text (FooterMinimal): concise copyright line, e.g. "© 2025 Acme Inc. All rights reserved."\n` +
     `- NavigationHeader cta_primary: the session's primary conversion action (e.g. "Upgrade now").\n` +
-    `- Keep headline copy under 12 words. Subheads under 25 words.` +
+    `- Keep headline copy under 12 words. Subheads under 25 words.\n` +
+    `- body (ContentSection, HeroStatement): 3–4 sentences of structured, specific argument. ALWAYS populate — never omit this key.\n` +
+    `- subhead (HeroPrimary, CTABanner): write a real subhead; do not omit.\n` +
+    `- CRITICAL: every key listed in slots_to_fill MUST appear in your response for that section. Omitting a key leaves a visible placeholder on the page.` +
     productContextSection +
     brandBriefSection;
 
@@ -304,7 +307,17 @@ async function populateContent(ia, page, brief, manifest, behavioral = null) {
       console.warn(`  No content returned for section: ${section.section}`);
       return section;
     }
-    return { ...section, slots: { ...section.slots, ...filled } };
+    const merged = { ...section.slots, ...filled };
+
+    // Warn about any surviving bracket-style stubs (e.g. "[body]", "[subhead]")
+    // that the LLM omitted from its response, leaving the component-selector stub.
+    for (const [k, v] of Object.entries(merged)) {
+      if (typeof v === "string" && /^\[[^\]]+\]$/.test(v)) {
+        console.warn(`  Unfilled stub in ${section.section}.${k}: "${v}" — LLM did not populate this slot`);
+      }
+    }
+
+    return { ...section, slots: merged };
   });
 }
 
