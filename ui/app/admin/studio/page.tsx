@@ -55,18 +55,26 @@ export default function StudioPage() {
   // Add supplemental page cards for registry entries whose variant_label is not
   // already in the active build. This keeps the pricing page visible in Studio
   // even when an archetype-driven build (no conversion variant) is active.
+  //
+  // Dedup by both label AND filename — the archetype build labels the pricing
+  // manifest entry "pricing" (page slug) while the registry stores variant_label
+  // "conversion"; without filename dedup, the same file shows twice.
   const loadedLabels = new Set(variants.map((v) => v.label));
+  const loadedFilenames = new Set(variants.map((v) => v.filename));
   for (const entry of pageRegistry) {
     if (!entry.variant_label) continue;
-    if (loadedLabels.has(entry.variant_label)) continue; // already present from active build
+    if (loadedLabels.has(entry.variant_label)) continue;
+    if (entry.filename && loadedFilenames.has(entry.filename)) continue;
     const found = findVariantFile(entry.variant_label, buildTs);
     if (found) {
+      if (loadedFilenames.has(found.filename)) continue; // resolved to same file already loaded
       variants.push({
         label: entry.label,
         filename: found.filename,
         output: found.output,
         route: entry.route,
       });
+      loadedFilenames.add(found.filename);
     }
   }
 

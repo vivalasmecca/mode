@@ -61,9 +61,19 @@ async function llmPlanBeats(brief) {
   const anthropic = getClient();
 
   const archetypeGuidance = {
-    Mover:     "Fewer beats, direct path. Skip Evidence unless essential. Conversion beat as early as viable.",
-    Validator: "Include Credibility and Evidence. Validator needs proof before committing.",
-    Explorer:  "Include Value and Credibility. Explorer is in discovery mode — no pressure toward conversion.",
+    Mover:
+      "Fewer beats, direct path. Orientation → Value → Conversion → Recovery. " +
+      "Skip Evidence and Credibility unless truly essential — Mover acts on clarity, not proof. " +
+      "Conversion beat as early as viable. Keep rationale tight and action-oriented.",
+    Validator:
+      "Full depth required. Orientation → Credibility → Value → Evidence → Conversion → Recovery. " +
+      "Validator needs to see social proof and specific metrics before committing. " +
+      "Do not skip Credibility or Evidence — they are the reason Validator converts.",
+    Explorer:
+      "Value and Credibility; omit Decision and hold Conversion to soft. " +
+      "Orientation → Value → Credibility → Conversion → Recovery. " +
+      "Explorer is in discovery mode — educate, do not pressure. " +
+      "Conversion is a low-friction invite, not a close.",
   };
 
   const message = await anthropic.messages.create({
