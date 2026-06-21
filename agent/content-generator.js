@@ -21,7 +21,7 @@ function getClient() {
   return _client;
 }
 
-// Slots skipped regardless of component
+// Slots skipped regardless of component (image/structural slots)
 const SKIP_KEYS = new Set([
   "logo",
   "media",
@@ -32,6 +32,21 @@ const SKIP_KEYS = new Set([
   "nav_links",
   "nav_columns",
   "social_links",
+]);
+
+// Text slots that must always be populated — strip "| null" from their type
+// so the LLM cannot return null for them, regardless of manifest declaration.
+const ALWAYS_REQUIRED = new Set([
+  "headline",
+  "quote",
+  "attribution",
+  "author_name",
+  "author_title",
+  "company",
+  "plan_name",
+  "price",
+  "billing_period",
+  "legal_text",
 ]);
 
 const TONE = {
@@ -113,8 +128,12 @@ function buildSpec(ia, page, manifest) {
     const slots_to_fill = {};
 
     if (def) {
+      // Only send slots that the chosen variant actually renders, if known.
+      const variantSlotList = def.variant_slots?.[section.variant] ?? null;
+
       for (const [key, rawType] of Object.entries(def.slots)) {
         if (SKIP_KEYS.has(key)) continue;
+        if (variantSlotList && !variantSlotList.includes(key)) continue;
 
         if (Array.isArray(rawType)) {
           slots_to_fill[key] = {
@@ -123,7 +142,11 @@ function buildSpec(ia, page, manifest) {
             count: arrayCount(section.component, key, section.variant),
           };
         } else {
-          slots_to_fill[key] = { type: rawType };
+          // Strip "| null" for fields that must always be populated.
+          const effectiveType = ALWAYS_REQUIRED.has(key)
+            ? rawType.replace(/\s*\|\s*null/, "").trim()
+            : rawType;
+          slots_to_fill[key] = { type: effectiveType };
         }
       }
     }
