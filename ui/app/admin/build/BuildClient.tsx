@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import type { SiteConfig } from "@/lib/types";
+import type { SiteConfigEntry } from "@/lib/get-output";
 
 interface PresetConfig {
   key: string;
@@ -79,10 +79,10 @@ const PALETTE_DRIVER_LABELS: Record<string, string> = {
 };
 
 interface BuildClientProps {
-  siteConfig?: SiteConfig | null;
+  siteConfigs?: SiteConfigEntry[];
 }
 
-export default function BuildClient({ siteConfig }: BuildClientProps) {
+export default function BuildClient({ siteConfigs }: BuildClientProps) {
   const [step, setStep] = useState<Step>("config-loading");
   const [allPresets, setAllPresets] = useState<PresetConfig[]>([]);
   const [selectedPreset, setSelectedPreset] = useState<PresetConfig | null>(null);
@@ -115,9 +115,15 @@ export default function BuildClient({ siteConfig }: BuildClientProps) {
   const [siteSiteUrl, setSiteSiteUrl] = useState("");
   const [siteError, setSiteError] = useState("");
   const [siteActivateState, setSiteActivateState] = useState<"idle" | "loading" | "done" | "error">("idle");
+  const [selectedSiteFile, setSelectedSiteFile] = useState<string>(
+    () => siteConfigs?.[0]?.filename ?? ""
+  );
 
-  const totalVariantCount = siteConfig
-    ? siteConfig.pages.reduce((sum, p) => sum + p.variant_values.length, 0)
+  const activeSiteConfig =
+    siteConfigs?.find((c) => c.filename === selectedSiteFile)?.config ??
+    siteConfigs?.[0]?.config;
+  const totalVariantCount = activeSiteConfig
+    ? activeSiteConfig.pages.reduce((sum, p) => sum + p.variant_values.length, 0)
     : 0;
 
   useEffect(() => {
@@ -295,7 +301,11 @@ export default function BuildClient({ siteConfig }: BuildClientProps) {
     setSiteError("");
     setSiteActivateState("idle");
     try {
-      const res = await fetch("/api/generate/site", { method: "POST" });
+      const res = await fetch("/api/generate/site", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ configFile: selectedSiteFile }),
+      });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Site build failed");
       setSiteTs(data.ts);
@@ -734,8 +744,8 @@ export default function BuildClient({ siteConfig }: BuildClientProps) {
   return (
     <main>
       <div className="max-w-3xl mx-auto px-6 py-8 space-y-6">
-        {/* Site Build card — shown when config/site.json is present */}
-        {siteConfig && (
+        {/* Site Build card — shown when at least one site config exists */}
+        {siteConfigs && siteConfigs.length > 0 && activeSiteConfig && (
           <div className="border border-gray-200 rounded-lg overflow-hidden">
             <div className="bg-gray-50 border-b border-gray-200 px-4 py-2.5">
               <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-500">
@@ -743,13 +753,38 @@ export default function BuildClient({ siteConfig }: BuildClientProps) {
               </h3>
             </div>
             <div className="px-5 py-4 space-y-3">
+              {/* Config switcher — only shown when multiple configs exist */}
+              {siteConfigs.length > 1 && (
+                <div className="flex gap-1.5">
+                  {siteConfigs.map((c) => (
+                    <button
+                      key={c.filename}
+                      onClick={() => {
+                        setSelectedSiteFile(c.filename);
+                        setSiteStep("idle");
+                        setSiteTs("");
+                        setSiteSiteUrl("");
+                        setSiteError("");
+                        setSiteActivateState("idle");
+                      }}
+                      className={`px-3 py-1 text-xs font-medium rounded-md border transition-colors ${
+                        c.filename === selectedSiteFile
+                          ? "bg-indigo-600 text-white border-indigo-600"
+                          : "bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+                      }`}
+                    >
+                      {c.label}
+                    </button>
+                  ))}
+                </div>
+              )}
               <p className="text-sm text-gray-500">
                 Generate all {totalVariantCount} page-variants in one run with shared nav links injected.
               </p>
               {/* Palette mode + page chips */}
               <div className="flex flex-wrap gap-2 items-center">
                 {(() => {
-                  const sitePresetKey = siteConfig.pages[0]?.preset ?? "";
+                  const sitePresetKey = activeSiteConfig.pages[0]?.preset ?? "";
                   const sitePresetConfig = allPresets.find((p) => p.key === sitePresetKey);
                   return sitePresetKey ? (
                     <div className="text-xs bg-indigo-50 border border-indigo-100 text-indigo-700 rounded px-2.5 py-1 font-mono font-medium">
@@ -763,7 +798,7 @@ export default function BuildClient({ siteConfig }: BuildClientProps) {
                   ) : null;
                 })()}
                 <span className="text-gray-200 text-xs">|</span>
-                {siteConfig.pages.map((p) => (
+                {activeSiteConfig.pages.map((p) => (
                   <div
                     key={p.label}
                     className="text-xs bg-white border border-gray-200 rounded px-2.5 py-1"

@@ -165,6 +165,44 @@ export function getSiteConfig(): SiteConfig | null {
   }
 }
 
+export interface SiteConfigEntry {
+  filename: string;
+  label: string;
+  config: SiteConfig;
+}
+
+/**
+ * Discovers all site config files in config/ (site.json + site-*.json).
+ * Used by the Build tab to populate the site config switcher.
+ */
+export function listSiteConfigs(): SiteConfigEntry[] {
+  try {
+    const configDir = path.join(DATA_ROOT, "config");
+    if (!fs.existsSync(configDir)) return [];
+    return fs
+      .readdirSync(configDir)
+      .filter((f) => f.startsWith("site") && f.endsWith(".json"))
+      .sort()
+      .flatMap((filename): SiteConfigEntry[] => {
+        try {
+          const config = JSON.parse(
+            fs.readFileSync(path.join(configDir, filename), "utf8")
+          ) as SiteConfig;
+          const label =
+            config.label ??
+            (filename === "site.json"
+              ? "Default"
+              : filename.replace(/^site-/, "").replace(/\.json$/, ""));
+          return [{ filename, label, config }];
+        } catch {
+          return [];
+        }
+      });
+  } catch {
+    return [];
+  }
+}
+
 /**
  * Reads the most recent JSON output file from output/.
  * Used directly by server components (no HTTP, no port dependency).

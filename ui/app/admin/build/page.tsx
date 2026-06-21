@@ -1,10 +1,10 @@
 import BuildClient from "./BuildClient";
-import { getSiteConfig } from "@/lib/get-output";
+import { listSiteConfigs } from "@/lib/get-output";
 
 export const dynamic = "force-dynamic";
 
 export default function BuildPage() {
-  const siteConfig = getSiteConfig();
+  const siteConfigs = listSiteConfigs();
   return (
     <>
       <div className="flex items-center gap-3 border-b border-red-100 bg-red-50 px-6 py-3">
@@ -15,7 +15,7 @@ export default function BuildPage() {
           Building regenerates all content from scratch and overwrites any edits made in the Edit tab. Use the Edit tab for targeted changes after a build.
         </p>
       </div>
-      <BuildClient siteConfig={siteConfig} />
+      <BuildClient siteConfigs={siteConfigs.length > 0 ? siteConfigs : undefined} />
     </>
   );
 }

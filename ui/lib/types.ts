@@ -125,6 +125,8 @@ export interface SitePageSpec {
 
 export interface SiteConfig {
   site_name: string;
+  /** Human-readable label used in the Build tab config selector. Falls back to filename if absent. */
+  label?: string;
   nav_links: SiteNavLink[];
   shared_brief: Record<string, string>;
   pages: SitePageSpec[];

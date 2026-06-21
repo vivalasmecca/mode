@@ -1,23 +1,24 @@
 {
   "site_name": "MODE",
-  "label": "Funnel-driven",
+  "label": "Archetype-driven",
   "nav_links": [
     { "label": "Home", "href": "/" },
     { "label": "Pricing", "href": "/pricing" }
   ],
   "shared_brief": {
     "audience": "growth-focused SaaS teams who need a semantic design layer that adapts to visitor intent",
-    "goal": "demonstrate MODE's ability to generate intent-aware pages at funnel scale",
-    "context_mode": "organic"
+    "goal": "demonstrate MODE's ability to generate identity-aware pages that adapt to who the visitor is",
+    "context_mode": "organic",
+    "funnel_stage": "awareness"
   },
   "pages": [
     {
       "label": "Homepage",
       "route": "/",
-      "preset": "funnel-driven",
-      "variant_dimension": "funnel_stage",
-      "variant_values": ["awareness", "consideration", "decision", "conversion"],
-      "brief_overrides": { "archetype": "Validator" }
+      "preset": "archetype-driven",
+      "variant_dimension": "archetype",
+      "variant_values": ["Mover", "Validator", "Explorer"],
+      "brief_overrides": {}
     },
     {
       "label": "Pricing",
