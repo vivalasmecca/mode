@@ -638,6 +638,21 @@ This would be a fourth preset type alongside `funnel-driven`, `feature-emphasis`
 ### When to build this
 Not now. The insight is worth preserving because it clarifies the addressable market. Mode A buyers want semantic control. Mode B buyers want better pages with a simpler interface. These are different products sharing the same underlying engine. Build Mode A fully first; Mode B follows naturally once the variant selection logic is mature.
 
+### Feature-emphasis is neither Mode A nor Mode B — it's a third relationship with the customer journey
+
+This is the important clarification for users of the feature-emphasis preset:
+
+**Palette mode in feature-emphasis is not responsive to the customer journey.** It is an editorial structural decision made once by the author — "social proof sections are dark, content sections are neutral" — that holds constant across all visitors and all funnel stages. Changing it in the Studio is a brand/product decision, not a personalization signal. It doesn't shift per visitor the way funnel-driven or archetype-driven palettes do.
+
+**The customer journey variable in feature-emphasis comes from something else:** component ordering and content sizing/density. A visitor in the awareness stage might see social proof and feature breadth earlier in the page; a conversion-stage visitor might see pricing and specifics earlier. A Mover archetype gets denser, faster sections; a Validator gets more depth. The visual palette stays constant; the *sequence* and *weight* of sections is what adapts.
+
+This means:
+- Users should not expect palette map changes to "personalize" the experience — it won't. It sets the editorial tone for all visitors.
+- The actual per-visitor variation in a feature-emphasis build is driven by IA ordering (which the agent handles) and content density tokens (which archetype drives) — not by palette mode.
+- This is closer to Mode B (expression dial) in spirit, but with editorial palette control layered on top. The palette is an intentional design choice, not an invisible runtime signal.
+
+**Practical implication for the Studio and Palette tab:** when in a feature-emphasis build, the palette map panel is a layout/editorial tool — comparable to deciding that headers are always dark and supporting content is always light in a print publication. It is not a "personalization" surface and shouldn't be pitched as one. Users who want runtime palette adaptation need funnel-driven or archetype-driven.
+
 ---
 
 ## Unresolved: visual mapping tool
