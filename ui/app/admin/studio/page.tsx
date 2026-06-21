@@ -42,11 +42,17 @@ export default function StudioPage() {
     for (const page of manifest.pages) {
       const output = getOutputByFile(page.filename);
       if (output) {
+        // Use the human page label ("Pricing") only when label is the page slug, not a variant
+        // discriminator. "pricing" → "Pricing" ✓; "mover" (vs "Homepage") → keep "mover" ✓
+        const pageSlugMatch =
+          page.page &&
+          page.page.toLowerCase().replace(/\s+/g, "-") === page.label;
         variants.push({
-          label: page.label,
+          label: pageSlugMatch ? page.page! : page.label,
           filename: page.filename,
           output,
-          route: variantLabelToRoute[page.label] ?? null,
+          // Prefer the route stored in the manifest; fall back to registry lookup by variant label
+          route: page.route ?? variantLabelToRoute[page.label] ?? null,
         });
       }
     }

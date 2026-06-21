@@ -141,6 +141,7 @@
         "Explorer"
       ],
       "funnel_stages": [
+        "awareness",
         "consideration",
         "decision"
       ],
@@ -182,7 +183,8 @@
       ],
       "archetypes": [
         "Validator",
-        "Mover"
+        "Mover",
+        "Explorer"
       ],
       "funnel_stages": [
         "awareness",
@@ -235,6 +237,7 @@
         "Validator"
       ],
       "funnel_stages": [
+        "awareness",
         "consideration",
         "decision"
       ],
@@ -315,6 +318,7 @@
         "Validator"
       ],
       "funnel_stages": [
+        "awareness",
         "consideration",
         "decision"
       ],
@@ -349,6 +353,8 @@
         "Validator"
       ],
       "funnel_stages": [
+        "awareness",
+        "consideration",
         "decision",
         "conversion"
       ],
@@ -389,6 +395,7 @@
         "Explorer"
       ],
       "funnel_stages": [
+        "awareness",
         "consideration"
       ],
       "variants": [
