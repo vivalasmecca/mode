@@ -9,19 +9,21 @@ import * as NavigationMenu from "@radix-ui/react-navigation-menu";
 import type { ComponentSlots, CTAButtonSlot, PaletteMode } from "@/lib/types";
 import { PlaceholderSlot, isPlaceholderValue } from "@/components/blocks/PlaceholderSlot";
 import { CTAButton } from "@/components/blocks/CTAButton";
+import { getPalette } from "@/lib/palette";
 
 interface NavigationHeaderProps {
   slots: ComponentSlots;
   variant: string | null;
-  palette?: PaletteMode; // chrome — always light regardless of page palette
+  palette?: PaletteMode;
 }
 
-export function NavigationHeader({ slots, variant, palette: _palette }: NavigationHeaderProps) {
+export function NavigationHeader({ slots, variant, palette }: NavigationHeaderProps) {
+  const p = getPalette(palette ?? "light");
   const isMinimal = variant === "minimal";
   const navLinks = Array.isArray(slots.nav_links) ? slots.nav_links : [];
 
   return (
-    <nav className="w-full border-b border-gray-100 bg-white">
+    <nav className={`w-full border-b ${p.border} ${p.bg}`}>
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         {/* Logo */}
         <div className="flex items-center gap-8">
@@ -37,7 +39,7 @@ export function NavigationHeader({ slots, variant, palette: _palette }: Navigati
                   <NavigationMenu.Item key={i}>
                     <NavigationMenu.Link
                       href={link.href ?? "#"}
-                      className="text-sm text-gray-600 transition-colors hover:text-gray-900"
+                      className={`text-sm ${p.subtext} transition-colors`}
                     >
                       {link.label}
                     </NavigationMenu.Link>

@@ -777,25 +777,34 @@ function PaletteMapPanel({
   paletteMap,
   origPaletteMap,
   dirty,
+  overridesDirty,
   saveState,
   onChange,
   onSave,
+  onSaveOverrides,
 }: {
   paletteMap: Record<string, string>;
   origPaletteMap: Record<string, string>;
   dirty: boolean;
+  overridesDirty: boolean;
   saveState: "idle" | "saving" | "saved" | "error";
   onChange: (component: string, newMode: string) => void;
   onSave: () => void;
+  onSaveOverrides: () => void;
 }) {
   const components = Object.keys(paletteMap);
+  const anyDirty = dirty || overridesDirty;
+  function handleSaveAll() {
+    if (overridesDirty) onSaveOverrides();
+    if (dirty) onSave();
+  }
   return (
     <div className="w-[272px] shrink-0 border-l border-gray-200 bg-white flex flex-col overflow-hidden">
       <div className="shrink-0 px-3 py-2.5 border-b border-gray-100 flex items-center justify-between">
         <h2 className="text-xs font-semibold text-gray-700">Palette map</h2>
         <button
-          onClick={onSave}
-          disabled={!dirty || saveState === "saving"}
+          onClick={handleSaveAll}
+          disabled={!anyDirty || saveState === "saving"}
           className={`rounded px-2.5 py-1 text-[10px] font-semibold transition-colors disabled:opacity-40 ${
             saveState === "saved"
               ? "bg-green-600 text-white"
@@ -1413,9 +1422,11 @@ function ExpandedView({
           paletteMap={paletteMap}
           origPaletteMap={origPaletteMap}
           dirty={paletteMapDirty}
+          overridesDirty={dirty}
           saveState={paletteMapSaveState}
           onChange={onPaletteMapChange}
           onSave={onPaletteMapSave}
+          onSaveOverrides={onSave}
         />
       ) : (
         <TokenPanel
