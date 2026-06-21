@@ -638,20 +638,21 @@ This would be a fourth preset type alongside `funnel-driven`, `feature-emphasis`
 ### When to build this
 Not now. The insight is worth preserving because it clarifies the addressable market. Mode A buyers want semantic control. Mode B buyers want better pages with a simpler interface. These are different products sharing the same underlying engine. Build Mode A fully first; Mode B follows naturally once the variant selection logic is mature.
 
-### Feature-emphasis is neither Mode A nor Mode B — it's a third relationship with the customer journey
+### Feature-emphasis is neither Mode A nor Mode B — it separates what varies
 
-This is the important clarification for users of the feature-emphasis preset:
+The critical distinction for feature-emphasis:
 
-**Palette mode in feature-emphasis is not responsive to the customer journey.** It is an editorial structural decision made once by the author — "social proof sections are dark, content sections are neutral" — that holds constant across all visitors and all funnel stages. Changing it in the Studio is a brand/product decision, not a personalization signal. It doesn't shift per visitor the way funnel-driven or archetype-driven palettes do.
+**Variants still exist** (Validator, Mover, Explorer). What archetype drives in this mode is **component selection, IA ordering, and content density** — not palette. A Validator homepage leads with depth and social proof; a Mover homepage collapses to a fast path. Those are structurally different pages. But both render with the same palette map: social proof sections are dark on both, content sections are neutral on both, nav is light on both.
 
-**The customer journey variable in feature-emphasis comes from something else:** component ordering and content sizing/density. A visitor in the awareness stage might see social proof and feature breadth earlier in the page; a conversion-stage visitor might see pricing and specifics earlier. A Mover archetype gets denser, faster sections; a Validator gets more depth. The visual palette stays constant; the *sequence* and *weight* of sections is what adapts.
+**Palette mode in feature-emphasis is not the variant axis.** It is an editorial structural decision made once by the author — "social proof components are dark, supporting content is neutral" — that holds constant across all archetypes. Changing it in the Studio or Palette tab is a brand/product decision that propagates to every variant simultaneously. It does not shift per visitor.
 
-This means:
-- Users should not expect palette map changes to "personalize" the experience — it won't. It sets the editorial tone for all visitors.
-- The actual per-visitor variation in a feature-emphasis build is driven by IA ordering (which the agent handles) and content density tokens (which archetype drives) — not by palette mode.
-- This is closer to Mode B (expression dial) in spirit, but with editorial palette control layered on top. The palette is an intentional design choice, not an invisible runtime signal.
+The separation of concerns:
+- **Archetype → what components appear, in what order, with what density** (IA + component selector)
+- **Component role → what palette weight each component carries** (palette map, constant across variants)
 
-**Practical implication for the Studio and Palette tab:** when in a feature-emphasis build, the palette map panel is a layout/editorial tool — comparable to deciding that headers are always dark and supporting content is always light in a print publication. It is not a "personalization" surface and shouldn't be pitched as one. Users who want runtime palette adaptation need funnel-driven or archetype-driven.
+In funnel-driven and archetype-driven, both axes shift per variant — a different palette map AND different IA for each stage/archetype. In feature-emphasis, only the IA shifts; the palette map is a shared editorial layer.
+
+**Practical implication for the Studio:** the palette map panel in a feature-emphasis build is a layout/editorial tool — comparable to an art director deciding headers are always dark and supporting content is always light in a publication. It applies to all variants at once. Users who want palette to respond *differently per visitor* need funnel-driven or archetype-driven, not feature-emphasis.
 
 ---
 
