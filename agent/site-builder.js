@@ -65,23 +65,33 @@ async function buildSite(siteConfig, { dataRoot }) {
   const outputDir = path.join(dataRoot, "output");
   if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
 
-  // Expand all page × variant combos
-  const combos = siteConfig.pages.flatMap((pageSpec) =>
-    pageSpec.variant_values.map((variantValue) => ({ pageSpec, variantValue }))
-  );
+  // Expand all page × variant combos.
+  // Pages without variant_values (structural presets) produce a single
+  // canonical pass with variantValue = null — no variant suffix on the file.
+  const combos = siteConfig.pages.flatMap((pageSpec) => {
+    const values = pageSpec.variant_values?.length ? pageSpec.variant_values : [null];
+    return values.map((variantValue) => ({ pageSpec, variantValue }));
+  });
 
   // Run the full pipeline for every combo in parallel
   const results = await Promise.all(
     combos.map(async ({ pageSpec, variantValue }) => {
       const pageSlug = pageSpec.label.toLowerCase().replace(/\s+/g, "-");
-      const variantSlug = variantValue.toLowerCase().replace(/\s+/g, "-");
-      const isMultiVariant = pageSpec.variant_values.length > 1;
+      const variantSlug = variantValue
+        ? variantValue.toLowerCase().replace(/\s+/g, "-")
+        : null;
+      const isMultiVariant = (pageSpec.variant_values?.length ?? 0) > 1;
 
-      // Compose the per-page brief
+      // Compose the per-page brief.
+      // Only inject the variant dimension field when one is declared — structural
+      // presets (feature-emphasis) have no variant dimension and set archetype/
+      // funnel_stage directly in shared_brief or brief_overrides.
       const brief = {
         ...siteConfig.shared_brief,
         ...pageSpec.brief_overrides,
-        [pageSpec.variant_dimension]: variantValue,
+        ...(pageSpec.variant_dimension && variantValue !== null
+          ? { [pageSpec.variant_dimension]: variantValue }
+          : {}),
       };
 
       // Step 1 — IA planning
@@ -116,15 +126,16 @@ async function buildSite(siteConfig, { dataRoot }) {
       );
 
       // Filename: multi-variant uses variantSlug suffix; single-variant omits it
-      const filename = isMultiVariant
-        ? `page-${ts}-${pageSlug}-${variantSlug}.json`
-        : `page-${ts}-${pageSlug}.json`;
+      const filename =
+        isMultiVariant && variantSlug
+          ? `page-${ts}-${pageSlug}-${variantSlug}.json`
+          : `page-${ts}-${pageSlug}.json`;
 
       const previewUrl = `/admin/preview?file=${filename}`;
 
-      // Site manifest label: homepage variants use variantSlug (matches routing),
-      // single-variant pages use pageSlug (e.g. "pricing").
-      const siteLabel = isMultiVariant ? variantSlug : pageSlug;
+      // Site manifest label: multi-variant pages use variantSlug (matches routing),
+      // single-page pages use pageSlug (e.g. "pricing", "homepage").
+      const siteLabel = isMultiVariant && variantSlug ? variantSlug : pageSlug;
       const siteUrl = `/admin/site?ts=${ts}&page=${siteLabel}`;
 
       const output = {

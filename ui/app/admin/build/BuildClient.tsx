@@ -123,7 +123,7 @@ export default function BuildClient({ siteConfigs }: BuildClientProps) {
     siteConfigs?.find((c) => c.filename === selectedSiteFile)?.config ??
     siteConfigs?.[0]?.config;
   const totalVariantCount = activeSiteConfig
-    ? activeSiteConfig.pages.reduce((sum, p) => sum + p.variant_values.length, 0)
+    ? activeSiteConfig.pages.reduce((sum, p) => sum + (p.variant_values?.length || 1), 0)
     : 0;
 
   useEffect(() => {
@@ -805,7 +805,9 @@ export default function BuildClient({ siteConfigs }: BuildClientProps) {
                   >
                     <span className="font-medium">{p.label}</span>
                     <span className="text-gray-400 ml-1">
-                      ({p.variant_values.length} variant{p.variant_values.length > 1 ? "s" : ""})
+                      {p.variant_values?.length
+                        ? `(${p.variant_values.length} variant${p.variant_values.length > 1 ? "s" : ""})`
+                        : "(canonical)"}
                     </span>
                   </div>
                 ))}
@@ -823,7 +825,7 @@ export default function BuildClient({ siteConfigs }: BuildClientProps) {
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
                   <span className="text-sm text-gray-600">
-                    Building {totalVariantCount} page-variants…
+                    Building {totalVariantCount} {activeSiteConfig?.pages.every((p) => !p.variant_values?.length) ? "pages" : "page-variants"}…
                   </span>
                 </div>
               )}

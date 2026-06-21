@@ -118,8 +118,10 @@ export interface SitePageSpec {
   label: string;
   route: string;
   preset: string;
-  variant_dimension: string;
-  variant_values: string[];
+  /** Omit for structural presets (e.g. feature-emphasis) that produce one canonical page per route. */
+  variant_dimension?: string;
+  /** Omit for structural presets. When absent, the builder produces a single page with no variant suffix. */
+  variant_values?: string[];
   brief_overrides?: Record<string, string>;
 }
 

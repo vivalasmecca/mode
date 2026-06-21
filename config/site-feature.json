@@ -9,23 +9,19 @@
     "audience": "growth-focused SaaS teams who need a semantic design layer that adapts to visitor intent",
     "goal": "demonstrate MODE's structural palette approach — component role drives visual emphasis, not funnel stage",
     "context_mode": "organic",
-    "funnel_stage": "consideration"
+    "funnel_stage": "consideration",
+    "archetype": "Validator"
   },
   "pages": [
     {
       "label": "Homepage",
       "route": "/",
-      "preset": "feature-emphasis",
-      "variant_dimension": "archetype",
-      "variant_values": ["Validator", "Mover", "Explorer"],
-      "brief_overrides": {}
+      "preset": "feature-emphasis"
     },
     {
       "label": "Pricing",
       "route": "/pricing",
       "preset": "feature-emphasis",
-      "variant_dimension": "archetype",
-      "variant_values": ["Validator"],
       "brief_overrides": { "funnel_stage": "conversion" }
     }
   ]
