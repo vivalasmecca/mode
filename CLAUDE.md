@@ -792,15 +792,34 @@ The inline slot editor, CMS integration, and CSS variables work all sit in the "
 
 ---
 
+## Naming — in transition
+
+The working name "MODE" is being retired. "Mode" (the data-intelligence company) was acquired by ThoughtSpot for ~$200M — different category, same exact word, too close to build more brand equity on.
+
+No replacement chosen yet. Strongest survivors after an extended elimination pass: **Stet**, possibly others. Many directions ruled out for trademark or domain collisions (Valence, Register, Tenor, Altitude, Sigil, Cascade, Colophon, Didot, Marca, Splice, Rollo, Casca, and ~10 others).
+
+**For codebase purposes:** Don't hardcode the product name any deeper into brand-facing surfaces. Keep it swappable in hero copy, pricing pages, and customer-facing docs so a rename doesn't require a structural rewrite. Internal names — variable names, file paths, `mode-agent` package name — don't need to change yet. Brand-layer decision only.
+
+---
+
 ## ICP and product model
 
-**ICP:** Code-first SaaS companies. They may have an existing design system or be starting fresh. What they're buying is the intelligence layer — the semantic config, the agent, the token resolver — not a managed service.
+**ICP:** Code-first SaaS companies — particularly those with existing design systems and real page manifests. What they're buying is the intelligence layer (semantic config, agent pipeline, token resolver) plus a hosted control plane for managing and iterating on it collaboratively.
 
-**Product model: kit, not SaaS.** Buy and deploy yourself. The buyer integrates MODE into their existing Next.js/React stack and brings their own visual system (Radix theme, design tokens, component library). MODE provides the intent mapping, the generation pipeline, and the routing patterns. They wire it to their stack.
+**Product model: hosted control plane, git-synced.** *(Correction: earlier docs stated "kit, not SaaS" — that framing is now wrong and should not be repeated.)*
 
-This makes the expression layer / theme mapping separation (palette_modes → theme.json) architecturally important: the kit needs a clean handoff point where the buyer substitutes their own visual tokens without touching the intent layer.
+The dashboard (Overview, Build, Edit, Brand, Palette, Studio, Run) is a hosted SaaS control plane — collaborative, team-based, persistent. It synchronizes to the buyer's repo rather than owning a database that the live site depends on. "Save" actions in the dashboard commit config/token/manifest changes into the buyer's git repo — same pattern as Contentful's git-sync or the Figma Tokens plugin.
 
-**On routing:** The buyer implements routing themselves using patterns MODE provides. The demo site will include a working routing layer to show what this looks like in practice — but it's demo infrastructure, not a service MODE runs.
+**The deployed site never calls this product at runtime for rendering.** Signal detection, routing, component selection, and content resolution all execute from repo-committed config inside the buyer's own deployment. The "no runtime dependency" promise means no dependency on this product's uptime — not "no hosted product at all."
+
+What this means in practice:
+- The dashboard is the product. Teams build, edit, approve, and deploy from it.
+- The buyer's site is the runtime. It reads committed config; this product is not in the request path.
+- Git sync is the integration contract. The buyer's repo is the source of truth for what's deployed.
+
+**Pricing:** The $1,199 one-time kit price in `context/product-context.json` was an early hypothesis — it is now stale. A SaaS-leaning model likely means hybrid pricing: seat-based or subscription for dashboard access, still no recurring dependency for the rendering layer. Don't treat the current pricing copy as locked.
+
+**Multi-system sync (open, not yet scoped):** Plans exist for additional sync targets beyond git — Figma variables, headless CMSs, Storybook, generic webhooks/API. Don't over-build a git-only sync abstraction if multi-system sync is a near-term goal. Worth an adapter-layer design pass before going deeper on the git implementation specifically.
 
 ---
 
@@ -852,6 +871,56 @@ A funnel journey isn't one build — it's four separate builds with advancing fu
 
 ## What MODE is for
 
-Every SaaS product has the same problem: a design system that knows how to render components but not *why* to render them. MODE adds the semantic layer — components that know which user they're talking to, where that user is in the funnel, and what emotional register the moment requires. The result is a design system that makes better decisions by default, reduces the QA burden on every page, and gives non-designers a structured way to build without breaking brand.
+Every SaaS product has the same problem: a design system that knows how to render components but not *why* to render them. MODE adds the semantic layer — components that know which user they're talking to, where that user are in the funnel, and what emotional register the moment requires. The result is a design system that makes better decisions by default, reduces the QA burden on every page, and gives non-designers a structured way to build without breaking brand.
 
 *Built under Hyve Digital. Prior works IP claim on file.*
+
+---
+
+## Competitive positioning
+
+Researched the adjacent landscape. Two clusters exist; neither does what this product does. The gap between them is the actual product.
+
+**Cluster 1 — AI website personalization / CRO platforms**
+(Mutiny, Intellimize, Abmatic AI, Instapage, AB Tasty, Dynamic Yield)
+
+Runtime-only. Swap copy and sections within a fixed, existing page structure based on visitor segment or funnel stage. Sold to marketing/growth/ABM teams at enterprise pricing (sales-led). Cannot restructure page narrative, propose IA, or generate new component selections. The page architecture is assumed; they work inside it. The page *structure* is never their concern.
+
+**Cluster 2 — AI design system generators**
+(Figma's native AI agent, Figr Identity, Anima's Buddy, "Figma Intelligence" plugin)
+
+Design-time only. Help build and audit token/component hierarchies, generate code from designs, maintain semantic consistency across a design system. None of them resolve anything at runtime based on who is visiting or where they are in the funnel. The visitor is invisible to them.
+
+**The white space:** generating IA and component selection from a brief — Cluster 2's territory — *and* resolving which variant a live visitor sees based on archetype/funnel stage/intent state/context mode — Cluster 1's territory — owned by the dev/design team rather than rented as a marketing SaaS, with human overrides as first-class signal rather than something the system fights against.
+
+This positioning is validated and strong enough to be load-bearing in brand materials. Worth a "how is this different from X" section in the marketing site and docs once the rename resolves. The hero line shouldn't be updated yet (anchored to the retiring name), but the underlying claim is ready.
+
+---
+
+## Open decisions — resolve before building further
+
+**1. Routing Activity telemetry source**
+
+The Run tab's Routing Activity table shows live routing events ("5m ago"). If the deployed site never calls this product at runtime, this data has to come from somewhere else — either pulled from the buyer's own analytics/logging platform, or via an explicitly optional non-load-bearing reporting ping (site functions identically whether or not the ping succeeds). Decide this before building out the telemetry layer further.
+
+**2. Variant override logging model**
+
+When a human overrides the resolver's variant pick (e.g., changes HeroPrimary from "text-only" to "editorial" in the Studio), should that be:
+- (a) logged as a deviation that could inform future resolver tuning, or
+- (b) accepted silently as new ground truth with no distinction from a resolver-default pick?
+
+This changes the data model for what gets written to `output/page-{ts}-{variant}.json`. Decide before building the variant override UI affordance.
+
+**3. Multi-system sync scope**
+
+Git sync is the current integration contract. Plans exist for additional targets (Figma variables, headless CMSs, Storybook, webhooks). Decide whether to build git sync as a specific implementation or design an adapter layer now that git sync is the first adapter of. Affects how the Run tab deploy flow and dashboard "Save" actions are architected.
+
+---
+
+## Architecture note: Variant as an editable resolution slot
+
+Current state: `component-selector.js` (Claude Haiku) selects component + variant per IA slot. Palette is already overridable — the Studio's token panel and Palette tab let a human remap palette mode per component per context. Variant has no equivalent affordance; it's resolver output only, even though the manifest already documents multiple valid variants per component with rationale for when each applies.
+
+**Direction:** Make Variant behave the way Palette already does. Show the resolver's pick as the default; allow a human override via a dropdown scoped to the valid variants for that component's archetype/funnel-stage combination (per the manifest). This is consistent with the existing override model and doesn't require a new paradigm — just applying the same pattern one layer down.
+
+Blocked on open decision #2 above (override logging model) before the UI affordance is built.
