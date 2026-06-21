@@ -522,7 +522,7 @@ No additional artifacts. The Brand tab, Build form, and deploy pipeline are the 
 | Artifact | What it is | Current state |
 |---|---|---|
 | **Component manifest editor** | UI to declare external components — name, beats, funnel stages, archetypes, variants, slot schema. Generates the `components.json` entry. | Manual JSON editing. No UI, no guidance. |
-| **Integration scaffold generator** | Takes a component declaration and outputs TypeScript boilerplate implementing the `ModuleComponent` interface with the right props and slot shape. Makes "implement the interface" concrete rather than inferred from examples. | Not built. Pattern must be inferred from existing components. |
+| **Integration scaffold generator** | Takes a component declaration and outputs TypeScript boilerplate implementing the `ModuleComponent` interface with the right props and slot shape — **including the palette pattern pre-wired** (see Component palette readiness contract below). Must not leave palette wiring as an exercise; components that skip it silently ignore all palette mode changes. | Not built. Pattern must be inferred from existing components. |
 | **Component registration validator** | Checks that every component declared in `manifest/components.json` has a matching key in MODULE_REGISTRY. Surfaces the "unknown component" error at setup time, not at render time in Studio. | Nothing. Error only appears when the Studio tries to render. |
 | **Page mapping mode** | Fork 2 users map existing pages onto MODE's site structure rather than declaring blank ones. The site setup UI needs an "import/declare existing" framing alongside the blank-page path. | Same gap as the shared site setup UI. |
 
@@ -535,6 +535,58 @@ Site setup UI is a genuine missing config layer that unblocks both forks. `confi
 Fork 2's three artifacts (manifest editor, scaffold generator, registration validator) form a contained sub-system — a "Component Setup" flow that makes the import path viable end-to-end.
 
 Onboarding status is the last piece and only makes sense once the steps it tracks actually exist.
+
+---
+
+## Component palette readiness contract
+
+Discovered during feature-emphasis implementation (June 2026): NavigationHeader and FooterMinimal were wired with `palette: _palette` — explicitly aliasing the prop away with a comment saying "chrome — always light regardless of page palette." When palette mode changes were made in the Studio, those components stayed white and appeared broken. The issue surfaced immediately as an apparent bug rather than a config gap.
+
+This is the failure mode external design system components will hit by default: they accept a `palette` prop at the interface level but do nothing with it internally. Every mode switch will appear broken for those components until they're wired.
+
+**What "palette compliance" means for a component:**
+
+1. **Accept and use the prop — no exceptions.** Every component must accept `palette?: PaletteMode` and call `getPalette(palette ?? "light")`. There is no such thing as a "chrome" exemption — even nav and footer must be palette-responsive so structural palette presets (like feature-emphasis) can set them intentionally.
+
+2. **Outer section/wrapper must use palette vars.** The outermost `<section>`, `<nav>`, `<footer>`, or equivalent must use `${p.bg}` and `${p.border}`. Hardcoding `bg-white` on the wrapper means the section never responds to palette mode regardless of what the palette map declares.
+
+3. **Inner element hardcoding is acceptable when variant-driven.** Inner cards, badges, overlays, and variant-specific sub-elements can have hardcoded colors if they're governed by component variant logic rather than page palette (e.g., `PricingCard`'s inner dark card). The rule is: outer section = palette vars; inner variant-specific structure = can be hardcoded.
+
+4. **`theme.json` must have visually distinct values for all three modes.** If `neutral.bg` and `light.bg` both resolve to `white`, a palette mode switch appears broken even when the component is correctly wired. This is an expression layer configuration issue, not a component bug — but it looks identical to a wiring bug. All three modes (`light`, `neutral`, `dark`) must have perceptibly different `bg` values. `neutral.bg` should be `slate.2` or equivalent — a step off white, not white itself.
+
+**For the integration scaffold generator:**
+
+The generated boilerplate must include this pattern pre-wired and non-optional:
+
+```tsx
+import { getPalette } from "@/lib/palette";
+
+interface MyComponentProps {
+  slots: ComponentSlots;
+  variant: string | null;
+  palette?: PaletteMode;  // ← required in interface; must not be aliased away
+}
+
+export function MyComponent({ slots, variant, palette }: MyComponentProps) {
+  const p = getPalette(palette ?? "light");
+  // ...
+  return (
+    <section className={`${p.bg} py-20`}>  {/* ← outer wrapper must use p.bg */}
+```
+
+If the scaffold leaves palette wiring as a comment or optional step, external components will ship broken by default — every Studio palette switch will appear to do nothing for that component.
+
+**Validation checklist for new components:**
+
+- [ ] Accepts `palette?: PaletteMode` (not aliased to `_palette`)
+- [ ] Calls `getPalette(palette ?? "light")` inside the component body
+- [ ] Outermost wrapper uses `${p.bg}` (not `bg-white`, `bg-gray-*`, or any hardcoded background)
+- [ ] Outermost wrapper uses `${p.border}` for any border (not `border-gray-*`)
+- [ ] Primary text uses `${p.text}` (not `text-gray-900`, `text-black`, etc.)
+- [ ] Secondary text uses `${p.subtext}` or `${p.muted}`
+- [ ] `theme.json` has distinct values for all three modes' `bg` fields before first use
+
+**This checklist should be part of the component registration validator** — surface these gaps at setup time, not when a user switches palette mode in the Studio and nothing happens.
 
 ---
 
