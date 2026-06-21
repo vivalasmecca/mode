@@ -7,8 +7,9 @@
   ],
   "shared_brief": {
     "audience": "growth-focused SaaS teams who need a semantic design layer that adapts to visitor intent",
-    "goal": "demonstrate MODE's structural palette approach — component role drives visual emphasis; archetype drives IA selection and content density",
-    "context_mode": "organic"
+    "goal": "convince SaaS teams that MODE's intent-aware design system will make their pages more effective at converting the right visitors",
+    "context_mode": "organic",
+    "archetype": "Validator"
   },
   "pages": [
     {
