@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 export async function PUT(req: Request) {
   try {
-    const { preset, paletteMap }: { preset: string; paletteMap: Record<string, Record<string, string>> } =
+    const { preset, paletteMap }: { preset: string; paletteMap: Record<string, string | Record<string, string>> } =
       await req.json();
 
     if (!preset || !paletteMap) {

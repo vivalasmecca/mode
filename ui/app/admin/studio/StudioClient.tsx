@@ -39,6 +39,10 @@ export interface StudioClientProps {
   componentVariantSlots: Record<string, Record<string, string[]>>;
   componentProperties: Record<string, Record<string, string[]>>;
   initialVariantOverrides: VariantOverrideMap;
+  /** "component_role" for feature-emphasis structural builds; absent for funnel/archetype builds. */
+  paletteDriver?: string;
+  /** Flat { component → mode } palette map from mode-tokens.json, only for component_role builds. */
+  initialPaletteMap?: Record<string, string>;
 }
 
 // ── Constants ────────────────────────────────────────────────────────────────
@@ -755,6 +759,87 @@ function TokenPanel({
   );
 }
 
+// ── PaletteMapPanel — right panel for structural (feature-emphasis) builds ────
+
+const PALETTE_CYCLE: Record<string, string> = {
+  light: "neutral",
+  neutral: "dark",
+  dark: "light",
+};
+
+const PALETTE_BADGE: Record<string, string> = {
+  light:   "bg-white border border-gray-200 text-gray-700",
+  neutral: "bg-gray-50 border border-gray-200 text-gray-600",
+  dark:    "bg-gray-900 border border-gray-700 text-gray-300",
+};
+
+function PaletteMapPanel({
+  paletteMap,
+  origPaletteMap,
+  dirty,
+  saveState,
+  onChange,
+  onSave,
+}: {
+  paletteMap: Record<string, string>;
+  origPaletteMap: Record<string, string>;
+  dirty: boolean;
+  saveState: "idle" | "saving" | "saved" | "error";
+  onChange: (component: string, newMode: string) => void;
+  onSave: () => void;
+}) {
+  const components = Object.keys(paletteMap);
+  return (
+    <div className="w-[272px] shrink-0 border-l border-gray-200 bg-white flex flex-col overflow-hidden">
+      <div className="shrink-0 px-3 py-2.5 border-b border-gray-100 flex items-center justify-between">
+        <h2 className="text-xs font-semibold text-gray-700">Palette map</h2>
+        <button
+          onClick={onSave}
+          disabled={!dirty || saveState === "saving"}
+          className={`rounded px-2.5 py-1 text-[10px] font-semibold transition-colors disabled:opacity-40 ${
+            saveState === "saved"
+              ? "bg-green-600 text-white"
+              : "bg-gray-900 text-white hover:bg-gray-700"
+          }`}
+        >
+          {saveState === "saving" ? "Saving…" : saveState === "saved" ? "Saved ✓" : "Save"}
+        </button>
+      </div>
+      <p className="shrink-0 px-3 py-2 text-[10px] text-gray-400 border-b border-gray-100 leading-relaxed">
+        Click any cell to cycle light → neutral → dark. Changes apply to all pages instantly.
+      </p>
+      <div className="flex-1 overflow-y-auto divide-y divide-gray-50">
+        {components.map((component) => {
+          const mode = paletteMap[component] ?? "light";
+          const changed = mode !== (origPaletteMap[component] ?? "light");
+          const badgeClass = PALETTE_BADGE[mode] ?? PALETTE_BADGE.light;
+          const nextMode = PALETTE_CYCLE[mode] ?? "light";
+          return (
+            <div
+              key={component}
+              className="px-3 py-2.5 flex items-center justify-between hover:bg-gray-50 transition-colors"
+            >
+              <span className="text-[11px] font-mono text-gray-600 truncate pr-2">{component}</span>
+              <button
+                onClick={() => onChange(component, nextMode)}
+                title={`Click to cycle → ${nextMode}`}
+                className={`shrink-0 inline-flex items-center justify-center w-16 h-6 rounded text-[10px] font-medium border transition-opacity hover:opacity-80 cursor-pointer ${badgeClass} ${
+                  changed ? "ring-2 ring-indigo-400 ring-offset-1" : ""
+                }`}
+              >
+                {mode}
+              </button>
+            </div>
+          );
+        })}
+        {saveState === "error" && (
+          <p className="px-3 py-2 text-xs text-red-600">Save failed — check console</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ── SlotEditor — right panel for creating/editing named variants ──────────────
 
 function SlotEditor({
@@ -1129,6 +1214,13 @@ function ExpandedView({
   onSaveVariantDef,
   onApplyVariant,
   onSetSectionVariant,
+  isStructuralPreset,
+  paletteMap,
+  origPaletteMap,
+  paletteMapDirty,
+  paletteMapSaveState,
+  onPaletteMapChange,
+  onPaletteMapSave,
 }: {
   variants: Variant[];
   activeIdx: number;
@@ -1155,6 +1247,13 @@ function ExpandedView({
   variantOverrides: VariantOverrideMap;
   liveSlotViz: Record<string, boolean>;
   liveLayout: { align?: "left" | "center" };
+  isStructuralPreset: boolean;
+  paletteMap: Record<string, string>;
+  origPaletteMap: Record<string, string>;
+  paletteMapDirty: boolean;
+  paletteMapSaveState: "idle" | "saving" | "saved" | "error";
+  onPaletteMapChange: (component: string, newMode: string) => void;
+  onPaletteMapSave: () => void;
   onSlotVizChange: (viz: Record<string, boolean>) => void;
   onLayoutChange: (layout: { align?: "left" | "center" }) => void;
   onSaveVariantDef: (componentName: string, variantName: string) => Promise<void>;
@@ -1291,7 +1390,7 @@ function ExpandedView({
         )}
       </div>
 
-      {/* Right panel: SlotEditor or TokenPanel */}
+      {/* Right panel: SlotEditor, PaletteMapPanel (structural builds), or TokenPanel */}
       {customizingSection && customizingComponent ? (
         <SlotEditor
           key={`${customizingSection.filename}-${customizingSection.sectionIndex}`}
@@ -1308,6 +1407,15 @@ function ExpandedView({
           onSlotVizChange={onSlotVizChange}
           onSaveVariant={(variantName) => onSaveVariantDef(customizingComponent!, variantName)}
           onClose={onCloseCustomize}
+        />
+      ) : isStructuralPreset ? (
+        <PaletteMapPanel
+          paletteMap={paletteMap}
+          origPaletteMap={origPaletteMap}
+          dirty={paletteMapDirty}
+          saveState={paletteMapSaveState}
+          onChange={onPaletteMapChange}
+          onSave={onPaletteMapSave}
         />
       ) : (
         <TokenPanel
@@ -1498,6 +1606,8 @@ export function StudioClient({
   componentVariantSlots,
   componentProperties,
   initialVariantOverrides,
+  paletteDriver,
+  initialPaletteMap,
 }: StudioClientProps) {
   // activeVariants starts from server data; updated in-memory after saves so
   // the display stays consistent without a page reload.
@@ -1535,6 +1645,14 @@ export function StudioClient({
   // Token panel open row
   const [openKey, setOpenKey] = useState<string | null>(null);
 
+  // Structural palette map state — only active for feature-emphasis (component_role) builds.
+  // Palette assignments live in the right panel and propagate in-memory to all pages on change.
+  const isStructuralPreset = paletteDriver === "component_role";
+  const [paletteMap, setPaletteMap] = useState<Record<string, string>>(initialPaletteMap ?? {});
+  const [origPaletteMap] = useState<Record<string, string>>(initialPaletteMap ?? {});
+  const [paletteMapDirty, setPaletteMapDirty] = useState(false);
+  const [paletteMapSaveState, setPaletteMapSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
+
   if (activeVariants.length === 0) {
     return <NoVariants buildTs={buildTs} />;
   }
@@ -1562,6 +1680,47 @@ export function StudioClient({
     setDirty(true);
     const side = variant === "on_light" ? "light" : "dark";
     applyVar(`--mode-accent-${side}-${slot}`, ref, colorScale);
+  }
+
+  // ── Structural palette map handlers (feature-emphasis builds only) ──
+
+  function handlePaletteMapChange(component: string, newMode: string) {
+    setPaletteMap((prev) => ({ ...prev, [component]: newMode }));
+    setPaletteMapDirty(true);
+    setPaletteMapSaveState("idle");
+    // Propagate immediately to all in-memory pages — no rebuild needed.
+    setActiveVariants((prev) =>
+      prev.map((v) => ({
+        ...v,
+        output: {
+          ...v.output,
+          page: v.output.page.map((section) =>
+            section.component === component
+              ? { ...section, palette: newMode as "light" | "neutral" | "dark" }
+              : section
+          ),
+        },
+      }))
+    );
+  }
+
+  async function handlePaletteMapSave() {
+    setPaletteMapSaveState("saving");
+    try {
+      const presetKey =
+        (activeVariants[0]?.output as { preset?: string } | undefined)?.preset ?? "feature-emphasis";
+      const res = await fetch("/api/palette", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ preset: presetKey, paletteMap }),
+      });
+      if (!res.ok) throw new Error("Failed");
+      setPaletteMapSaveState("saved");
+      setPaletteMapDirty(false);
+      setTimeout(() => setPaletteMapSaveState("idle"), 2500);
+    } catch {
+      setPaletteMapSaveState("error");
+    }
   }
 
   function handleSetComponentOverride(
@@ -1827,7 +1986,7 @@ export function StudioClient({
 
         <div className="flex-1" />
 
-        {(dirty || scaleDirty) && (
+        {(dirty || scaleDirty || paletteMapDirty) && (
           <span className="text-xs text-amber-600 font-medium shrink-0">Unsaved changes</span>
         )}
         <a
@@ -1885,6 +2044,13 @@ export function StudioClient({
           onSaveVariantDef={handleSaveVariantDef}
           onApplyVariant={handleApplyCustomVariant}
           onSetSectionVariant={handleSetManifestVariant}
+          isStructuralPreset={isStructuralPreset}
+          paletteMap={paletteMap}
+          origPaletteMap={origPaletteMap}
+          paletteMapDirty={paletteMapDirty}
+          paletteMapSaveState={paletteMapSaveState}
+          onPaletteMapChange={handlePaletteMapChange}
+          onPaletteMapSave={handlePaletteMapSave}
         />
       )}
     </div>

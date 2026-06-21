@@ -84,6 +84,23 @@ export default function StudioPage() {
     }
   }
 
+  // Detect structural (component_role) preset — used to show palette map panel in Studio
+  const paletteDriver = (variants[0]?.output as { palette_driver?: string } | undefined)?.palette_driver ?? null;
+  const initialPaletteMap: Record<string, string> | null = (() => {
+    if (paletteDriver !== "component_role") return null;
+    try {
+      const tokensRaw = readJson(path.join(DATA_ROOT, "tokens", "mode-tokens.json")) as {
+        presets?: Record<string, { palette_driver?: string; palette_map?: Record<string, string> }>;
+      } | null;
+      const presetKey = (variants[0]?.output as { preset?: string } | undefined)?.preset ?? "";
+      const preset = tokensRaw?.presets?.[presetKey];
+      if (preset?.palette_driver === "component_role" && preset.palette_map) {
+        return preset.palette_map;
+      }
+    } catch {}
+    return null;
+  })();
+
   const colorScale =
     (readJson(path.join(DATA_ROOT, "tokens", "color-scale.json")) as Record<string, unknown>) ?? {};
 
@@ -134,6 +151,8 @@ export default function StudioPage() {
       componentVariantSlots={componentVariantSlots}
       componentProperties={componentProperties}
       initialVariantOverrides={variantOverrides}
+      paletteDriver={paletteDriver ?? undefined}
+      initialPaletteMap={initialPaletteMap ?? undefined}
     />
   );
 }

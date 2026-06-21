@@ -323,8 +323,10 @@ export default function PaletteClient({
                         {component}
                       </td>
                       {dimensionValues.map((val) => {
-                        const mode = currentMap[component]?.[val] ?? "light";
-                        const original = originals[selectedKey][component]?.[val] ?? "light";
+                        const mode = getMode(component, val);
+                        const original = isFlat
+                          ? (originals[selectedKey][component] as string) ?? "light"
+                          : (originals[selectedKey][component] as Record<string, string>)?.[val] ?? "light";
                         const changed = mode !== original;
                         const cellStyle = CELL[mode] ?? CELL.light;
                         const modeBgHex = resolved.modeBgs[mode as keyof typeof resolved.modeBgs] ?? "#ffffff";
