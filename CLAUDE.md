@@ -679,6 +679,67 @@ This is not solved yet and should be designed before the library grows significa
 
 ---
 
+## V1 / V2 boundary — ingestion
+
+### What v1 is
+
+The CLI tools built in June 2026 (`agent/ingest.js`, `agent/ingestion-schema.js`, `agent/validate-manifest.js`) are v1 of the ingestion contract. They prove the architecture is correct. They are not the end-user experience.
+
+The v1 steps require a developer to: write a declaration JSON by hand, run CLI commands, edit two TypeScript files, and validate manually. This is appropriate for validating the contract — it lets us test that the adapter pattern, slot mapping, and palette bridge work before building UI on top of them. It is not appropriate to ship to a real buyer.
+
+### What v2 is
+
+A real buyer has a design system in Figma or a code package. They should not write JSON or run CLI commands. The v2 ingestion experience is a single guided flow — **Connect → Discover → Review → Done** — where MODE does the mechanical work and the user answers the two questions that genuinely require human judgment:
+
+**Question 1: "Which MODE section type is this component?"**
+Semantic identity. Pick from a dropdown of existing modeTypes (Hero, Social Proof, Feature Grid, etc.) or declare a new one. This is the question that anchors the component in the IA system — what beat it serves, what funnel stages it's valid for, what the AI will select it for. It can't be inferred from code; it's a semantic judgment.
+
+**Question 2: "What does high emphasis look like in your system?"**
+The palette bridge. The user sees their component rendered in three states and picks or types the prop value(s) that express each state (dark, neutral, light). "High emphasis for us is `theme='dark'`." This is the handoff between MODE's intent layer and the buyer's expression layer. It also can't be automated — it requires someone who knows the design system.
+
+Everything else — prop name reading, variant discovery, slot shape inference, adapter generation, manifest update, registry write — is mechanical and should happen invisibly.
+
+### The two source paths
+
+**Figma + Code Connect (clearest path)**
+
+Figma Code Connect exports a mapping of component name → code export + prop values per visual variant. This is 80% of a declaration file automatically. MODE reads the Code Connect output, generates draft slot mappings and variant maps, and asks the two human questions. The user reviews, answers, confirms. Adapters are generated and registered without the user touching a file.
+
+The buyer's steps: connect Figma file → MODE reads components → answer 2 questions per component → done.
+
+**npm package or local code**
+
+TypeScript type introspection (e.g. `ts-morph`) reads prop types from exported components. Gets prop names and their types automatically. Variant values can be inferred from union types (`theme: "light" | "muted" | "dark"`). Still needs the two human questions answered, but the technical translation is auto-generated.
+
+The buyer's steps: paste package name or local path → MODE introspects exports → answer 2 questions per component → done.
+
+### The review UI (the one human step)
+
+For each discovered component, the user sees:
+- The component name and rendered preview (if available)
+- A dropdown: "Which MODE section type does this serve?" — or "This is a new type, name it"
+- A palette bridge picker: "What props should I spread when this section needs to be dark / neutral / light?" — pre-populated from any Figma variant names or TypeScript union values that look like theme/mode/appearance props
+
+Once confirmed, MODE generates the adapter, updates the manifest, and registers — exactly what `ingest.js --write` does, but without the user seeing any of it.
+
+### What to build in v2 (sequenced)
+
+1. **Figma connection** — read a Figma file's published component library via the Figma API; if Code Connect is configured, read it via the MCP tool. Produce candidate declarations.
+2. **TypeScript introspection** — given a package name or local path, read exported component prop types. Produce candidate declarations.
+3. **Review UI** — a dashboard page that shows discovered components, lets the user answer the two human questions per component, and triggers generation on confirm.
+4. **Background generation** — on confirm, run `ingest.js` logic server-side, write adapter, patch manifest, patch registry. Surface success/error state.
+5. **Token bridge** — if the external system exposes CSS custom properties, offer to auto-map them to `color-scale.json` + `theme.json`. If W3C token JSON is available, script the import.
+
+Steps 1–4 are the user-facing v2 path. Step 5 is the token layer that makes the visual expression automatic too.
+
+### What this means for the current codebase
+
+The v1 CLI tools are the correct backend for v2's "generate on confirm" step. `ingest.js` already takes a validated declaration and produces all the outputs — the v2 UI just replaces the "user writes JSON by hand" step with a guided form that produces the same declaration object and calls the same generator.
+
+No refactoring of v1 needed before building v2 — it's an additive layer on top of the same contract.
+
+---
+
 ## Ingestion translation contract — specification
 
 ### Validation criterion
