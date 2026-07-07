@@ -44,7 +44,7 @@ class LocalGitDeployer implements Deployer {
 
   async push(commitMessage: string): Promise<DeployResult> {
     const opts = { cwd: this.repoRoot };
-    execSync("git add output/ config/", opts);
+    execSync("git add -f output/ config/", opts);
     const staged = execSync("git diff --cached --name-only", opts).toString().trim();
     if (!staged) {
       return { success: true, nothingToCommit: true, message: "Nothing new to deploy — already up to date." };

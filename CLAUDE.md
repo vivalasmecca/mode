@@ -13,6 +13,24 @@ The agent exists. The UI dashboard is built and working. The current focus is on
 
 ---
 
+## Governing principle: agentic build, deterministic serve
+
+This is the core architectural rule. Every decision about where to put intelligence should be evaluated against it.
+
+**AI at build time — correct.** LLM calls happen when generating page output. The agent proposes IA, selects components, resolves tokens, and populates content. This is the right place for intelligence — it's explicit, auditable, and the output is committed to the repo.
+
+**Deterministic at serve time — correct.** The live site reads committed JSON + config files. No LLM in the request path, no dependency on this product's uptime. Signal routing is rule-based middleware (UTM params, cookies, UA). This must stay true.
+
+**The build pipeline should be more agentic.** The current pipeline is linear: brief → IA → components → tokens → content. The right evolution is iterative and self-correcting — after content is generated, review it against the brief; if a section doesn't meet the quality criteria, re-run that stage. The agent should be able to reject its own output and try again. This is standard agentic behavior (tool calls in a loop with stopping criteria) and the pipeline's `module.exports` structure already supports it — the orchestrator just needs to wrap stages in a retry/eval loop rather than calling them once.
+
+**Ingestion is an agentic problem, not a static CLI translation.** Discovering components, understanding their semantic role, asking clarifying questions, proposing a mapping, and iterating on it with the user — that is a multi-step agentic workflow. The v1 CLI tools (`agent/ingest.js`, etc.) prove the contract is correct. V2 replaces the hand-written JSON step with an agent that does the discovery and drafting automatically, then asks the two human questions.
+
+**The platform needs an API surface for external agents.** Right now the build pipeline is only callable from the dashboard. As MODE becomes a hosted control plane, external orchestrators (customer CI pipelines, other agents, webhook triggers) need to be able to call `POST /api/generate/site` or equivalent without a browser. Design new pipeline endpoints to be callable by agents, not just the dashboard UI — clean request/response contracts, no session state required.
+
+**Practical implication for new features:** Before adding a new UI affordance, ask: "Is this a human decision or a machine decision?" Human decisions (palette mode assignment, component semantic identity, brand voice) should have good UI. Machine decisions (content generation, IA proposal, component selection) should be done by the agent and reviewed by the human — not done *by* the human in a form.
+
+---
+
 ## Architecture: the three tiers
 
 ```

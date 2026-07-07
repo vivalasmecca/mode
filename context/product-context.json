@@ -1,5 +1,5 @@
 {
-  "_note": "Product context injected into the content generator at build time. Populate via the Brand Setup tab or edit directly. Leave fields empty/null if unknown — do not invent.",
+  "_note": "Product context injected into the content generator at build time. Populate via the Brand Setup tab or edit directly. Leave fields empty/null if unknown — do not invent. product_name is a placeholder pending rename (see naming brief, 2026-06-19) — update when locked.",
   "product_name": "MODE",
   "one_liner": "Your design system knows how to render. MODE teaches it why.",
   "features": [
@@ -9,45 +9,45 @@
     "Palette map — visual emphasis resolves per component per funnel stage, no manual assignment",
     "Behavioral tokens — copy density, evidence requirements, and CTA rules driven by archetype",
     "Component manifest — 11 components fully specified with zone affinity, slot schemas, and usage intent",
-    "Token dashboard — editable palette map, accent configuration, and preset switching",
+    "Token dashboard — editable palette map, accent configuration, and preset switching, synced to your repo",
     "Three presets out of the box — funnel-driven, archetype-driven, and feature-emphasis",
     "Next.js preview UI — renders agent output instantly with palette and label overlays",
     "Bring your own Anthropic API key — you own the token spend, no vendor billing"
   ],
   "proof_points": [],
   "pricing": {
-    "billing_periods": ["one_time"],
+    "billing_periods": [
+      "monthly"
+    ],
     "annual_discount": null,
     "tiers": [
       {
-        "name": "MODE Kit",
-        "price": 1199,
-        "billing_period": "one_time",
-        "description": "The full intelligence layer. Resolution engine, component manifest, token config, palette map, IA planner agent, multi-variant generation, and Next.js preview UI. Yours forever.",
+        "name": "MODE",
+        "price": null,
+        "billing_period": "monthly",
+        "description": "Hosted control plane for intent-aware page generation. Build, preview, and deploy semantic pages across your full funnel — from a shared dashboard your whole team uses. The deployed site never calls MODE at runtime.",
         "features": [
           "Semantic resolution engine with four dimension model",
           "Component manifest — 11 components, fully specified",
           "Three palette presets — funnel-driven, archetype-driven, feature-emphasis",
           "IA planner + multi-variant generation agent",
           "Token dashboard with editable palette map",
-          "Next.js preview UI",
-          "Built on Radix UI primitives",
-          "Bring your own Anthropic API key",
-          "Lifetime access, no subscription"
+          "Studio canvas with live component and palette editing",
+          "Git-sync deploy — no runtime dependency on this product",
+          "Bring your own Anthropic API key"
         ],
-        "cta": "Get MODE"
+        "cta": "Join waitlist"
       },
       {
-        "name": "MODE Studio",
+        "name": "MODE Team",
         "price": null,
         "billing_period": "monthly",
-        "description": "Team accounts, hosted builds, usage dashboard, and adapter library. Coming soon.",
+        "description": "Multi-seat access, component adapter library, and usage dashboard. Coming soon.",
         "features": [
-          "Everything in MODE Kit",
+          "Everything in MODE",
           "Team accounts and shared workspaces",
-          "Hosted build pipeline",
           "Usage dashboard",
-          "shadcn and Tailwind UI adapters",
+          "shadcn, Tailwind UI, and Radix Themes adapters",
           "Priority support"
         ],
         "cta": "Join waitlist"
@@ -59,25 +59,25 @@
     }
   },
   "checkout": {
-    "primary_url": null,
+    "primary_url": "https://hyvedigital.lemonsqueezy.com/checkout/buy/91423b71-edcb-466c-8e2f-f51c1bede692",
     "trial_url": null,
     "currency": "USD"
   },
   "named_links": {
     "_note": "Named link tokens for the slot editor — appear as selectable shortcuts in CTA href fields. Add any destination the site links to.",
-    "checkout": null,
+    "checkout": "https://hyvedigital.lemonsqueezy.com/checkout/buy/91423b71-edcb-466c-8e2f-f51c1bede692",
     "trial": null,
-    "demo": null
+    "demo": "https://mode-nu.vercel.app/"
   },
   "social_proof": [],
   "differentiators": [
     "Semantic intent layer — components resolve behavior across archetype, funnel stage, and context mode",
     "No manual variants — the system makes the right call by default",
-    "Ships as a code kit — lives in your codebase, not a third-party tool",
+    "Own what ships, rent what thinks — the rendered site syncs from the intelligence layer via your repo and never depends on it at runtime",
     "Built on Radix UI — zero new primitives to learn",
     "Palette map — visual emphasis accumulates semantically toward conversion",
     "Simple setup — running in under an hour, configured once",
-    "Full ownership — no runtime dependency, no lock-in, fork and extend freely",
+    "Full ownership of the live site — config and resolution logic sync to your repo, fork and extend freely",
     "Extensible — swap presets, extend the manifest, adapt to your stack"
   ]
 }
