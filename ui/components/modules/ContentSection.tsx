@@ -9,7 +9,7 @@
  *
  * Palette bridge:
  *   light   → {}
- *   neutral → {"className":"bg-muted"}
+ *   neutral → {"className":"neutral"}
  *   dark    → {"className":"dark"}
  */
 
@@ -24,7 +24,7 @@ const VARIANT_MAP: Record<string, Record<string, unknown>> = {
 
 const PALETTE_MAP: Record<string, Record<string, unknown>> = {
   light:   {},
-  neutral:   {"className":"bg-muted"},
+  neutral:   {"className":"neutral"},
   dark:   {"className":"dark"},
 };
 

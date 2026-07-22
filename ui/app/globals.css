@@ -7,9 +7,11 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  /* Font fix: shadcn init introduced a circular --font-sans: var(--font-sans).
+     Restored to reference the Next.js Geist font var set in layout.tsx. */
+  --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-geist-sans);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -48,73 +50,126 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/*
+ * TOKEN BRIDGE — shadcn semantic vars → MODE palette vars
+ *
+ * MODE's palette vars (--mode-light-bg, --mode-dark-text, etc.) are resolved
+ * hex values injected as inline style on <html> by palette-vars.ts at request
+ * time. They come from tokens/theme.json → tokens/color-scale.json.
+ *
+ * By pointing shadcn's semantic vars at MODE's palette vars, any change made
+ * in the Studio token panel (or to theme.json directly) flows through to
+ * shadcn components automatically — no component-level changes required.
+ *
+ * Vars with no MODE equivalent (--destructive, --radius, chart vars) keep
+ * shadcn's defaults.
+ */
+
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  /* Surface */
+  --background:    var(--mode-light-bg);
+  --foreground:    var(--mode-light-text);
+  --card:          var(--mode-light-bg);
+  --card-foreground: var(--mode-light-text);
+  --popover:       var(--mode-light-bg);
+  --popover-foreground: var(--mode-light-text);
+
+  /* Actions */
+  --primary:       var(--mode-accent-light-bg);
+  --primary-foreground: var(--mode-accent-light-text);
+  --secondary:     var(--mode-neutral-bg);
+  --secondary-foreground: var(--mode-neutral-text);
+
+  /* Subtle */
+  --muted:         var(--mode-light-icon-bg);
+  --muted-foreground: var(--mode-light-subtext);
+  --accent:        var(--mode-light-icon-bg);
+  --accent-foreground: var(--mode-light-text);
+
+  /* Structure */
+  --border:        var(--mode-light-border);
+  --input:         var(--mode-light-border);
+  --ring:          var(--mode-accent-light-bg);
+
+  /* Sidebar */
+  --sidebar:       var(--mode-light-bg);
+  --sidebar-foreground: var(--mode-light-text);
+  --sidebar-primary: var(--mode-accent-light-bg);
+  --sidebar-primary-foreground: var(--mode-accent-light-text);
+  --sidebar-accent: var(--mode-light-icon-bg);
+  --sidebar-accent-foreground: var(--mode-light-text);
+  --sidebar-border: var(--mode-light-border);
+  --sidebar-ring:  var(--mode-accent-light-bg);
+
+  /* No MODE equivalent — shadcn defaults */
+  --destructive:   oklch(0.577 0.245 27.325);
+  --radius:        0.625rem;
+  --chart-1:       oklch(0.87 0 0);
+  --chart-2:       oklch(0.556 0 0);
+  --chart-3:       oklch(0.439 0 0);
+  --chart-4:       oklch(0.371 0 0);
+  --chart-5:       oklch(0.269 0 0);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* Surface */
+  --background:    var(--mode-dark-bg);
+  --foreground:    var(--mode-dark-text);
+  --card:          var(--mode-dark-bg);
+  --card-foreground: var(--mode-dark-text);
+  --popover:       var(--mode-dark-bg);
+  --popover-foreground: var(--mode-dark-text);
+
+  /* Actions */
+  --primary:       var(--mode-accent-dark-bg);
+  --primary-foreground: var(--mode-accent-dark-text);
+  --secondary:     var(--mode-dark-icon-bg);
+  --secondary-foreground: var(--mode-dark-text);
+
+  /* Subtle */
+  --muted:         var(--mode-dark-icon-bg);
+  --muted-foreground: var(--mode-dark-subtext);
+  --accent:        var(--mode-dark-icon-bg);
+  --accent-foreground: var(--mode-dark-text);
+
+  /* Structure */
+  --border:        var(--mode-dark-border);
+  --input:         var(--mode-dark-border);
+  --ring:          var(--mode-dark-muted);
+
+  /* Sidebar */
+  --sidebar:       var(--mode-dark-bg);
+  --sidebar-foreground: var(--mode-dark-text);
+  --sidebar-primary: var(--mode-accent-dark-bg);
+  --sidebar-primary-foreground: var(--mode-accent-dark-text);
+  --sidebar-accent: var(--mode-dark-icon-bg);
+  --sidebar-accent-foreground: var(--mode-dark-text);
+  --sidebar-border: var(--mode-dark-border);
+  --sidebar-ring:  var(--mode-dark-muted);
+
+  /* No MODE equivalent — shadcn defaults */
+  --destructive:   oklch(0.704 0.191 22.216);
+}
+
+.neutral {
+  /*
+   * Neutral context — MODE-specific; no shadcn equivalent.
+   * Added to support the ContentSection neutral palette bridge.
+   * Applies MODE neutral palette vars to shadcn's semantic tokens
+   * without triggering the full dark mode flip.
+   */
+  --background:    var(--mode-neutral-bg);
+  --foreground:    var(--mode-neutral-text);
+  --card:          var(--mode-neutral-bg);
+  --card-foreground: var(--mode-neutral-text);
+  --popover:       var(--mode-neutral-bg);
+  --popover-foreground: var(--mode-neutral-text);
+  --muted:         var(--mode-neutral-icon-bg);
+  --muted-foreground: var(--mode-neutral-subtext);
+  --accent:        var(--mode-neutral-icon-bg);
+  --accent-foreground: var(--mode-neutral-text);
+  --border:        var(--mode-neutral-border);
+  --input:         var(--mode-neutral-border);
 }
 
 @layer base {

@@ -22,9 +22,9 @@
   },
 
   "palette": {
-    "_comment": "shadcn has no theme prop. Palette is expressed through className. The .dark class scopes shadcn's CSS vars (--card, --foreground, etc.) to the section element and all descendants.",
+    "_comment": "Token bridge active. shadcn vars now reference MODE palette vars via globals.css. .dark and .neutral scope the correct MODE var set to this section. light needs no class — :root already points to --mode-light-*.",
     "light":   {},
-    "neutral": { "className": "bg-muted" },
+    "neutral": { "className": "neutral" },
     "dark":    { "className": "dark" }
   }
 }
