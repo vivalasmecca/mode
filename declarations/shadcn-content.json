@@ -1,0 +1,30 @@
+{
+  "_comment": "Phase 1 shadcn test — maps shadcn/Base UI Card composition to MODE's ContentSection.",
+  "_usage": "node agent/ingest.js declarations/shadcn-content.json",
+  "_phase1_goal": "Validate the ingestion contract with a className-based palette bridge (shadcn has no theme prop).",
+  "_phase2_note": "Phase 2 would replace color-scale.json + theme.json with shadcn's CSS var system so MODE's palette modes flow through shadcn's rendering.",
+
+  "name": "ShadcnContentSection",
+  "source": "@/components/external/ShadcnContentSection",
+  "modeType": "ContentSection",
+
+  "slots": {
+    "headline": { "prop": "headline" },
+    "body":     { "prop": "body" },
+    "callout":  { "prop": "callout", "type": "string?" },
+    "cta":      { "prop": "cta",     "type": "cta?" }
+  },
+
+  "variants": {
+    "standard":     {},
+    "with-sidebar": { "layout": "sidebar" },
+    "with-callout": { "showCallout": true }
+  },
+
+  "palette": {
+    "_comment": "shadcn has no theme prop. Palette is expressed through className. The .dark class scopes shadcn's CSS vars (--card, --foreground, etc.) to the section element and all descendants.",
+    "light":   {},
+    "neutral": { "className": "bg-muted" },
+    "dark":    { "className": "dark" }
+  }
+}
